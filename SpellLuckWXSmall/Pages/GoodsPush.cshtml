@@ -1,0 +1,64 @@
+﻿@page
+@model GoodsPushModel
+@{
+    ViewData["Title"] = "商品添加";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="container">
+    <form class="form" method="post" asp-page-handler="submitGoods" enctype="multipart/form-data">
+        <div style="margin-top:50px;" class="row">
+            <label class="col-xs-6 col-sm-4 " for="goodsTitle">商品标题</label>
+            <input id="goodsTitle" asp-for="GoodsModel.GoodsTitle" class="form-control col-xs-6 col-sm-4" type="text" />
+        </div>
+
+        <div class="row">
+            <label class="col-xs-6 col-sm-4" for="goodsDetail">商品简介</label>
+            <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" class="form-control col-xs-6 col-sm-4"></textarea>
+        </div>
+
+        <div class="row">
+            <label class="col-xs-6 col-sm-4" for="goodsPrice">商品价格</label>
+            <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
+        </div>
+        <div class="row">
+            <label class="col-xs-6 col-sm-3" for="goodsPayType">商品购买类型</label>
+            <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
+                <option value="0">2人拼团</option>
+                <option value="1">多人拼团</option>
+                <option value="2">1分夺宝</option>
+            </select>
+            <label id="goodsPeopleNumLabel" class="col-xs-6 col-sm-3" style="display:none" for="goodsPeopleNum">参团人数</label>
+            <select id="goodsPeopleNum" class="form-control col-xs-6 col-sm-3" style="display:none" asp-for="GoodsModel.GoodsPeopleNum">
+                <option value="1">1人</option>
+                <option value="2">2人</option>
+                <option value="3">3人</option>
+                <option value="4">4人</option>
+                <option value="5">5人</option>
+                <option value="6">6人</option>
+            </select>
+        </div>
+        <div class="row">
+            <label class="col-xs-6 col-sm-3" for="goodsHomePic1">商品主图</label>
+            <input type="file" asp-for="MainImages" multiple max="5" class="col-xs-6 col-sm-3" id="goodsHomePic1" />
+
+            <label class="col-xs-6 col-sm-3" for="goodsOtherPic">商品其他图片</label>
+            <input type="file" asp-for="OtherImages" class="col-xs-6 col-sm-3" id="goodsOtherPic" multiple />
+        </div>
+        <div class="row">
+            <button style="margin-top:30px;" class="btn btn-lg btn-success col-xs-6 col-sm-4" type="submit">提 交</button>
+        </div>
+    </form>
+</div>
+<script>
+    function OnPayTypeChanged(obj) {
+        var pn = $("#goodsPeopleNum");
+        var pnl = $("#goodsPeopleNumLabel");
+        if ($(obj).val() == 1) {
+            pn.show();
+            pnl.show();
+        } else {
+            pn.hide();
+            pnl.hide();
+        }
+    }
+</script>

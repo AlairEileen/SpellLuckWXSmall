@@ -1,0 +1,31 @@
+﻿@page
+@model GoodsListShowModel
+@{
+    ViewData["Title"] = "商品展示";
+}
+<h2>@ViewData["Title"]</h2>
+
+<div class="container marketing">
+    <div class="row">
+        @foreach (var item in Model.GoodsModelList)
+        {
+            <div class="col-lg-4">
+                <img width="140" height="140" class="img-responsive" src="/file/FileDownload?fileUrl=@item.GoodsMainImages[0].FileUrlData[0]" />
+                <h2>@item.GoodsTitle</h2>
+                <p>@item.GoodsDetail</p>
+            <p><a class="btn btn-danger">删除</a></p>
+        </div>
+        }
+    </div>
+    <div class="row">
+        <ul class="pagination pagination-lg">
+            <li><a href="#">&laquo;</a></li>
+            <li><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li><a href="#">&raquo;</a></li>
+        </ul>
+    </div>
+</div>

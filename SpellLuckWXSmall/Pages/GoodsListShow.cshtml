@@ -4,7 +4,6 @@
     ViewData["Title"] = "商品展示";
 }
 <h2>@ViewData["Title"]</h2>
-
 <div class="container marketing">
     <div class="row">
         @foreach (var item in Model.GoodsModelList)
@@ -15,17 +14,17 @@
                 <p>@item.GoodsDetail</p>
             <p><a class="btn btn-danger">删除</a></p>
         </div>
-        }
+        }   
     </div>
     <div class="row">
-        <ul class="pagination pagination-lg">
-            <li><a href="#">&laquo;</a></li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">&raquo;</a></li>
-        </ul>
+            <ul class="pagination pagination-lg">
+                <li><button asp-page-handler="">&laquo;</button></li>
+                <li><a asp-page-handler="">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">&raquo;</a></li>
+            </ul>
     </div>
 </div>

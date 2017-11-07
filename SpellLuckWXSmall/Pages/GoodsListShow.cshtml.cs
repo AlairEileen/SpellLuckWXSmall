@@ -27,7 +27,7 @@ namespace SpellLuckWXSmall.Pages
 
         public IActionResult OnGetNextPage()
         {
-            PageIndex++;
+            PageIndex += pageSize;
             var filter = Builders<GoodsModel>.Filter.Empty;
             GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
             return Page();

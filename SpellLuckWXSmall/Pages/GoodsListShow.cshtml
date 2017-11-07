@@ -9,6 +9,7 @@
         @foreach (var item in Model.GoodsModelList)
         {
             <div class="col-lg-4">
+                
                 <img width="140" height="140" class="img-responsive" src="/file/FileDownload?fileUrl=@item.GoodsMainImages[0].FileUrlData[0]" />
                 <h2>@item.GoodsTitle</h2>
                 <p>@item.GoodsDetail</p>

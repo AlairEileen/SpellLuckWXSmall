@@ -22,25 +22,25 @@ namespace SpellLuckWXSmall.Pages
         public void OnGet()
         {
             var filter = Builders<GoodsModel>.Filter.Empty ;
-            GoodsModelList= new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
+            GoodsModelList= new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
         }
 
         public IActionResult OnGetNextPage()
         {
-            PageIndex += pageSize;
+            PageIndex++;
             var filter = Builders<GoodsModel>.Filter.Empty;
-            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
+            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
             return Page();
         }
         public IActionResult OnGetPrePage()
         {
-            if (PageIndex<pageSize)
+            if (PageIndex==0)
             {
-                return null;
+                return Page();
             }
-            PageIndex -= pageSize;
+            PageIndex--;
             var filter = Builders<GoodsModel>.Filter.Empty;
-            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
+            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
             return Page();
         }
     }

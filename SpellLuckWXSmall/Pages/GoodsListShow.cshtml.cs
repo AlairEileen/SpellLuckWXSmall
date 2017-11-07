@@ -25,9 +25,12 @@ namespace SpellLuckWXSmall.Pages
             GoodsModelList= new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
         }
 
-        public void OnGetNextPage()
+        public IActionResult OnGetNextPage()
         {
-
+            PageIndex++;
+            var filter = Builders<GoodsModel>.Filter.Empty;
+            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex).Limit(PageSize).ToList();
+            return Page();
         }
     }
 }

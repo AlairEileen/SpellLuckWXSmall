@@ -13,6 +13,7 @@ namespace SpellLuckWXSmall.Models
         public int WaitingJoin { get; set; }
         public int WaitingSend { get; set; }
         public int WaitingAssess { get; set; }
+        public List<OrderModel> OrderList { get; set; }
     }
 
     public class OrderLocation

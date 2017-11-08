@@ -90,6 +90,8 @@ namespace SpellLuckWXSmall.Controllers
             {
                 responseModel.StatusCode = (int)ActionParams.code_null;
             }
+            responseModel.StatusCode = (int)ActionParams.code_ok;
+
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
                 new string[] {
@@ -97,9 +99,10 @@ namespace SpellLuckWXSmall.Controllers
                     "JsonData",
                     "GoodsInfo",
                     "JackGoods",
+                "CreateTime",
+                "GoodsID",
                 "AssessmentList",
                 "AssessmentContent",
-                "CreateTime",
                 "AssessAccount",
                 "AccountName",
                 "AccountAvatar"});

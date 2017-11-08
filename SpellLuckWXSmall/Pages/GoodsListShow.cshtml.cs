@@ -28,8 +28,8 @@ namespace SpellLuckWXSmall.Pages
             PageIndex = 0;
             var filter = Builders<GoodsModel>.Filter.Empty;
             var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
-            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
             PageCount = (int)find.Count() / pageSize;
+            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
         }
         public IActionResult OnGetGoPage(int pageIndex)
         {
@@ -39,7 +39,9 @@ namespace SpellLuckWXSmall.Pages
             }
             PageIndex = pageIndex;
             var filter = Builders<GoodsModel>.Filter.Empty;
-            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+            var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
+            PageCount = (int)find.Count() / pageSize;
+            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
             return Page();
         }
     }

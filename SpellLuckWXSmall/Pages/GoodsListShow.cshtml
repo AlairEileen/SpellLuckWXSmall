@@ -22,11 +22,11 @@
     <div class="row">
         <ul class="pagination pagination-lg">
             <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex--)">&laquo;</a></li>
-            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+1)">@(Model.PageIndex + 1)</a></li>
-            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+2)">@(Model.PageIndex + 2)</a></li>
-            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+3)">@(Model.PageIndex + 3)</a></li>
-            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+4)">@(Model.PageIndex + 4)</a></li>
-            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+5)">@(Model.PageIndex + 5)</a></li>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+=1)">@(Model.PageIndex + 1)</a></li>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+=2)">@(Model.PageIndex + 2)</a></li>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+=3)">@(Model.PageIndex + 3)</a></li>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+=4)">@(Model.PageIndex + 4)</a></li>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+=5)">@(Model.PageIndex + 5)</a></li>
             <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex++)">&raquo;</a></li>
         </ul>
     </div>

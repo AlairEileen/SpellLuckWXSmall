@@ -17,6 +17,7 @@ namespace SpellLuckWXSmall.Models
         public string GoodsTitle { get; set; }
         public string GoodsDetail { get; set; }
         public int GoodsPrice { get; set; }
+        public int GoodsOldPrice { get; set; }
         public int GoodsPayType { get; set; }
         public long GoodsSales { get; set; }
         public FileModel<string[]> GoodsListImage { get; set; }

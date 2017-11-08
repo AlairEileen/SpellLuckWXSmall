@@ -12,23 +12,28 @@ namespace SpellLuckWXSmall.Pages
 {
     public class GoodsListShowModel : PageModel
     {
-    
+
 
         public List<GoodsModel> GoodsModelList { get; set; }
-        private int pageSize=10;
-        [BindProperty]
+        private int pageSize = 5;
         public int PageIndex { get; set; }
+        public int PageCount { get; set; }
+        private int maxPageShow=10;
+        public int MaxPageShow { get => maxPageShow; }
         public int PageSize { get => pageSize; }
 
         public void OnGet()
         {
+
             PageIndex = 0;
-            var filter = Builders<GoodsModel>.Filter.Empty ;
-            GoodsModelList= new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
+            var filter = Builders<GoodsModel>.Filter.Empty;
+            var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
+            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+            PageCount = (int)find.Count() / pageSize;
         }
         public IActionResult OnGetGoPage(int pageIndex)
         {
-            if (PageIndex ==-1)
+            if (PageIndex == -1)
             {
                 return Page();
             }

@@ -28,7 +28,7 @@ namespace SpellLuckWXSmall.Pages
         }
         public IActionResult OnGetGoPage(int pageIndex)
         {
-            if (pageIndex == -1)
+            if (pageIndex == -1|| pageIndex == PageCount)
             {
                 return Page();
             }

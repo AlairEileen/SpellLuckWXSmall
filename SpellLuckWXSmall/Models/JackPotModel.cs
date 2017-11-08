@@ -15,6 +15,7 @@ namespace SpellLuckWXSmall.Models
         public ObjectId JackPotID { get; set; }
         public List<AccountPotModel> Participator { get; set; }
         public GoodsModel JackGoods { get; set; }
+        public int JackPotStatus { get; set; }
     }
 
     public class AccountPotModel

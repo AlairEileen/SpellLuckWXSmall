@@ -128,6 +128,8 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     responseModel.StatusCode = (int)ActionParams.code_null;
                 }
+
+                //查询三代
                 responseModel.JsonData = account;
             }
             catch (Exception)
@@ -142,7 +144,10 @@ namespace SpellLuckWXSmall.Controllers
                     "StatusCode",
                     "JsonData",
                     "AccountName" ,
-                    "AccountAvatar" });
+                    "AccountAvatar",
+                "WaitingJoin",
+                "WaitingSend",
+                "WaitingAssess"});
 
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }

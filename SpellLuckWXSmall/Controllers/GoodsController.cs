@@ -10,6 +10,7 @@ using Tools.ResponseModels;
 using Tools;
 using Newtonsoft.Json;
 using Tools.Json;
+using MongoDB.Bson;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,7 +53,72 @@ namespace SpellLuckWXSmall.Controllers
                 "GoodsSales",
                 "GoodsListImage",
                 "FileUrlData" });
-            return JsonConvert.SerializeObject(responseModel,jsonSerializerSettings);
+            return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+        }
+
+        /// <summary>
+        /// 获取商品信息
+        /// </summary>
+        /// <param name="goodsID">商品id</param>
+        /// <param name="jackPotID">拼团id</param>
+        /// <returns></returns>
+        public string GetGoodsDetail(string goodsID, string jackPotID)
+        {
+            string json = null;
+            if ((string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) || (!string.IsNullOrEmpty(goodsID) && !string.IsNullOrEmpty(jackPotID)))
+            {
+                return JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null });
+            }
+
+            if (!string.IsNullOrEmpty(goodsID))
+            {
+                json = GetSimpleGoodsDetail(goodsID);
+            }
+            else if (!string.IsNullOrEmpty(jackPotID))
+            {
+                json = GetJackPotGoodsDetail(jackPotID);
+
+            }
+            return json;
+        }
+
+        private string GetSimpleGoodsDetail(string goodsID)
+        {
+            BaseResponseModel<JackPotModel> responseModel = new BaseResponseModel<JackPotModel>();
+            var goods = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(x => x.GoodsID.Equals(new ObjectId(goodsID))).FirstOrDefault();
+            if (goods == null)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_null;
+            }
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                new string[] {
+                    "StatusCode",
+                    "JsonData",
+                    "JackGoods" });
+
+            responseModel.JsonData = new JackPotModel() { JackGoods = goods };
+            return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+        }
+
+        private string GetJackPotGoodsDetail(string jackPotID)
+        {
+            BaseResponseModel<JackPotModel> responseModel = new BaseResponseModel<JackPotModel>();
+            var jackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(x => x.JackPotID.Equals(new ObjectId(jackPotID))).FirstOrDefault();
+            if (jackPot == null)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_null;
+            }
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                new string[] {
+                    "StatusCode",
+                    "JsonData",
+                    "JackGoods",
+                    "JackPotID" });
+
+            responseModel.JsonData = jackPot;
+            return JsonConvert.SerializeObject(responseModel);
         }
     }
 }

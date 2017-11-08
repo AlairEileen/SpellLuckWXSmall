@@ -10,6 +10,9 @@ namespace SpellLuckWXSmall.Models
     {
         public string OpenID { get; set; }
         public OrderLocation OrderLocation { get; set; }
+        public int WaitingJoin { get; set; }
+        public int WaitingSend { get; set; }
+        public int WaitingAssess { get; set; }
     }
 
     public class OrderLocation

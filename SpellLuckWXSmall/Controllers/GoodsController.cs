@@ -84,7 +84,7 @@ namespace SpellLuckWXSmall.Controllers
 
         private string GetSimpleGoodsDetail(string goodsID)
         {
-            BaseResponseModel<JackPotModel> responseModel = new BaseResponseModel<JackPotModel>();
+            BaseResponseModel<ResponseGoodsDetail> responseModel = new BaseResponseModel<ResponseGoodsDetail>();
             var goods = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(x => x.GoodsID.Equals(new ObjectId(goodsID))).FirstOrDefault();
             if (goods == null)
             {
@@ -95,15 +95,23 @@ namespace SpellLuckWXSmall.Controllers
                 new string[] {
                     "StatusCode",
                     "JsonData",
-                    "JackGoods" });
+                    "GoodsInfo",
+                    "JackGoods",
+                "AssessmentList",
+                "AssessmentContent",
+                "CreateTime",
+                "AssessAccount",
+                "AccountName",
+                "AccountAvatar"});
 
-            responseModel.JsonData = new JackPotModel() { JackGoods = goods };
+
+            responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = new JackPotModel() { JackGoods = goods } };
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
 
         private string GetJackPotGoodsDetail(string jackPotID)
         {
-            BaseResponseModel<JackPotModel> responseModel = new BaseResponseModel<JackPotModel>();
+            BaseResponseModel<ResponseGoodsDetail> responseModel = new BaseResponseModel<ResponseGoodsDetail>();
             var jackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(x => x.JackPotID.Equals(new ObjectId(jackPotID))).FirstOrDefault();
             if (jackPot == null)
             {
@@ -111,13 +119,23 @@ namespace SpellLuckWXSmall.Controllers
             }
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
-                new string[] {
+               new string[] {
                     "StatusCode",
                     "JsonData",
+                    "GoodsInfo",
+                    "WaitingJackPotList",
                     "JackGoods",
-                    "JackPotID" });
+                "AssessmentList",
+                "AssessmentContent",
+                "CreateTime",
+                "AssessAccount",
+                "AccountName",
+                "JackPotID",
+                "WaitingAccount",
+                "AccountAvatar"});
 
-            responseModel.JsonData = jackPot;
+            responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = jackPot };
+
             return JsonConvert.SerializeObject(responseModel);
         }
     }

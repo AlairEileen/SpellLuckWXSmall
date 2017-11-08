@@ -34,7 +34,7 @@ namespace SpellLuckWXSmall.Models
         public ObjectId AssessmentID { get; set; }
         public ObjectId OrderID { get; set; }
         public string AssessmentContent { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime AssessTime { get; set; }
         public AccountPotModel AssessAccount { get; set; }
     }
 }

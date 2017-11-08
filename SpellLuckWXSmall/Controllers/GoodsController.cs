@@ -99,7 +99,6 @@ namespace SpellLuckWXSmall.Controllers
                     "JsonData",
                     "GoodsInfo",
                     "JackGoods",
-                "CreateTime",
                 "GoodsID",
                 "GoodsTitle",
                 "GoodsDetail",
@@ -109,12 +108,13 @@ namespace SpellLuckWXSmall.Controllers
                 "GoodsMainImages",
                 "GoodsSales",
                 "GoodsOtherImages",
+                "FileUrlData",
                 "GoodsPeopleNum",
-                "GoodsOtherImages",
                 "AssessmentList",
                 "AssessmentContent",
                 "AssessAccount",
                 "AccountName",
+                "AssessTime",
                 "AccountAvatar"});
 
 

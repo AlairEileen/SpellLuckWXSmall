@@ -16,6 +16,7 @@ namespace SpellLuckWXSmall.Pages
 
         public List<GoodsModel> GoodsModelList { get; set; }
         private int pageSize=10;
+        [BindProperty]
         public int PageIndex { get; set; }
         public int PageSize { get => pageSize; }
 
@@ -24,23 +25,14 @@ namespace SpellLuckWXSmall.Pages
             var filter = Builders<GoodsModel>.Filter.Empty ;
             GoodsModelList= new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
         }
-
-        public IActionResult OnGetNextPage()
+        public IActionResult OnGetGoPage(int pageIndex)
         {
-            PageIndex++;
-            var filter = Builders<GoodsModel>.Filter.Empty;
-            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
-            return Page();
-        }
-        public IActionResult OnGetPrePage()
-        {
-            if (PageIndex==0)
+            if (PageIndex ==-1)
             {
                 return Page();
             }
-            PageIndex--;
             var filter = Builders<GoodsModel>.Filter.Empty;
-            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex*pageSize).Limit(PageSize).ToList();
+            GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(PageIndex * pageSize).Limit(PageSize).ToList();
             return Page();
         }
     }

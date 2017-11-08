@@ -43,7 +43,15 @@ namespace SpellLuckWXSmall.Controllers
                 responseModel.StatusCode = (int)ActionParams.code_error;
             }
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(new string[] { "StatusCode", "JsonData", "GoodsID", "GoodsTitle", "GoodsPrice", "GoodsSales", "GoodsMainImages", "FileUrlData" });
+            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(new string[] {
+                "StatusCode",
+                "JsonData",
+                "GoodsID",
+                "GoodsTitle",
+                "GoodsPrice",
+                "GoodsSales",
+                "GoodsListImage",
+                "FileUrlData" });
             return JsonConvert.SerializeObject(responseModel,jsonSerializerSettings);
         }
     }

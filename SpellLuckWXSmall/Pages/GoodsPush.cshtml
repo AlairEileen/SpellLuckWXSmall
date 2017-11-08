@@ -38,11 +38,14 @@
             </select>
         </div>
         <div class="row">
-            <label class="col-xs-6 col-sm-3" for="goodsHomePic1">商品主图</label>
-            <input type="file" asp-for="MainImages" multiple max="5" class="col-xs-6 col-sm-3" id="goodsHomePic1" />
+            <label class="col-xs-6 col-sm-2" for="goodsListPic">商品列表图片</label>
+            <input type="file" asp-for="ListImage" multiple max="5" class="col-xs-6 col-sm-2" id="goodsListPic" />
 
-            <label class="col-xs-6 col-sm-3" for="goodsOtherPic">商品其他图片</label>
-            <input type="file" asp-for="OtherImages" class="col-xs-6 col-sm-3" id="goodsOtherPic" multiple />
+            <label class="col-xs-6 col-sm-2" for="goodsHomePic">商品主图</label>
+            <input type="file" asp-for="MainImages" multiple max="5" class="col-xs-6 col-sm-2" id="goodsHomePic" />
+
+            <label class="col-xs-6 col-sm-2" for="goodsOtherPic">商品其他图片</label>
+            <input type="file" asp-for="OtherImages" class="col-xs-6 col-sm-2" id="goodsOtherPic" multiple />
         </div>
         <div class="row">
             <button style="margin-top:30px;" class="btn btn-lg btn-success col-xs-6 col-sm-4" type="submit">提 交</button>

@@ -40,6 +40,8 @@ namespace SpellLuckWXSmall.Pages
 
         [BindProperty]
         public List<IFormFile> OtherImages { get; set; }
+        [BindProperty]
+        public IFormFile ListImage { get; set; }
         public async Task<IActionResult> OnPostSubmitGoodsAsync()
         {
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
@@ -55,6 +57,7 @@ namespace SpellLuckWXSmall.Pages
             {
                 GoodsModel.GoodsOtherImages = new List<FileModel<string[]>>();
             }
+            await SaveImage(ListImage);
             await SaveImages(MainImages, GoodsModel.GoodsMainImages);
             await SaveImages(OtherImages, GoodsModel.GoodsOtherImages);
             try
@@ -69,6 +72,47 @@ namespace SpellLuckWXSmall.Pages
             }
 
             return Page();
+        }
+
+        private async Task<long> SaveImage(IFormFile listImage)
+        {
+            return await Task.Run(() => {
+
+                long size = 0;
+                if (listImage!=null)
+                {
+                    var filename = ContentDispositionHeaderValue
+                                    .Parse(listImage.ContentDisposition)
+                                    .FileName
+                                    .Trim('"');
+                    string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}";
+                    if (!Directory.Exists(saveDir))
+                    {
+                        Directory.CreateDirectory(saveDir);
+                    }
+                    filename = filename.Substring(filename.LastIndexOf("."));
+                    string saveName = ConstantProperty.GoodsImagesDir + ObjectId.GenerateNewId().ToString() + $@"{filename}";
+                    filename = ConstantProperty.BaseDir + saveName;
+                    size += listImage.Length;
+                    using (FileStream fs = System.IO.File.Create(filename))
+                    {
+                        listImage.CopyTo(fs);
+                        fs.Flush();
+
+                    }
+                    ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
+                    params3Img.OnFinish += fileModel =>
+                    {
+                        if (fileModel.FileID == ObjectId.Empty)
+                        {
+                            fileModel.FileID = ObjectId.GenerateNewId();
+                        }
+                        GoodsModel.GoodsListImage = fileModel;
+                    };
+                    ImageTool.Create3Img(params3Img);
+                }
+                return size;
+            });
         }
 
         private async Task<long> SaveImages(List<IFormFile> sourceImages, List<FileModel<string[]>> container)

@@ -22,9 +22,12 @@
     <div class="row">
         <ul class="pagination pagination-lg">
             <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex-1)">&laquo;</a></li>
-            @for (int i = Model.PageIndex+1; i < 10 && i < Model.PageCount+1; i++)
+            @for (int i = 1; i < 10 && i < Model.PageCount + 1; i++)
             {
-                <li><a asp-page-handler="goPage" asp-route-pageIndex="@i">@i</a></li>
+                if (Model.PageIndex + i <= Model.PageCount)
+                {
+                    <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+i)">@(Model.PageIndex + i)</a></li>
+                }
             }
             <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+1)">&raquo;</a></li>
         </ul>

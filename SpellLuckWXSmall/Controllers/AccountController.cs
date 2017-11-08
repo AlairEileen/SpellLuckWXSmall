@@ -84,10 +84,10 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="accountID"></param>
         /// <param name="accountName"></param>
         /// <returns></returns>
-        public string ChangeAccountName(ObjectId accountID, string accountName)
+        public string ChangeAccountName(string accountID, string accountName)
         {
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
-            if (accountID==ObjectId.Empty||string.IsNullOrEmpty(accountName))
+            if (string.IsNullOrEmpty(accountID) || string.IsNullOrEmpty(accountName))
             {
                 responseModel.StatusCode = (int)ActionParams.code_error_null;
                 return JsonConvert.SerializeObject(responseModel);
@@ -96,15 +96,54 @@ namespace SpellLuckWXSmall.Controllers
 
             try
             {
-                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
+                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
                 var update = Builders<AccountModel>.Update.Set(x => x.AccountName, accountName);
                 new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filter, update);
             }
             catch (Exception)
             {
-            responseModel.StatusCode = (int)ActionParams.code_error;
+                responseModel.StatusCode = (int)ActionParams.code_error;
             }
             return JsonConvert.SerializeObject(responseModel);
+        }
+        /// <summary>
+        /// 获取账户信息
+        /// </summary>
+        /// <param name="accountID">账户Id</param>
+        /// <returns></returns>
+        public string GetAccountInfo(string accountID)
+        {
+            BaseResponseModel<AccountModel> responseModel = new BaseResponseModel<AccountModel>();
+            if (accountID == null)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error_null;
+                return JsonConvert.SerializeObject(responseModel);
+            }
+            responseModel.StatusCode = (int)ActionParams.code_ok;
+            try
+            {
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+                if (account == null)
+                {
+                    responseModel.StatusCode = (int)ActionParams.code_null;
+                }
+                responseModel.JsonData = account;
+            }
+            catch (Exception)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error;
+
+                throw;
+            }
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                new string[] {
+                    "StatusCode",
+                    "JsonData",
+                    "AccountName" ,
+                    "AccountAvatar" });
+
+            return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
     }
 }

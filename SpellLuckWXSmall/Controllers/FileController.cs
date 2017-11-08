@@ -48,10 +48,10 @@ namespace SpellLuckWXSmall.Controllers
         /// </summary>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public string UploadAvatar(ObjectId accountID)
+        public string UploadAvatar(string accountID)
         {
             BaseResponseModel<String> responseModel = new BaseResponseModel<String>();
-            if (accountID == null)
+            if (string.IsNullOrEmpty(accountID))
             {
                 responseModel.StatusCode = (int)ActionParams.code_error_null;
                 responseModel.JsonData = $@"参数：openId:{accountID}";
@@ -82,7 +82,7 @@ namespace SpellLuckWXSmall.Controllers
                     {
                         file.CopyTo(fs);
                         fs.Flush();
-                        var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
+                        var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
                         var update = Builders<AccountModel>.Update.Set(x => x.AccountAvatar, saveName);
                         var dbTool = new MongoDBTool();
                         dbTool.GetMongoCollection<AccountModel>().UpdateOne(filter, update);

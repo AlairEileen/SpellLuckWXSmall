@@ -132,20 +132,31 @@ namespace SpellLuckWXSmall.Controllers
             }
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
-               new string[] {
+            new string[] {
                     "StatusCode",
                     "JsonData",
                     "GoodsInfo",
-                    "WaitingJackPotList",
                     "JackGoods",
+                "GoodsID",
+                "GoodsTitle",
+                "GoodsDetail",
+                "GoodsPrice",
+                "GoodsOldPrice",
+                "GoodsPayType",
+                "GoodsMainImages",
+                "GoodsSales",
+                "GoodsOtherImages",
+                "FileUrlData",
+                "GoodsPeopleNum",
                 "AssessmentList",
                 "AssessmentContent",
-                "CreateTime",
                 "AssessAccount",
                 "AccountName",
-                "JackPotID",
-                "WaitingAccount",
-                "AccountAvatar"});
+                "AssessTime",
+                "AccountAvatar",
+            "WaitingJackPotList",
+            "JackPotID",
+            "WaitingAccount"});
 
             responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = jackPot };
 

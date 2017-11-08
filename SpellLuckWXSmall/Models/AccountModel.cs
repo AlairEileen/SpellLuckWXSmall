@@ -14,9 +14,9 @@ namespace SpellLuckWXSmall.Models
 
     public class OrderLocation
     {
-        public string Province { get; set; }
-        public string City { get; set; }
-        public string Area { get; set; }
+        public string OrderLocationPhone { get; set; }
+        public string OrderLocationPersonName { get; set; }
+        public string[] ProvinceCityArea { get; set; }
         public string AddressDetail { get; set; }
     }
 }

@@ -40,7 +40,8 @@ namespace SpellLuckWXSmall.Controllers
                 if (accountCard == null)
                 {
                     int gender = wXAccount.Gender == 1 ? 1 : wXAccount.Gender == 2 ? 2 : 3;
-                    string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
+                    //string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
+                    string avatarUrl = wXAccount.AvatarUrl;
                     accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = gender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
                     collection.InsertOne(accountCard);
                 }
@@ -145,5 +146,40 @@ namespace SpellLuckWXSmall.Controllers
 
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accountID">账户id</param>
+        /// <param name="provinceArray">省市区数组["北京","北京","朝阳"]</param>
+        /// <param name="addressDetail">详细地址</param>
+        /// <param name="orderLocationPhone">收件联系方式</param>
+        /// <param name="orderLocationPersonName">收件人姓名</param>
+        /// <returns></returns>
+        public string SetAddress(string accountID, string provinceArray, string addressDetail, string orderLocationPhone, string orderLocationPersonName)
+        {
+            BaseResponseModel<AccountModel> responseModel = new BaseResponseModel<AccountModel>();
+            if (string.IsNullOrEmpty(accountID) || string.IsNullOrEmpty(provinceArray) || string.IsNullOrEmpty(addressDetail))
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error_null;
+                return JsonConvert.SerializeObject(responseModel);
+            }
+            responseModel.StatusCode = (int)ActionParams.code_ok;
+
+            try
+            {
+                string[] pca = JsonConvert.DeserializeObject<string[]>(provinceArray);
+                var address = new OrderLocation() { ProvinceCityArea = pca, AddressDetail = addressDetail, OrderLocationPersonName = orderLocationPersonName, OrderLocationPhone = orderLocationPhone };
+                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
+                var update = Builders<AccountModel>.Update.Set(x => x.OrderLocation, address);
+                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filter, update);
+            }
+            catch (Exception)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error;
+                throw;
+            }
+            return JsonConvert.SerializeObject(responseModel);
+        }
+
     }
 }

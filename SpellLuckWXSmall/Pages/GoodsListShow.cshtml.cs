@@ -24,25 +24,27 @@ namespace SpellLuckWXSmall.Pages
 
         public void OnGet()
         {
-
-            PageIndex = 0;
-            var filter = Builders<GoodsModel>.Filter.Empty;
-            var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
-            PageCount = (int)find.Count() / pageSize;
-            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+            setPage(0);
         }
         public IActionResult OnGetGoPage(int pageIndex)
         {
-            if (PageIndex == -1)
+            if (pageIndex == -1)
             {
                 return Page();
             }
+            setPage(pageIndex);
+            
+            return Page();
+        }
+
+        private void setPage(int pageIndex)
+        {
             PageIndex = pageIndex;
             var filter = Builders<GoodsModel>.Filter.Empty;
             var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
-            PageCount = (int)find.Count() / pageSize;
+            var count = find.Count();
+            PageCount = ((int)count / pageSize) + (count % pageSize == 0 ? 0 : 1);
             GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
-            return Page();
         }
     }
 }

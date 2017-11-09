@@ -4,20 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using WXSmallAppCommon.Models;
+using WXSmallAppCommon.WXTool;
 
 namespace WXSmallAppCommon.WXInteractions
 {
     public class WXLoginAction
     {
-        const string Appid = "wxe3bf3cc9cb899b25";
-        const string Secret = "46a6f00347a84369f7c422096932043a";
         public static WXAccountInfo ProcessRequest(string code, string iv, string encryptedData)
         {
+            
             Console.WriteLine("进入登陆：&&&");
             string grant_type = "authorization_code";
             WXAccountInfo userInfo = new WXAccountInfo();
             //向微信服务端 使用登录凭证 code 获取 session_key 和 openid 
-            string url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + Appid + "&secret=" + Secret + "&js_code=" + code + "&grant_type=" + grant_type;
+            string url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WxPayConfig.APPID + "&secret=" + WxPayConfig.APPSECRET + "&js_code=" + code + "&grant_type=" + grant_type;
             string type = "utf-8";
 
             WXAccountInfoGetter GetUsersHelper = new WXAccountInfoGetter();

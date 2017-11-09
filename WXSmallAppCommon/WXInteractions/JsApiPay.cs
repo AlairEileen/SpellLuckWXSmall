@@ -18,23 +18,26 @@ namespace WXSmallAppCommon.WXInteractions
         /// <summary>
         /// 商品金额，用于统一下单
         /// </summary>
-        public int total_fee { get; set; }
-        /**
-      * 调用统一下单，获得下单结果
-      * @return 统一下单结果
-      * @失败时抛异常WxPayException
-      */
-        public WxPayData GetUnifiedOrderResult()
+        public decimal total_fee { get; set; }
+    
+        /// <summary>
+        /// 调用统一下单，获得下单结果,失败时抛异常WxPayException
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="attach"></param>
+        /// <param name="goods_tag"></param>
+        /// <returns>统一下单结果</returns>
+        public WxPayData GetUnifiedOrderResult(string body,string attach,string goods_tag)
         {
             //统一下单
             WxPayData data = new WxPayData();
-            data.SetValue("body", "test");
-            data.SetValue("attach", "test");
+            data.SetValue("body", body);
+            data.SetValue("attach", attach);
             data.SetValue("out_trade_no", WxPayApi.GenerateOutTradeNo());
             data.SetValue("total_fee", total_fee);
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));
             data.SetValue("time_expire", DateTime.Now.AddMinutes(10).ToString("yyyyMMddHHmmss"));
-            data.SetValue("goods_tag", "test");
+            data.SetValue("goods_tag", goods_tag);
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 

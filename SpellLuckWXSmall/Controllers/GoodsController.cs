@@ -32,11 +32,23 @@ namespace SpellLuckWXSmall.Controllers
             try
             {
                 var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsPayType, goodsPayType);
-                var GoodsModelList = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(pageIndex * pageSize).Limit(pageSize).ToList();
-                if (GoodsModelList == null || GoodsModelList.Count == 0)
+                var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(pageIndex * pageSize);
+                var count = find.Count();
+                var pageSum = (count / pageSize) + (count % pageSize == 0 ? 0 : 1);
+                List<GoodsModel> GoodsModelList = null;
+                if (pageSum >= pageIndex + 1)
                 {
-                    responseModel.StatusCode = (int)ActionParams.code_error_null;
+                    GoodsModelList = find.Skip(pageIndex * pageSize).Limit(pageSize).ToList();
+                    if (GoodsModelList == null || GoodsModelList.Count == 0)
+                    {
+                        responseModel.StatusCode = (int)ActionParams.code_error_null;
+                    }
                 }
+                else
+                {
+                    responseModel.StatusCode = (int)ActionParams.code_null;
+                }
+
                 responseModel.JsonData = GoodsModelList;
             }
             catch (Exception)

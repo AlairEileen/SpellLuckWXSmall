@@ -42,7 +42,7 @@ namespace SpellLuckWXSmall.Controllers
                     int gender = wXAccount.Gender == 1 ? 1 : wXAccount.Gender == 2 ? 2 : 3;
                     //string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
                     string avatarUrl = wXAccount.AvatarUrl;
-                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = gender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
+                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, HasRedPocket = false, AccountName = wXAccount.NickName, Gender = gender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
                     collection.InsertOne(accountCard);
                 }
             }
@@ -54,7 +54,11 @@ namespace SpellLuckWXSmall.Controllers
             }
             responseModel.StatusCode = stautsCode;
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(new string[] { "StatusCode", "JsonData", "AccountID" });
+
+            string[] param = new string[] { "StatusCode", "JsonData", "AccountID", "HasRedPocket" };
+      
+
+            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);
             string jsonString = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
             Console.WriteLine("json#####UserInfo:" + jsonString);
             return jsonString;
@@ -145,9 +149,15 @@ namespace SpellLuckWXSmall.Controllers
                     "JsonData",
                     "AccountName" ,
                     "AccountAvatar",
+                    "OrderList",
+                    "ServicePhone",
                 "WaitingJoin",
                 "WaitingSend",
-                "WaitingAssess"});
+                "WaitingAssess",
+                "OrderLocationPhone",
+                "OrderLocationPersonName",
+                "ProvinceCityArea",
+                "AddressDetail"});
 
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }

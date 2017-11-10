@@ -15,7 +15,7 @@
                 </figure>
                 <h2>@item.GoodsTitle</h2>
                 <p>@item.GoodsDetail</p>
-                <p><a class="btn btn-danger">删除</a></p>
+                <p><a class="btn btn-danger" asp-page-handler="delGoods" asp-route-goodsID="@item.GoodsID.ToString()">删除</a></p>
             </div>
         }
     </div>

@@ -15,7 +15,11 @@ namespace SpellLuckWXSmall.Models
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId GoodsID { get; set; }
+        [Required]
+        [DataType(DataType.Text)]
         public string GoodsTitle { get; set; }
+        [Required]
+        [DataType(DataType.Text)]
         public string GoodsDetail { get; set; }
         [Range(1, 100)]
         [DataType(DataType.Currency)]

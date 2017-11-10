@@ -13,16 +13,13 @@
 
         <div class="row">
             <label class="col-xs-6 col-sm-4" for="goodsDetail">商品简介</label>
-            <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" class="form-control col-xs-6 col-sm-4"></textarea>
-        </div>
-
-        <div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsPrice">商品团价</label>
-            <input id="goodsPrice" type="number" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
-        </div>
-        <div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsOldPrice">商品原价</label>
-            <input id="goodsOldPrice" type="number" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" />
+            <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
+        </div><div class="row">
+            <label class="col-xs-6 col-sm-4" for="goodsColor">商品颜色(每行一个)</label>
+            <textarea id="goodsColor" asp-for="GoodsColor" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
+        </div><div class="row">
+            <label class="col-xs-6 col-sm-4" for="goodsRule">商品尺寸(每行一个)</label>
+            <textarea id="goodsRule" asp-for="GoodsRule" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
         </div>
         <div class="row">
             <label class="col-xs-6 col-sm-3" for="goodsPayType">商品购买类型</label>
@@ -39,6 +36,15 @@
                 <option value="6">6人</option>
             </select>
         </div>
+        <div class="row" id="goodsPriceRow">
+            <label class="col-xs-6 col-sm-4" for="goodsPrice">商品团价</label>
+            <input id="goodsPrice" type="number" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
+        </div>
+        <div class="row">
+            <label class="col-xs-6 col-sm-4" for="goodsOldPrice">商品原价</label>
+            <input id="goodsOldPrice" type="number" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" />
+        </div>
+        
         <div class="row">
             <label class="col-xs-6 col-sm-2" for="goodsListPic">商品列表图片</label>
             <input type="file" asp-for="ListImage" max="5" class="col-xs-6 col-sm-2" id="goodsListPic" />
@@ -64,6 +70,13 @@
         } else {
             pn.hide();
             pnl.hide();
+        }
+        var priceRow = $("#goodsPriceRow");
+        if ($(obj).val() == 2) {
+            priceRow.hide();
+        } else {
+
+            priceRow.show();
         }
     }
 </script>

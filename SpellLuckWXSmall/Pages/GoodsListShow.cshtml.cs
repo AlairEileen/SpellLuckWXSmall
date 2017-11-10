@@ -7,6 +7,7 @@ using SpellLuckWXSmall.Models;
 using Microsoft.AspNetCore.Mvc;
 using Tools.DB;
 using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace SpellLuckWXSmall.Pages
 {
@@ -18,7 +19,7 @@ namespace SpellLuckWXSmall.Pages
         private int pageSize = 5;
         public int PageIndex { get; set; }
         public int PageCount { get; set; }
-        private int maxPageShow=10;
+        private int maxPageShow = 10;
         public int MaxPageShow { get => maxPageShow; }
         public int PageSize { get => pageSize; }
 
@@ -28,12 +29,12 @@ namespace SpellLuckWXSmall.Pages
         }
         public IActionResult OnGetGoPage(int pageIndex)
         {
-            if (pageIndex == -1|| pageIndex == PageCount)
+            if (pageIndex == -1 || pageIndex == PageCount)
             {
                 return Page();
             }
             setPage(pageIndex);
-            
+
             return Page();
         }
 
@@ -45,6 +46,14 @@ namespace SpellLuckWXSmall.Pages
             var count = find.Count();
             PageCount = ((int)count / pageSize) + (count % pageSize == 0 ? 0 : 1);
             GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+        }
+
+        public IActionResult OnGetDelGoods(string goodsID)
+        {
+            var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
+            new MongoDBTool().GetMongoCollection<GoodsModel>().DeleteOne(filter);
+
+            return Page();
         }
     }
 }

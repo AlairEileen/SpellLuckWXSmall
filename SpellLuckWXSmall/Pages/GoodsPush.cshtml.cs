@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading;
 using Tools.Models;
 using Tools.DB;
+using System.ComponentModel.DataAnnotations;
 
 namespace SpellLuckWXSmall.Pages
 {
@@ -35,15 +36,29 @@ namespace SpellLuckWXSmall.Pages
         public GoodsModel GoodsModel { get; set; }
 
 
+        [Required]
         [BindProperty]
         public List<IFormFile> MainImages { get; set; }
 
+        [Required]
         [BindProperty]
         public List<IFormFile> OtherImages { get; set; }
+        [Required]
         [BindProperty]
+        public string GoodsColor { get; set; }
+        [Required]
+        [BindProperty]
+        public string GoodsRule { get; set; }
+        [BindProperty]
+        [Required]
         public IFormFile ListImage { get; set; }
         public async Task<IActionResult> OnPostSubmitGoodsAsync()
         {
+
+            if (CheckHasNull())
+            {
+                return RedirectToPage("/ErrorNull");
+            }
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
             if (MainImages.Count > 5)
             {
@@ -60,6 +75,12 @@ namespace SpellLuckWXSmall.Pages
             await SaveImage(ListImage);
             await SaveImages(MainImages, GoodsModel.GoodsMainImages);
             await SaveImages(OtherImages, GoodsModel.GoodsOtherImages);
+            saveColor();
+            saveRule();
+            if (GoodsModel.GoodsPayType == 2)
+            {
+                GoodsModel.GoodsPrice = new decimal(0.01);
+            }
             try
             {
                 new MongoDBTool().GetMongoCollection<GoodsModel>().InsertOne(GoodsModel);
@@ -71,15 +92,61 @@ namespace SpellLuckWXSmall.Pages
                 throw;
             }
 
-            return Page();
+            return RedirectToPage("/GoodsPushFinish");
+        }
+
+        private bool CheckHasNull()
+        {
+            bool hasNull = false;
+            if (
+                OtherImages == null || OtherImages.Count == 0
+               || MainImages == null || MainImages.Count == 0
+               || ListImage == null
+                || string.IsNullOrEmpty(GoodsColor)
+                || string.IsNullOrEmpty(GoodsRule)
+                || string.IsNullOrEmpty(GoodsModel.GoodsTitle)
+                || string.IsNullOrEmpty(GoodsModel.GoodsDetail)
+                || GoodsModel.GoodsOldPrice == 0
+                )
+            {
+                hasNull = true;
+            }
+            return hasNull;
+        }
+
+        private void saveRule()
+        {
+            var rules = GoodsRule.Split("\r\n");
+            if (GoodsModel.GoodsRule == null)
+            {
+                GoodsModel.GoodsRule = new List<string>();
+            }
+            for (int i = 0; i < rules.Length; i++)
+            {
+                GoodsModel.GoodsRule.Add(rules[i]);
+            }
+        }
+
+        private void saveColor()
+        {
+            var colors = GoodsColor.Split("\r\n");
+            if (GoodsModel.GoodsColor == null)
+            {
+                GoodsModel.GoodsColor = new List<string>();
+            }
+            for (int i = 0; i < colors.Length; i++)
+            {
+                GoodsModel.GoodsColor.Add(colors[i]);
+            }
         }
 
         private async Task<long> SaveImage(IFormFile listImage)
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
 
                 long size = 0;
-                if (listImage!=null)
+                if (listImage != null)
                 {
                     var filename = ContentDispositionHeaderValue
                                     .Parse(listImage.ContentDisposition)
@@ -117,7 +184,8 @@ namespace SpellLuckWXSmall.Pages
 
         private async Task<long> SaveImages(List<IFormFile> sourceImages, List<FileModel<string[]>> container)
         {
-           return await Task.Run(()=> {
+            return await Task.Run(() =>
+            {
 
                 long size = 0;
                 foreach (var file in sourceImages)
@@ -141,7 +209,7 @@ namespace SpellLuckWXSmall.Pages
                         fs.Flush();
 
                     }
-                   ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename,FileDir=ConstantProperty.GoodsImagesDir};
+                    ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
                     params3Img.OnFinish += fileModel =>
                     {
                         if (fileModel.FileID == ObjectId.Empty)
@@ -154,13 +222,13 @@ namespace SpellLuckWXSmall.Pages
                     //Thread thread = new Thread(new ParameterizedThreadStart(ImageTool.Create3Img));
                     //thread.IsBackground = false;
                     //thread.Start(params3Img);
-                   ImageTool.Create3Img(params3Img);
+                    ImageTool.Create3Img(params3Img);
                 }
-               return size;
-           });
-             
+                return size;
+            });
 
-           
+
+
         }
     }
 

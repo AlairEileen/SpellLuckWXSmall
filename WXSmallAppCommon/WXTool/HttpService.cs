@@ -62,7 +62,8 @@ namespace WXSmallAppCommon.WXTool
                 //是否使用证书
                 if (isUseCert)
                 {
-                    string path = @"WXSmallAppCommon/";
+                    string path = @"../WXSmallAppCommon/";
+                    
                     X509Certificate2 cert = new X509Certificate2(path + WxPayConfig.SSLCERT_PATH, WxPayConfig.SSLCERT_PASSWORD);
                     request.ClientCertificates.Add(cert);
                     Log.Debug("WxPayApi", "PostXml used cert");

@@ -15,9 +15,9 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId OrderID { get; set; }
         public OrderGoodsInfo GoodsInfo { get; set; }
-        public int OrderPrice { get; set; }
+        public decimal OrderPrice { get; set; }
         public DateTime CreateTime { get; set; }
-
+        public int OrderStatus { get; set; }
     }
 
     public class OrderGoodsInfo
@@ -26,7 +26,7 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId GoodsID { get; set; }
         public string GoodsTitle { get; set; }
-        public int GoodsPrice { get; set; }
+        public decimal GoodsPrice { get; set; }
         public int GoodsPayType { get; set; }
         public FileModel<string[]> GoodsListImage { get; set; }
         public long GoodsPeopleNum { get; set; }

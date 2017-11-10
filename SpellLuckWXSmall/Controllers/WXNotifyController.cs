@@ -4,6 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WXSmallAppCommon.WXTool;
+using SpellLuckWXSmall.Models;
+using Newtonsoft.Json;
+using Tools.DB;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using SpellLuckWXSmall.AppData;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,6 +17,7 @@ namespace SpellLuckWXSmall.Controllers
 {
     public class WXNotifyController : Controller
     {
+        JackPotData jackPotData = new JackPotData();
         public string OnWXPayBack()
         {
             var body = Request.Body;
@@ -40,7 +47,26 @@ namespace SpellLuckWXSmall.Controllers
 
         private void OnPaySuccess(WxPayData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var attach = (string)data.GetValue("attach");
+                if (string.IsNullOrEmpty(attach))
+                {
+                    return;
+                }
+                PayWaitingModel payWaitingModel = JsonConvert.DeserializeObject<PayWaitingModel>(attach);
+
+                jackPotData.StartJack(payWaitingModel);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("腾讯支付成功返回处理出错" + ex.Message);
+            }
         }
+
+
+
+
     }
 }

@@ -7,13 +7,16 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SpellLuckWXSmall.AppData;
 
 namespace SpellLuckWXSmall
 {
     public class Program
     {
+        static JackPotTimer jackPotTimer;
         public static void Main(string[] args)
         {
+            jackPotTimer = new JackPotTimer();
             BuildWebHost(args).Run();
         }
 

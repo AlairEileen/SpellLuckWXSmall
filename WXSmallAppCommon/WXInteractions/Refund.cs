@@ -16,7 +16,7 @@ namespace WXSmallAppCommon.WXInteractions
         /// <param name="total_fee">订单总金额</param>
         /// <param name="refund_fee">退款金额</param>
         /// <returns> 退款结果（xml格式）</returns>
-        public static string Run(string transaction_id, string out_trade_no, decimal total_fee, decimal refund_fee)
+        public static string Run(string transaction_id, string out_trade_no, int total_fee, int refund_fee)
         {
             Log.Info("Refund", "Refund is processing...");
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Tools;
 using Tools.DB;
 using WXSmallAppCommon.WXInteractions;
 
@@ -150,7 +151,7 @@ namespace SpellLuckWXSmall.AppData
                 Console.WriteLine("商品不存在");
                 return;
             }
-            Refund.Run(payWaitingModel.WXOrderId, "", goods.GoodsPrice, goods.GoodsPrice);
+            Refund.Run(payWaitingModel.WXOrderId, "", goods.GoodsPrice.ConvertToMoneyCent(), goods.GoodsPrice.ConvertToMoneyCent());
         }
 
         /// <summary>
@@ -323,7 +324,7 @@ namespace SpellLuckWXSmall.AppData
         {
             for (int i = 0; i < item.Participator.Count; i++)
             {
-                Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice, item.JackGoods.GoodsPrice);
+                Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice.ConvertToMoneyCent(), item.JackGoods.GoodsPrice.ConvertToMoneyCent());
             }
         }
 

@@ -18,7 +18,7 @@ namespace WXSmallAppCommon.WXInteractions
         /// <summary>
         /// 商品金额，用于统一下单
         /// </summary>
-        public decimal total_fee { get; set; }
+        public int total_fee { get; set; }
     
         /// <summary>
         /// 调用统一下单，获得下单结果,失败时抛异常WxPayException

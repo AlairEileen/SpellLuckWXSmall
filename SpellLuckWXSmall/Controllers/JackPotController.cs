@@ -10,6 +10,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using WXSmallAppCommon.WXTool;
 using Newtonsoft.Json;
+using Tools;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -76,7 +77,7 @@ namespace SpellLuckWXSmall.Controllers
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();
                 jsApiPay.openid = account.OpenID;
-                jsApiPay.total_fee = goods.GoodsPrice;
+                jsApiPay.total_fee = goods.GoodsPrice.ConvertToMoneyCent();
                 var body = "test";
                 var attach = JsonConvert.SerializeObject(payWaitingModel);
                 var goods_tag = goods.GoodsTitle;

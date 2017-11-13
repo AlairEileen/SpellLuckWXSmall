@@ -11,6 +11,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using SpellLuckWXSmall.AppData;
 using System.Text;
+using System.IO;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,27 +29,19 @@ namespace SpellLuckWXSmall.Controllers
         {
             var body = Request.Body;
 
-            int count = 0;
-            byte[] buffer = new byte[1024];
             StringBuilder builder = new StringBuilder();
-            while ((count = body.Read(buffer, 0, 1024)) > 0)
+            using (Stream ins =body)
             {
-                builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
+                int count = 0;
+                byte[] buffer = new byte[1024];
+                while ((count = body.Read(buffer, 0, 1024)) > 0)
+                {
+                    builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
+                }
             }
-            body.Flush();
-            body.Close();
-            body.Dispose();
-
-
-
-
-
 
             //var bodyString = body.ToString();
-            var bodyString = buffer.ToString();
-
-
-
+            var bodyString = builder.ToString();
 
             Log.Info(this.GetType().ToString(), "Receive data from WeChat : " + bodyString);
             string ret = "";

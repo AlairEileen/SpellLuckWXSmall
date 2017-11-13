@@ -18,6 +18,11 @@ namespace SpellLuckWXSmall.Controllers
     public class WXNotifyController : Controller
     {
         JackPotData jackPotData = new JackPotData();
+      
+        /// <summary>
+        /// 微信支付回掉
+        /// </summary>
+        /// <returns></returns>
         public string OnWXPayBack()
         {
             var body = Request.Body;
@@ -40,33 +45,39 @@ namespace SpellLuckWXSmall.Controllers
                 Log.Error(this.GetType().ToString(), "Sign check error : " + res.ToXml());
                 ret = res.ToXml();
             }
-
             Log.Info(this.GetType().ToString(), "Check sign success");
             return ret;
         }
-
+     
+        /// <summary>
+        /// 微信支付成功返回数据
+        /// </summary>
+        /// <param name="data"></param>
         private void OnPaySuccess(WxPayData data)
         {
             try
             {
                 var attach = (string)data.GetValue("attach");
+                var wxOrderId = (string)data.GetValue("transaction_id") ;
                 if (string.IsNullOrEmpty(attach))
                 {
                     return;
                 }
+                if (string.IsNullOrEmpty(wxOrderId))
+                {
+                    Console.WriteLine("####微信订单号为空");
+                }
                 PayWaitingModel payWaitingModel = JsonConvert.DeserializeObject<PayWaitingModel>(attach);
-
+                if (payWaitingModel!=null)
+                {
+                    payWaitingModel.WXOrderId = wxOrderId;
+                }
                 jackPotData.StartJack(payWaitingModel);
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine("腾讯支付成功返回处理出错" + ex.Message);
             }
         }
-
-
-
-
     }
 }

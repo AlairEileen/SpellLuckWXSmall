@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Tools.DB;
+using WXSmallAppCommon.WXInteractions;
 
 namespace SpellLuckWXSmall.AppData
 {
@@ -77,7 +78,10 @@ namespace SpellLuckWXSmall.AppData
                 {
                     GoodsID = goods.GoodsID,
                     AccountID = account.AccountID,
-                    PayWaitingID = payWaitingModel.PayWaitingID
+                    PayWaitingID = payWaitingModel.PayWaitingID,
+                    GoodsRule = payWaitingModel.GoodsRule,
+                    GoodsColor = payWaitingModel.GoodsColor,
+                    WXOrderId = payWaitingModel.WXOrderId
                 };
                 mongo.GetMongoCollection<JackPotJoinWaitingModel>().InsertOne(jackPotJoinWaiting);
             }
@@ -101,7 +105,15 @@ namespace SpellLuckWXSmall.AppData
             {
                 return;
             }
-            jackPot.Participator.Add(new AccountPotModel() { AccountAvatar = account.AccountAvatar, AccountID = account.AccountID, AccountName = account.AccountName });
+            jackPot.Participator.Add(new AccountPotModel()
+            {
+                AccountAvatar = account.AccountAvatar,
+                AccountID = account.AccountID,
+                GoodsColor = payWaitingModel.GoodsColor,
+                GoodsRule = payWaitingModel.GoodsRule,
+                WXOrderId = payWaitingModel.WXOrderId,
+                AccountName = account.AccountName
+            });
             if (jackPot.JackGoods.GoodsPeopleNum == jackPot.Participator.Count)
             {
                 ObjectId accountID = JackTool.CalcJackAccount(jackPot.Participator);
@@ -131,10 +143,15 @@ namespace SpellLuckWXSmall.AppData
         /// <param name="payWaitingModel"></param>
         private void OpenedJack(MongoDBTool mongo, AccountModel account, PayWaitingModel payWaitingModel)
         {
-            throw new NotImplementedException();
+            var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, payWaitingModel.GoodsID);
+            var goods = mongo.GetMongoCollection<GoodsModel>().Find(filter).FirstOrDefault();
+            if (goods == null)
+            {
+                Console.WriteLine("商品不存在");
+                return;
+            }
+            Refund.Run(payWaitingModel.WXOrderId, "", goods.GoodsPrice, goods.GoodsPrice);
         }
-
-
 
         /// <summary>
         /// 创建奖池
@@ -159,6 +176,9 @@ namespace SpellLuckWXSmall.AppData
                         Participator = new List<AccountPotModel>() { new AccountPotModel() {
                     AccountAvatar=account.AccountAvatar,
                     AccountID=account.AccountID,
+                    GoodsColor = payWaitingModel.GoodsColor,
+                    GoodsRule = payWaitingModel.GoodsRule,
+                    WXOrderId=payWaitingModel.WXOrderId,
                     AccountName=account.AccountName
                 } }
                     };
@@ -176,6 +196,7 @@ namespace SpellLuckWXSmall.AppData
 
     }
 
+
     /// <summary>
     /// 奖计算工具与颁发工具
     /// </summary>
@@ -188,12 +209,19 @@ namespace SpellLuckWXSmall.AppData
         /// <param name="accountID"></param>
         internal static void CreateOrder(JackPotModel jackPot, ObjectId accountID)
         {
+            var account = jackPot.Participator.Find(x => x.AccountID.Equals(accountID));
+            if (account == null)
+            {
+                Console.WriteLine("订单用户不存在！");
+                return;
+            }
             OrderModel orderModel = new OrderModel()
             {
                 OrderID = ObjectId.GenerateNewId(),
                 OrderStatus = 0,
                 OrderPrice = jackPot.JackGoods.GoodsPrice,
                 CreateTime = DateTime.Now,
+                WXOrderId = account.WXOrderId,
                 GoodsInfo = new OrderGoodsInfo()
                 {
                     GoodsPrice = jackPot.JackGoods.GoodsPrice,
@@ -201,7 +229,9 @@ namespace SpellLuckWXSmall.AppData
                     GoodsListImage = jackPot.JackGoods.GoodsListImage,
                     GoodsPayType = jackPot.JackGoods.GoodsPayType,
                     GoodsPeopleNum = jackPot.JackGoods.GoodsPeopleNum,
-                    GoodsTitle = jackPot.JackGoods.GoodsTitle
+                    GoodsTitle = jackPot.JackGoods.GoodsTitle,
+                    GoodsRule = account.GoodsRule,
+                    GoodsColor = account.GoodsColor,
                 }
             };
             var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
@@ -221,6 +251,7 @@ namespace SpellLuckWXSmall.AppData
             return participator[luckIndex].AccountID;
         }
     }
+
 
     /// <summary>
     /// 开奖定时器
@@ -290,8 +321,14 @@ namespace SpellLuckWXSmall.AppData
         /// <param name="item"></param>
         private void GoRefund(JackPotModel item)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < item.Participator.Count; i++)
+            {
+                Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice, item.JackGoods.GoodsPrice);
+            }
         }
+
+
+
 
         /// <summary>
         /// 检测1分夺宝

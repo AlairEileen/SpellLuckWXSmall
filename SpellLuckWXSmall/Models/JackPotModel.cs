@@ -27,10 +27,15 @@ namespace SpellLuckWXSmall.Models
 
     public class AccountPotModel
     {
+
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId AccountID { get; set; }
         public string AccountName { get; set; }
         public string AccountAvatar { get; set; }
+        public string WXOrderId { get; set; }
+        public string GoodsColor { get; set; }
+        public string GoodsRule { get; set; }
+
     }
 }

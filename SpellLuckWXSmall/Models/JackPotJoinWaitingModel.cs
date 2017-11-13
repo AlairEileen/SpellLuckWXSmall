@@ -20,8 +20,10 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId PayWaitingID { get; set; }
         public int SharaTimes { get => sharaTimes; set => sharaTimes = value; }
-
         private int sharaTimes = 3;
         public int currentSharaTimes { get; set; }
+        public string GoodsColor { get; set; }
+        public string GoodsRule { get; set; }
+        public string WXOrderId { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace SpellLuckWXSmall.Models
         public decimal OrderPrice { get; set; }
         public DateTime CreateTime { get; set; }
         public int OrderStatus { get; set; }
+        public string WXOrderId { get; set; }
     }
 
     public class OrderGoodsInfo
@@ -30,5 +31,7 @@ namespace SpellLuckWXSmall.Models
         public int GoodsPayType { get; set; }
         public FileModel<string[]> GoodsListImage { get; set; }
         public long GoodsPeopleNum { get; set; }
+        public string GoodsColor { get; set; }
+        public string GoodsRule { get; set; }
     }
 }

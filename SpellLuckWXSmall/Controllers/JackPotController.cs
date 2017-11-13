@@ -17,8 +17,16 @@ namespace SpellLuckWXSmall.Controllers
 {
     public class JackPotController : Controller
     {
-
-        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID)
+        /// <summary>
+        /// 请求参奖
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <param name="goodsID"></param>
+        /// <param name="jackPotID"></param>
+        /// <param name="goodsColor"></param>
+        /// <param name="goodsRule"></param>
+        /// <returns></returns>
+        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID,string goodsColor,string goodsRule)
         {
             string param = "";
             try
@@ -50,7 +58,9 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     AccountID = account.AccountID,
                     GoodsID = goods != null ? goods.GoodsID : ObjectId.Empty,
-                    JackPotID = jackPot != null ? jackPot.JackPotID : ObjectId.Empty
+                    JackPotID = jackPot != null ? jackPot.JackPotID : ObjectId.Empty,
+                    GoodsColor=goodsColor,
+                    GoodsRule=goodsRule
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();

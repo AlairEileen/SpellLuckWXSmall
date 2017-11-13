@@ -20,5 +20,8 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId JackPotID { get; set; }
         public string JackPotKey { get; set; }
+        public string GoodsColor { get; set; }
+        public string GoodsRule { get; set; }
+        public string WXOrderId { get; set; }
     }
 }

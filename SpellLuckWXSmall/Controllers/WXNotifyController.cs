@@ -10,6 +10,7 @@ using Tools.DB;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using SpellLuckWXSmall.AppData;
+using System.Text;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,7 +19,7 @@ namespace SpellLuckWXSmall.Controllers
     public class WXNotifyController : Controller
     {
         JackPotData jackPotData = new JackPotData();
-      
+
         /// <summary>
         /// 微信支付回掉
         /// </summary>
@@ -26,7 +27,29 @@ namespace SpellLuckWXSmall.Controllers
         public string OnWXPayBack()
         {
             var body = Request.Body;
-            var bodyString = body.ToString();
+
+            int count = 0;
+            byte[] buffer = new byte[1024];
+            StringBuilder builder = new StringBuilder();
+            while ((count = body.Read(buffer, 0, 1024)) > 0)
+            {
+                builder.Append(Encoding.UTF8.GetString(buffer, 0, count));
+            }
+            body.Flush();
+            body.Close();
+            body.Dispose();
+
+
+
+
+
+
+            //var bodyString = body.ToString();
+            var bodyString = buffer.ToString();
+
+
+
+
             Log.Info(this.GetType().ToString(), "Receive data from WeChat : " + bodyString);
             string ret = "";
             //转换数据格式并验证签名
@@ -48,7 +71,7 @@ namespace SpellLuckWXSmall.Controllers
             Log.Info(this.GetType().ToString(), "Check sign success");
             return ret;
         }
-     
+
         /// <summary>
         /// 微信支付成功返回数据
         /// </summary>
@@ -58,7 +81,7 @@ namespace SpellLuckWXSmall.Controllers
             try
             {
                 var attach = (string)data.GetValue("attach");
-                var wxOrderId = (string)data.GetValue("transaction_id") ;
+                var wxOrderId = (string)data.GetValue("transaction_id");
                 if (string.IsNullOrEmpty(attach))
                 {
                     return;
@@ -67,8 +90,8 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     Console.WriteLine("####微信订单号为空");
                 }
-                var payWaitingModel=new MongoDBTool().GetMongoCollection<PayWaitingModel>().Find(x=>x.PayWaitingID.Equals(new ObjectId(attach))).FirstOrDefault();
-                if (payWaitingModel!=null)
+                var payWaitingModel = new MongoDBTool().GetMongoCollection<PayWaitingModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(attach))).FirstOrDefault();
+                if (payWaitingModel != null)
                 {
                     payWaitingModel.WXOrderId = wxOrderId;
                     jackPotData.StartJack(payWaitingModel);

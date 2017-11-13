@@ -26,18 +26,29 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="goodsColor"></param>
         /// <param name="goodsRule"></param>
         /// <returns></returns>
-        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID,string goodsColor,string goodsRule)
+        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule)
         {
             string param = "";
             try
             {
                 var mongo = new MongoDBTool();
                 var accountFilter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
-                var goodsFilter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
-                var jackPotFilter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, new ObjectId(jackPotID));
                 var account = mongo.GetMongoCollection<AccountModel>().Find(accountFilter).FirstOrDefault();
-                var goods = mongo.GetMongoCollection<GoodsModel>().Find(goodsFilter).FirstOrDefault();
-                var jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
+
+                JackPotModel jackPot = null;
+                GoodsModel goods = null;
+                if (!string.IsNullOrEmpty(jackPotID))
+                {
+                    var jackPotFilter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, new ObjectId(jackPotID));
+                    jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
+
+                }
+                else if (!string.IsNullOrEmpty(goodsID))
+                {
+                    var goodsFilter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
+                    goods = mongo.GetMongoCollection<GoodsModel>().Find(goodsFilter).FirstOrDefault();
+                }
+              
                 //OrderModel orderModel = new OrderModel() {
                 //    OrderID = ObjectId.GenerateNewId(),
                 //    OrderStatus = 0,
@@ -59,8 +70,8 @@ namespace SpellLuckWXSmall.Controllers
                     AccountID = account.AccountID,
                     GoodsID = goods != null ? goods.GoodsID : ObjectId.Empty,
                     JackPotID = jackPot != null ? jackPot.JackPotID : ObjectId.Empty,
-                    GoodsColor=goodsColor,
-                    GoodsRule=goodsRule
+                    GoodsColor = goodsColor,
+                    GoodsRule = goodsRule
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();

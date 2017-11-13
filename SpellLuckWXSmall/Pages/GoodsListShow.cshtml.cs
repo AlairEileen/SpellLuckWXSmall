@@ -25,35 +25,42 @@ namespace SpellLuckWXSmall.Pages
 
         public void OnGet()
         {
-            setPage(0);
+           setPage(0);
         }
-        public IActionResult OnGetGoPage(int pageIndex)
+        public async Task<IActionResult> OnGetGoPageAsync(int pageIndex)
         {
             if (pageIndex == -1 || pageIndex == PageCount)
             {
-                return Page();
+                return RedirectToPage();
             }
-            setPage(pageIndex);
+            await Task.Run(()=> {
+                setPage(pageIndex);
+            });
 
             return Page();
         }
 
         private void setPage(int pageIndex)
         {
-            PageIndex = pageIndex;
-            var filter = Builders<GoodsModel>.Filter.Empty;
-            var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
-            var count = find.Count();
-            PageCount = ((int)count / pageSize) + (count % pageSize == 0 ? 0 : 1);
-            GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+      
+               PageIndex = pageIndex;
+               var filter = Builders<GoodsModel>.Filter.Empty;
+               var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter);
+               var count = find.Count();
+               PageCount = ((int)count / pageSize) + (count % pageSize == 0 ? 0 : 1);
+               GoodsModelList = find.Skip(PageIndex * pageSize).Limit(PageSize).ToList();
+         
         }
 
-        public IActionResult OnGetDelGoods(string goodsID)
+        public async Task<IActionResult> OnGetDelGoods(string goodsID)
         {
-            var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
-            new MongoDBTool().GetMongoCollection<GoodsModel>().DeleteOne(filter);
+           await Task.Run(()=> {
 
-            return Page();
+                var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
+                new MongoDBTool().GetMongoCollection<GoodsModel>().DeleteOne(filter);
+            });
+         
+            return RedirectToPage();
         }
     }
 }

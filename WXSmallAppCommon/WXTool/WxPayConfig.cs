@@ -15,7 +15,7 @@ namespace WXSmallAppCommon.WXTool
         */
         public const string APPID = "wxafc09c66a22ed778";
         public const string MCHID = "1491932202";
-        public const string KEY = "zf198810zf198810zf198810zf198810";
+        public const string KEY = "ocadbb3tpt1fpibxdat2udllhem4nhni";
         public const string APPSECRET = "759e8856dd6adaa19d6ee07fa12715c4";
 
         //=======【证书路径设置】===================================== 

@@ -77,10 +77,10 @@ namespace SpellLuckWXSmall.Controllers
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();
                 jsApiPay.openid = account.OpenID;
-                jsApiPay.total_fee = goods.GoodsPrice.ConvertToMoneyCent();
+                jsApiPay.total_fee = goods!=null?goods.GoodsPrice.ConvertToMoneyCent():jackPot.JackGoods.GoodsPrice.ConvertToMoneyCent();
                 var body = "test";
                 var attach = JsonConvert.SerializeObject(payWaitingModel.PayWaitingID);
-                var goods_tag = goods.GoodsTitle;
+                var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
                 param = jsApiPay.GetJsApiParameters();
             }

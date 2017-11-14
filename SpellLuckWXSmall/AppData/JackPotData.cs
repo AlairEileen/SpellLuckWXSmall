@@ -37,7 +37,9 @@ namespace SpellLuckWXSmall.AppData
                     var jackPotFilter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, payWaitingModel.JackPotID);
                     jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
                 }
-                switch (goods.GoodsPayType)
+
+                var currentGoods = goods == null ? jackPot.JackGoods : goods;
+                switch (currentGoods.GoodsPayType)
                 {
                     case 0://2人拼团
                     case 1://多人拼团
@@ -174,6 +176,7 @@ namespace SpellLuckWXSmall.AppData
                         CreateTime = DateTime.Now,
                         JackPotPassword = payWaitingModel.JackPotKey,
                         JackPotStatus = 0,
+                        PayWaitingID = payWaitingModel.PayWaitingID,
                         Participator = new List<AccountPotModel>() { new AccountPotModel() {
                     AccountAvatar=account.AccountAvatar,
                     AccountID=account.AccountID,
@@ -235,9 +238,17 @@ namespace SpellLuckWXSmall.AppData
                     GoodsColor = account.GoodsColor,
                 }
             };
+            var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
             var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
-            var update = Builders<AccountModel>.Update.Push(x => x.OrderList, orderModel);
-            new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filter, update);
+            var accountCurrent = collection.Find(filter).FirstOrDefault();
+            if (accountCurrent.OrderList == null)
+            {
+                accountCurrent.OrderList = new List<OrderModel>();
+            }
+            accountCurrent.OrderList.Add(orderModel);
+            var update = Builders<AccountModel>.Update.Set(x => x.OrderList, accountCurrent.OrderList);
+            collection.UpdateOne(filter, update);
+
         }
 
         /// <summary>

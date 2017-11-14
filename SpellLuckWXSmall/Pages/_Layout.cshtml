@@ -30,8 +30,28 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-page="/Index">订单</a></li>
-                    <li><a asp-page="/GoodsPush">添加商品</a></li>
+                    <li>
+                        @if ((int)ViewData["Index"] == 1)
+                        {
+                            <a class="active" asp-page="/Index">订单</a>
+                        }
+                        else
+                        {
+                            <a asp-page="/Index">订单</a>
+                        }
+                    </li>
+
+                    <li>
+
+                        @if ((int)ViewData["Index"] == 2)
+                        {
+                            <a class="active" asp-page="/GoodsPush">添加商品</a>
+                        }
+                        else
+                        {
+                            <a asp-page="/GoodsPush">添加商品</a>
+                        }
+                    </li>
                     <li><a asp-page="/GoodsListShow">商品展示</a></li>
                     <li><a asp-page="/GoodsCentAdd">添加1分夺宝商品</a></li>
                     <li><a asp-page="/Settings">设置信息</a></li>

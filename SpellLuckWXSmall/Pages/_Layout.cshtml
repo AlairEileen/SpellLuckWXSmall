@@ -42,7 +42,7 @@
                         <a asp-page="/GoodsListShow">商品展示</a>
                     </li>
                     <li><a asp-page="/GoodsCentAdd">添加1分夺宝商品</a></li>
-                    <li><a asp-page="/Settings">设置信息</a></li>
+                    <li class='@((int)ViewData["Index"]==0?"active":"")'><a asp-page="/Settings">设置信息</a></li>
                 </ul>
             </div>
         </div>

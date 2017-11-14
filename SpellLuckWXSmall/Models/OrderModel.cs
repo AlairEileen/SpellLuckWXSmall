@@ -17,6 +17,9 @@ namespace SpellLuckWXSmall.Models
         public OrderGoodsInfo GoodsInfo { get; set; }
         public decimal OrderPrice { get; set; }
         public DateTime CreateTime { get; set; }
+        /// <summary>
+        /// 0:待确认发货，1：待评价，2：结束
+        /// </summary>
         public int OrderStatus { get; set; }
         public string WXOrderId { get; set; }
     }

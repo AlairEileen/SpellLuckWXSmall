@@ -56,7 +56,7 @@ namespace SpellLuckWXSmall.Controllers
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
 
             string[] param = new string[] { "StatusCode", "JsonData", "AccountID", "HasRedPocket" };
-      
+
 
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);
             string jsonString = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
@@ -127,13 +127,36 @@ namespace SpellLuckWXSmall.Controllers
             responseModel.StatusCode = (int)ActionParams.code_ok;
             try
             {
-                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+                var mongo = new MongoDBTool();
+                var account = mongo.GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
                 if (account == null)
                 {
                     responseModel.StatusCode = (int)ActionParams.code_null;
                 }
 
                 //查询三代
+                ///查询待拼单
+
+                var jackFilter = Builders<JackPotModel>.Filter;
+                var jackFilterSum = jackFilter.Eq("Participator.AccountID", account.AccountID) & jackFilter.Eq(x => x.JackPotStatus, 1);
+                var jackList = mongo.GetMongoCollection<JackPotModel>().Find(jackFilterSum).ToList();
+                if (jackList != null)
+                {
+                    account.WaitingJoin = jackList.Count;
+                }
+
+                if (account.OrderList != null)
+                {
+                    account.WaitingSend = account.OrderList.FindAll(x => x.OrderStatus == 0).Count;
+                    account.WaitingAssess = account.OrderList.FindAll(x => x.OrderStatus == 1).Count;
+                }
+
+                var company = mongo.GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+                if (company != null)
+                {
+                    account.ServicePhone = company.ServicePhone;
+                }
+
                 responseModel.JsonData = account;
             }
             catch (Exception)

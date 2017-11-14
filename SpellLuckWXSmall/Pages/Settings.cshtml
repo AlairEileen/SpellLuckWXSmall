@@ -1,5 +1,17 @@
 ﻿@page
 @model SettingsModel
 @{
+    ViewData["Index"] = 0;
+    ViewData["Title"] = "公司设置";
+
 }
-<h1>Settings</h1>
+<h1>设置</h1>
+<h2>设置公司信息</h2>
+<form class="form" method="post" asp-page-handler="submitCompany" enctype="multipart/form-data">
+
+    <label for="companyName">公司名称</label>
+    <input id="companyName" asp-for="Company.CompanyName" type="text" required />
+    <label for="companyServicePhone">公司服务热线</label>
+    <input id="companyServicePhone" asp-for="Company.ServicePhone" type="tel" required />
+    <button class="btn btn-default" type="submit">提 交</button>
+</form>

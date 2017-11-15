@@ -11,6 +11,7 @@ using MongoDB.Bson;
 using WXSmallAppCommon.WXTool;
 using Newtonsoft.Json;
 using Tools;
+using Tools.ResponseModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +31,12 @@ namespace SpellLuckWXSmall.Controllers
         /// <returns></returns>
         public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword)
         {
-            string param = "";
+            var responseModel = new BaseResponseModel<string>() { StatusCode=(int)ActionParams.code_ok};
+            if (string.IsNullOrEmpty(accountID)||(string.IsNullOrEmpty(goodsID)&&string.IsNullOrEmpty(jackPotID))||string.IsNullOrEmpty(goodsColor)||string.IsNullOrEmpty(goodsRule))
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error_null;
+                return JsonConvert.SerializeObject(responseModel);
+            }
             try
             {
                 var mongo = new MongoDBTool();
@@ -85,14 +91,16 @@ namespace SpellLuckWXSmall.Controllers
                 var attach = JsonConvert.SerializeObject(payWaitingModel.PayWaitingID);
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
-                param = jsApiPay.GetJsApiParameters();
+                responseModel.JsonData = jsApiPay.GetJsApiParameters();
+             
             }
             catch (Exception ex)
             {
-
+                responseModel.StatusCode = (int)ActionParams.code_error;
                 Console.WriteLine("请求支付时出错！" + ex.Message);
             }
-            return param;
+
+            return responseModel.ToJson();
         }
     }
 }

@@ -14,9 +14,11 @@ namespace SpellLuckWXSmall
     public class Program
     {
         static JackPotTimer jackPotTimer;
+        static OrderAutoSend orderAutoSend;
         public static void Main(string[] args)
         {
             jackPotTimer = new JackPotTimer();
+            orderAutoSend = new OrderAutoSend();
             BuildWebHost(args).Run();
         }
 

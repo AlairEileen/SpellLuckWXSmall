@@ -21,5 +21,9 @@ namespace SpellLuckWXSmall
         /// 团购超时退款小时
         /// </summary>
         public const int OverTimeGroupJack = 24;
+        /// <summary>
+        /// 检测下单后自动发货分钟
+        /// </summary>
+        public const int CheckOrderAutoSend = 6*60;
     }
 }

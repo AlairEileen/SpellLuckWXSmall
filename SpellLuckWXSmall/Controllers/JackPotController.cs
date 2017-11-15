@@ -91,8 +91,7 @@ namespace SpellLuckWXSmall.Controllers
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
                 var param = jsApiPay.GetJsApiParameters();
-                json = new BaseResponseModel<JsonObjectAttribute>() { JsonData = JsonConvert.DeserializeObject<JsonObjectAttribute>(param), StatusCode = (int)ActionParams.code_ok }.ToJson();
-
+                json = param;
             }
             catch (Exception ex)
             {

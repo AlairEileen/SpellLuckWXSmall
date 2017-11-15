@@ -43,8 +43,8 @@ namespace SpellLuckWXSmall.Controllers
                 }
                 else
                 {
-                    var account = mongo.GetMongoCollection<AccountModel>().Find(x=>x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
-                    var list = account.OrderList.FindAll(x=>x.OrderStatus==waitType);
+                    var account = mongo.GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+                    var list = account.OrderList.FindAll(x => x.OrderStatus == waitType);
                     json = JsonConvert.SerializeObject(new BaseResponseModel<List<OrderModel>>() { JsonData = list, StatusCode = (int)ActionParams.code_ok });
                 }
             }
@@ -52,6 +52,44 @@ namespace SpellLuckWXSmall.Controllers
             {
 
                 json = JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error });
+            }
+            return json;
+        }
+
+        /// <summary>
+        /// 获取待发货、待评价列表
+        /// </summary>
+        /// <param name="accountID">账户Id</param>
+        /// <param name="orderStatus">0：待发货，1：待评价</param>
+        /// <param name="pageIndex">页码（从0开始）</param>
+        /// <returns></returns>
+        public string GetWaitingOrderList(string accountID, int orderStatus, int pageIndex)
+        {
+            if (string.IsNullOrEmpty(accountID))
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
+            }
+            string json = "";
+            try
+            {
+                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
+                //var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filter).FirstOrDefault();
+                if (account == null)
+                {
+                    json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_null }.ToJson();
+                }
+                var orderList = account.OrderList.OrderByDescending(x => x.CreateTime).ToList();
+                if (orderList != null)
+                {
+                    orderList = orderList.FindAll(x => x.OrderStatus == orderStatus).Skip(pageIndex * AppConstData.MobilePageSize).Take(AppConstData.MobilePageSize).ToList();
+                }
+                json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
+            }
+            catch (Exception)
+            {
+                json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
             }
             return json;
         }

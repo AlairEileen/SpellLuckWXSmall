@@ -109,7 +109,7 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="accountID">账户Id</param>
         /// <param name="pageIndex">页码</param>
         /// <returns></returns>
-        public string FindWaitingJoinJackPotList(string accountID, int pageIndex)
+        public string GetWaitingJoinJackPotList(string accountID, int pageIndex)
         {
 
             if (string.IsNullOrEmpty(accountID))

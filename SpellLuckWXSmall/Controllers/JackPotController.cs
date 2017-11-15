@@ -12,6 +12,7 @@ using WXSmallAppCommon.WXTool;
 using Newtonsoft.Json;
 using Tools;
 using Tools.ResponseModels;
+using System.Globalization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -99,6 +100,40 @@ namespace SpellLuckWXSmall.Controllers
                 Console.WriteLine("请求支付时出错！" + ex.Message);
             }
 
+            return json;
+        }
+
+        /// <summary>
+        /// 查找待拼团列表
+        /// </summary>
+        /// <param name="accountID">账户Id</param>
+        /// <param name="pageIndex">页码</param>
+        /// <returns></returns>
+        public string FindWaitingJoinJackPotList(string accountID, int pageIndex)
+        {
+
+            if (string.IsNullOrEmpty(accountID))
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
+            }
+            string json = "";
+            try
+            {
+                var filter = Builders<JackPotModel>.Filter;
+                var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
+                var list = new MongoDBTool().GetMongoCollection<JackPotModel>()
+                    .Find(filterSum).Sort(Builders<JackPotModel>
+                    .Sort.Descending(x => x.CreateTime))
+                    .Skip(AppConstData.MobilePageSize * pageIndex)
+                    .Limit(AppConstData.MobilePageSize)
+                    .ToList();
+                json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = list }.ToJson();
+            }
+            catch (Exception)
+            {
+                json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
             return json;
         }
     }

@@ -25,5 +25,9 @@ namespace SpellLuckWXSmall
         /// 检测下单后自动发货分钟
         /// </summary>
         public const int CheckOrderAutoSend = 6*60;
+        /// <summary>
+        /// 手机分页大小
+        /// </summary>
+        public const int MobilePageSize = 5;
     }
 }

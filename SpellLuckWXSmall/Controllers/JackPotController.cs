@@ -31,12 +31,11 @@ namespace SpellLuckWXSmall.Controllers
         /// <returns></returns>
         public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword)
         {
-            var responseModel = new BaseResponseModel<string>() { StatusCode=(int)ActionParams.code_ok};
-            if (string.IsNullOrEmpty(accountID)||(string.IsNullOrEmpty(goodsID)&&string.IsNullOrEmpty(jackPotID))||string.IsNullOrEmpty(goodsColor)||string.IsNullOrEmpty(goodsRule))
+            if (string.IsNullOrEmpty(accountID) || (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) || string.IsNullOrEmpty(goodsColor) || string.IsNullOrEmpty(goodsRule))
             {
-                responseModel.StatusCode = (int)ActionParams.code_error_null;
-                return JsonConvert.SerializeObject(responseModel);
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
             }
+            string json = "";
             try
             {
                 var mongo = new MongoDBTool();
@@ -79,7 +78,7 @@ namespace SpellLuckWXSmall.Controllers
                     GoodsID = goods != null ? goods.GoodsID : ObjectId.Empty,
                     JackPotID = jackPot != null ? jackPot.JackPotID : ObjectId.Empty,
                     GoodsColor = goodsColor,
-                    JackPotKey=jackPotPassword,
+                    JackPotKey = jackPotPassword,
                     GoodsRule = goodsRule
 
                 };
@@ -91,16 +90,17 @@ namespace SpellLuckWXSmall.Controllers
                 var attach = JsonConvert.SerializeObject(payWaitingModel.PayWaitingID);
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
-                responseModel.JsonData = jsApiPay.GetJsApiParameters();
-             
+                var param = jsApiPay.GetJsApiParameters();
+                json = new BaseResponseModel<JsonObjectAttribute>() { JsonData = JsonConvert.DeserializeObject<JsonObjectAttribute>(param), StatusCode = (int)ActionParams.code_ok }.ToJson();
+
             }
             catch (Exception ex)
             {
-                responseModel.StatusCode = (int)ActionParams.code_error;
+                json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
                 Console.WriteLine("请求支付时出错！" + ex.Message);
             }
 
-            return responseModel.ToJson();
+            return json;
         }
     }
 }

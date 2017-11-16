@@ -79,12 +79,13 @@ namespace SpellLuckWXSmall.AppData
             {
                 JackPotJoinWaitingModel jackPotJoinWaitingModel = new JackPotJoinWaitingModel()
                 {
-                    GoodsID = goods.GoodsID,
+                    Goods = goods,
                     AccountID = account.AccountID,
                     PayWaitingID = payWaitingModel.PayWaitingID,
                     GoodsRule = payWaitingModel.GoodsRule,
                     GoodsColor = payWaitingModel.GoodsColor,
-                    WXOrderId = payWaitingModel.WXOrderId
+                    WXOrderId = payWaitingModel.WXOrderId,
+                    CreateTime = DateTime.Now
                 };
                 mongo.GetMongoCollection<JackPotJoinWaitingModel>().InsertOne(jackPotJoinWaiting);
             }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WXSmallAppCommon.Models;
 
 namespace SpellLuckWXSmall.Models
 {
@@ -23,5 +24,6 @@ namespace SpellLuckWXSmall.Models
         public string GoodsColor { get; set; }
         public string GoodsRule { get; set; }
         public string WXOrderId { get; set; }
+        public WXPayModel WXPayData { get; set; }
     }
 }

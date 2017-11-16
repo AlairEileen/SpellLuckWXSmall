@@ -13,8 +13,6 @@ namespace SpellLuckWXSmall.Pages
 {
     public class GoodsListShowModel : PageModel
     {
-
-
         public List<GoodsModel> GoodsModelList { get; set; }
         private int pageSize = 5;
         public int PageIndex { get; set; }
@@ -25,7 +23,7 @@ namespace SpellLuckWXSmall.Pages
 
         public void OnGet()
         {
-           setPage(0);
+           SetPage(0);
         }
         public async Task<IActionResult> OnGetGoPageAsync(int pageIndex)
         {
@@ -34,13 +32,13 @@ namespace SpellLuckWXSmall.Pages
                 return RedirectToPage();
             }
             await Task.Run(()=> {
-                setPage(pageIndex);
+                SetPage(pageIndex);
             });
 
             return Page();
         }
 
-        private void setPage(int pageIndex)
+        private void SetPage(int pageIndex)
         {
       
                PageIndex = pageIndex;

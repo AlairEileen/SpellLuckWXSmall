@@ -29,5 +29,9 @@ namespace SpellLuckWXSmall
         /// 手机分页大小
         /// </summary>
         public const int MobilePageSize = 5;
+        /// <summary>
+        /// 分享次数，达到后才能获得获奖机会
+        /// </summary>
+        public const int SharaMinAdd = 3;
     }
 }

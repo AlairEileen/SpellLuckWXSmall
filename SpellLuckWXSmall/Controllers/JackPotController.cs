@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Tools;
 using Tools.ResponseModels;
 using System.Globalization;
+using WXSmallAppCommon.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,7 +33,9 @@ namespace SpellLuckWXSmall.Controllers
         /// <returns></returns>
         public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword)
         {
-            if (string.IsNullOrEmpty(accountID) || (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) || string.IsNullOrEmpty(goodsColor) || string.IsNullOrEmpty(goodsRule))
+            if (string.IsNullOrEmpty(accountID) || 
+                (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) || 
+                string.IsNullOrEmpty(goodsColor) || string.IsNullOrEmpty(goodsRule))
             {
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
             }
@@ -81,7 +84,6 @@ namespace SpellLuckWXSmall.Controllers
                     GoodsColor = goodsColor,
                     JackPotKey = jackPotPassword,
                     GoodsRule = goodsRule
-
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();
@@ -92,7 +94,11 @@ namespace SpellLuckWXSmall.Controllers
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
                 var param = jsApiPay.GetJsApiParameters();
-                json = param;
+                if (!string.IsNullOrEmpty(param))
+                {
+                    payWaitingModel.WXPayData = JsonConvert.DeserializeObject<WXPayModel>(param);
+                }
+                json = new BaseResponseModel<PayWaitingModel>() { JsonData = payWaitingModel, StatusCode = (int)ActionParams.code_ok }.ToJson();
             }
             catch (Exception ex)
             {
@@ -127,11 +133,81 @@ namespace SpellLuckWXSmall.Controllers
                     .Skip(AppConstData.MobilePageSize * pageIndex)
                     .Limit(AppConstData.MobilePageSize)
                     .ToList();
+                ///一分夺宝列表
+                var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
+                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID));
+                var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
+
                 json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = list }.ToJson();
             }
             catch (Exception)
             {
                 json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
+            return json;
+        }
+
+        /// <summary>
+        /// 转发一分夺宝
+        /// </summary>
+        /// <param name="jackPotJoinWaitingID"></param>
+        /// <param name="shareTimes"></param>
+        /// <returns></returns>
+        public string PutSharaTimes(string jackPotJoinWaitingID, int shareTimes)
+        {
+            if (string.IsNullOrEmpty(jackPotJoinWaitingID))
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
+            }
+            string json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
+            try
+            {
+                var mongo = new MongoDBTool();
+                var jackpotWait = mongo.GetMongoCollection<JackPotJoinWaitingModel>()
+                    .Find(x => x.JackPotJoinWaitingID.Equals(new ObjectId(jackPotJoinWaitingID))).FirstOrDefault();
+                jackpotWait.ShareTimes += shareTimes;
+                if (jackpotWait.ShareTimes >= AppConstData.SharaMinAdd)
+                {
+                    var filter = Builders<JackPotModel>.Filter;
+                    var filterSum = filter.Eq(x => x.JackGoods.GoodsID, jackpotWait.Goods.GoodsID) & filter.Eq(x => x.JackPotStatus, 0);
+                    var jackPot = mongo.GetMongoCollection<JackPotModel>().Find(filterSum).FirstOrDefault();
+                    var account = mongo.GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(jackpotWait.AccountID)).FirstOrDefault();
+                    var accountPot = new AccountPotModel()
+                    {
+                        AccountID = account.AccountID,
+                        AccountName = account.AccountName,
+                        AccountAvatar = account.AccountAvatar,
+                        GoodsColor = jackpotWait.GoodsColor,
+                        GoodsRule = jackpotWait.GoodsRule,
+                        WXOrderId = jackpotWait.WXOrderId
+                    };
+                    if (jackPot == null)
+                    {
+                        mongo.GetMongoCollection<JackPotModel>().InsertOne(new JackPotModel()
+                        {
+                            CreateTime = DateTime.Now,
+                            JackGoods = jackpotWait.Goods,
+                            JackPotStatus = 0,
+                            Participator = new List<AccountPotModel>() { accountPot },
+                            PayWaitingID = jackpotWait.PayWaitingID
+                        });
+                    }
+                    else
+                    {
+                        mongo.GetMongoCollection<JackPotModel>().UpdateOne(filterSum, Builders<JackPotModel>.Update.Push(x => x.Participator, accountPot));
+                    }
+                }
+                else
+                {
+                    mongo.GetMongoCollection<JackPotJoinWaitingModel>().UpdateOne(Builders<JackPotJoinWaitingModel>.
+                        Filter.Eq(x => x.JackPotJoinWaitingID, jackpotWait.JackPotJoinWaitingID), 
+                        Builders<JackPotJoinWaitingModel>.Update.Set(x => x.ShareTimes, jackpotWait.ShareTimes));
+                }
+            }
+            catch (Exception)
+            {
+                 json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
                 throw;
             }
             return json;

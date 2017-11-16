@@ -13,17 +13,15 @@ namespace SpellLuckWXSmall.Models
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId JackPotJoinWaitingID { get; set; }
-        [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
-        public ObjectId GoodsID { get; set; }
+        public GoodsModel Goods { get; set; }
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId AccountID { get; set; }
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId PayWaitingID { get; set; }
-        public int SharaTimes { get => sharaTimes; set => sharaTimes = value; }
-        private int sharaTimes = 3;
-        public int currentSharaTimes { get; set; }
+        public int ShareTimes { get; set; }
         public string GoodsColor { get; set; }
         public string GoodsRule { get; set; }
         public string WXOrderId { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

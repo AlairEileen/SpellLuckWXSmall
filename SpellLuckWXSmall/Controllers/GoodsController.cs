@@ -68,6 +68,7 @@ namespace SpellLuckWXSmall.Controllers
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
 
+        #region 获取商品信息
         /// <summary>
         /// 获取商品信息
         /// </summary>
@@ -177,6 +178,67 @@ namespace SpellLuckWXSmall.Controllers
             responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = jackPot };
 
             return JsonConvert.SerializeObject(responseModel);
+        }
+        #endregion
+        /// <summary>
+        /// 添加评价
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <param name="orderID">订单ID</param>
+        /// <param name="assessmentContent">评价内容</param>
+        /// <returns></returns>
+        public string SaveAssessment(string accountID, string orderID, string assessmentContent)
+        {
+            BaseResponseModel<string> responseModel = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok };
+
+            var mongo = new MongoDBTool();
+            var account = mongo.GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+            if (account == null)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error_null;
+                return responseModel.ToJson();
+            }
+            var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderID)));
+            if (order == null)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error_null;
+                return responseModel.ToJson();
+
+            }
+            AssessmentModel assessmentModel = new AssessmentModel()
+            {
+                AssessmentID = ObjectId.GenerateNewId(),
+                OrderID = order.OrderID,
+                AssessmentContent = assessmentContent,
+                AssessTime = DateTime.Now,
+                AssessAccount = new AccountPotModel()
+                {
+                    AccountID = account.AccountID,
+                    AccountAvatar = account.AccountAvatar,
+                    AccountName = account.AccountName,
+                    WXOrderId = order.WXOrderId,
+                    GoodsColor = order.GoodsInfo.GoodsColor,
+                    GoodsRule = order.GoodsInfo.GoodsRule
+                }
+            };
+            var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, order.GoodsInfo.GoodsID);
+            var update = Builders<GoodsModel>.Update.Push(x => x.AssessmentList, assessmentModel);
+            var goods = mongo.GetMongoCollection<GoodsModel>().Find(filter).FirstOrDefault();
+            var orderFilter = Builders<AccountModel>.Filter;
+            var orderFilterSum = orderFilter.Eq(x => x.AccountID, account.AccountID) & orderFilter.Eq("OrderList.OrderID", order.OrderID);
+            mongo.GetMongoCollection<AccountModel>().UpdateOne(orderFilterSum, Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 2));
+            if (goods.AssessmentList == null)
+            {
+                goods.AssessmentList = new List<AssessmentModel>();
+                goods.AssessmentList.Add(assessmentModel);
+                mongo.GetMongoCollection<GoodsModel>().UpdateOne(filter, Builders<GoodsModel>.Update.Set(x => x.AssessmentList, goods.AssessmentList));
+
+            }
+            else
+            {
+                mongo.GetMongoCollection<GoodsModel>().UpdateOne(filter, update);
+            }
+            return responseModel.ToJson();
         }
     }
 }

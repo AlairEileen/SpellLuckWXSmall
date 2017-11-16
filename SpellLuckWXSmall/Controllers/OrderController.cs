@@ -93,5 +93,6 @@ namespace SpellLuckWXSmall.Controllers
             }
             return json;
         }
+
     }
 }

@@ -18,15 +18,19 @@ namespace Tools.DB
         /// 指定的表
         /// </summary>
         private const string tbName = "table_text";
-
+        private static IMongoDatabase mongoDatabase;
         /// <summary>
         /// 获取数据库
         /// </summary>
         /// <returns>当前数据库</returns>
         private IMongoDatabase GetMongoDatabase()
         {
-            MongoClient mongoClient = new MongoClient(conn);
-            return mongoClient.GetDatabase(dbName);
+            if (mongoDatabase==null)
+            {
+                MongoClient mongoClient = new MongoClient(conn);
+                mongoDatabase= mongoClient.GetDatabase(dbName);
+            }
+            return mongoDatabase;
         }
         /// <summary>
         /// 获取集合

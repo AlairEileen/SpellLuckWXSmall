@@ -33,16 +33,17 @@ namespace SpellLuckWXSmall.Models
         public List<FileModel<string[]>> GoodsMainImages { get; set; }
         public List<FileModel<string[]>> GoodsOtherImages { get; set; }
         public long GoodsPeopleNum { get; set; }
-        public List<Assessment> AssessmentList { get; set; }
+        public List<AssessmentModel> AssessmentList { get; set; }
         public List<string> GoodsColor { get; set; }
         public List<string> GoodsRule { get; set; }
     }
 
-    public class Assessment
+    public class AssessmentModel
     {
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId AssessmentID { get; set; }
+        [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId OrderID { get; set; }
         public string AssessmentContent { get; set; }
         public DateTime AssessTime { get; set; }

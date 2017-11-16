@@ -5,11 +5,14 @@ namespace Tools.DB
 
     public class MongoDBTool
     {
+
         /// <summary>
         /// 数据库连接
         /// </summary>
-        //private const string conn = "mongodb://localhost:27027";
-        private const string conn = "mongodb://192.168.1.222:27027";
+        private const string conn = "mongodb://localhost:27027";
+
+
+        private const string debugConn = "mongodb://192.168.1.222:27027";
         /// <summary>
         /// 指定的数据库
         /// </summary>
@@ -25,7 +28,11 @@ namespace Tools.DB
         /// <returns>当前数据库</returns>
         private IMongoDatabase GetMongoDatabase()
         {
-            MongoClient mongoClient = new MongoClient(conn);
+            var connectionString = conn;
+#if DEBUG
+            connectionString = debugConn;
+#endif
+            MongoClient mongoClient = new MongoClient(connectionString);
             return mongoClient.GetDatabase(dbName);
         }
         /// <summary>
@@ -35,8 +42,9 @@ namespace Tools.DB
         /// <returns>该类型集合</returns>
         public IMongoCollection<T> GetMongoCollection<T>()
         {
+
             string packageName = typeof(T).ToString();
-            string collectionName = packageName.Substring(packageName.LastIndexOf(".")+1);
+            string collectionName = packageName.Substring(packageName.LastIndexOf(".") + 1);
             return GetMongoDatabase().GetCollection<T>(collectionName);
         }
         /// <summary>

@@ -21,19 +21,23 @@ namespace Tools.DB
         /// 指定的表
         /// </summary>
         private const string tbName = "table_text";
-
+        private static IMongoDatabase mongoDatabase;
         /// <summary>
         /// 获取数据库
         /// </summary>
         /// <returns>当前数据库</returns>
         private IMongoDatabase GetMongoDatabase()
         {
-            var connectionString = conn;
+            if (mongoDatabase==null)
+            {
+                var connectionString = conn;
 #if DEBUG
             connectionString = debugConn;
 #endif
-            MongoClient mongoClient = new MongoClient(connectionString);
-            return mongoClient.GetDatabase(dbName);
+                MongoClient mongoClient = new MongoClient(conn);
+                mongoDatabase= mongoClient.GetDatabase(dbName);
+            }
+            return mongoDatabase;
         }
         /// <summary>
         /// 获取集合

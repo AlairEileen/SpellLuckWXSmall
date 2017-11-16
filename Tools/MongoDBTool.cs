@@ -28,14 +28,14 @@ namespace Tools.DB
         /// <returns>当前数据库</returns>
         private IMongoDatabase GetMongoDatabase()
         {
-            if (mongoDatabase==null)
+            if (mongoDatabase == null)
             {
                 var connectionString = conn;
 #if DEBUG
-            connectionString = debugConn;
+                connectionString = debugConn;
 #endif
-                MongoClient mongoClient = new MongoClient(conn);
-                mongoDatabase= mongoClient.GetDatabase(dbName);
+                MongoClient mongoClient = new MongoClient(connectionString);
+                mongoDatabase = mongoClient.GetDatabase(dbName);
             }
             return mongoDatabase;
         }

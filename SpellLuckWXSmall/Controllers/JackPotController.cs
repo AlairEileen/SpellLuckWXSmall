@@ -14,6 +14,7 @@ using Tools;
 using Tools.ResponseModels;
 using System.Globalization;
 using WXSmallAppCommon.Models;
+using Tools.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,8 +34,8 @@ namespace SpellLuckWXSmall.Controllers
         /// <returns></returns>
         public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword)
         {
-            if (string.IsNullOrEmpty(accountID) || 
-                (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) || 
+            if (string.IsNullOrEmpty(accountID) ||
+                (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) ||
                 string.IsNullOrEmpty(goodsColor) || string.IsNullOrEmpty(goodsRule))
             {
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
@@ -98,7 +99,23 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     payWaitingModel.WXPayData = JsonConvert.DeserializeObject<WXPayModel>(param);
                 }
-                json = new BaseResponseModel<PayWaitingModel>() { JsonData = payWaitingModel, StatusCode = (int)ActionParams.code_ok }.ToJson();
+
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                    new string[] {
+                    "StatusCode",
+                    "JsonData",
+                    "PayWaitingID" ,
+                    "WXPayData",
+                    "appId",
+                    "nonceStr",
+                "package",
+                "paySign",
+                "signType",
+                "timeStamp"});
+
+
+                json = JsonConvert.SerializeObject(new BaseResponseModel<PayWaitingModel>() { JsonData = payWaitingModel, StatusCode = (int)ActionParams.code_ok }, jsonSerializerSettings);
             }
             catch (Exception ex)
             {
@@ -125,18 +142,26 @@ namespace SpellLuckWXSmall.Controllers
             string json = "";
             try
             {
+                ///拼团商品
                 var filter = Builders<JackPotModel>.Filter;
                 var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
-                var list = new MongoDBTool().GetMongoCollection<JackPotModel>()
-                    .Find(filterSum).Sort(Builders<JackPotModel>
-                    .Sort.Descending(x => x.CreateTime))
-                    .Skip(AppConstData.MobilePageSize * pageIndex)
-                    .Limit(AppConstData.MobilePageSize)
-                    .ToList();
+                var listJackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
+
                 ///一分夺宝列表
                 var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
                 var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID));
                 var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
+                if (listWaiting != null && listWaiting.Count != 0)
+                {
+                    var waitingJackPot = new List<JackPotModel>();
+                    foreach (var item in listWaiting)
+                    {
+                        waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods });
+                    }
+                    listJackPot.AddRange(waitingJackPot);
+                }
+                listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
+                var list = listJackPot.Skip(pageIndex * AppConstData.MobilePageSize).Take(AppConstData.MobilePageSize).ToList();
 
                 json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = list }.ToJson();
             }
@@ -149,7 +174,7 @@ namespace SpellLuckWXSmall.Controllers
         }
 
         /// <summary>
-        /// 转发一分夺宝
+        /// 添加转发一分夺宝次数
         /// </summary>
         /// <param name="jackPotJoinWaitingID"></param>
         /// <param name="shareTimes"></param>
@@ -201,16 +226,53 @@ namespace SpellLuckWXSmall.Controllers
                 else
                 {
                     mongo.GetMongoCollection<JackPotJoinWaitingModel>().UpdateOne(Builders<JackPotJoinWaitingModel>.
-                        Filter.Eq(x => x.JackPotJoinWaitingID, jackpotWait.JackPotJoinWaitingID), 
+                        Filter.Eq(x => x.JackPotJoinWaitingID, jackpotWait.JackPotJoinWaitingID),
                         Builders<JackPotJoinWaitingModel>.Update.Set(x => x.ShareTimes, jackpotWait.ShareTimes));
                 }
             }
             catch (Exception)
             {
-                 json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
                 throw;
             }
             return json;
         }
+
+        /// <summary>
+        /// 获取拼团分享ID
+        /// </summary>
+        /// <param name="payWaitingID">支付前的支付ID</param>
+        /// <returns></returns>
+        public string GetShareJackPotID(string payWaitingID)
+        {
+            if (string.IsNullOrEmpty(payWaitingID))
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
+            }
+
+            string json = "";
+            try
+            {
+
+                ///获取拼团ID
+                var mongo = new MongoDBTool();
+                var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
+                var response = new BaseResponseModel<string>()
+                {
+                    StatusCode = jackpot == null ? (int)ActionParams.code_null : (int)ActionParams.code_ok,
+                    JsonData = jackpot == null ? "" : jackpot.JackPotID.ToString()
+                };
+                json = response.ToJson();
+            }
+            catch (Exception)
+            {
+                json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
+
+            return json;
+        }
+
+
     }
 }

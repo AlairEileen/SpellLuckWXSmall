@@ -83,6 +83,7 @@ namespace SpellLuckWXSmall.Controllers
             webClient.DownloadFile(avatarUrl, saveFileName);
             return saveDBName;
         }
+
         /// <summary>
         /// 修改昵称
         /// </summary>
@@ -111,6 +112,7 @@ namespace SpellLuckWXSmall.Controllers
             }
             return JsonConvert.SerializeObject(responseModel);
         }
+
         /// <summary>
         /// 获取账户信息
         /// </summary>
@@ -184,8 +186,9 @@ namespace SpellLuckWXSmall.Controllers
 
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
+        
         /// <summary>
-        /// 
+        /// 设置收货地址
         /// </summary>
         /// <param name="accountID">账户id</param>
         /// <param name="provinceArray">省市区数组["北京","北京","朝阳"]</param>

@@ -39,6 +39,11 @@ namespace SpellLuckWXSmall.Models
         public ObjectId GoodsID { get; set; }
         public string GoodsTitle { get; set; }
         public decimal GoodsPrice { get; set; }
+        /// <summary>
+        /// 0:2人拼团
+        /// 1:多人拼团
+        /// 2:1分夺宝
+        /// </summary>
         public int GoodsPayType { get; set; }
         public FileModel<string[]> GoodsListImage { get; set; }
         public long GoodsPeopleNum { get; set; }

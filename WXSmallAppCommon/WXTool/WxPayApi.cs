@@ -580,7 +580,7 @@ namespace WXSmallAppCommon.WXTool
         {
             var ran = new Random();
             return string.Format("{0}{1}{2}", WxPayConfig.MCHID, DateTime.Now.ToString("yyyyMMddHHmmss"), ran.Next(999));
-        }
+        }   
 
         /**
         * 生成时间戳，标准北京时间，时区为东八区，自1970年1月1日 0点0分0秒以来的秒数

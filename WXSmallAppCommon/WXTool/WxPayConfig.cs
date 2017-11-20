@@ -17,7 +17,6 @@ namespace WXSmallAppCommon.WXTool
         public const string MCHID = "1491932202";
         public const string KEY = "ocadbb3tpt1fpibxdat2udllhem4nhni";
         public const string APPSECRET = "759e8856dd6adaa19d6ee07fa12715c4";
-
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */

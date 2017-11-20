@@ -27,6 +27,11 @@ namespace SpellLuckWXSmall.Models
         [Range(1, 100)]
         [DataType(DataType.Currency)]
         public decimal GoodsOldPrice { get; set; }
+        /// <summary>
+        /// 0:2人拼团
+        /// 1:多人拼团
+        /// 2:1分夺宝
+        /// </summary>
         public int GoodsPayType { get; set; }
         public long GoodsSales { get; set; }
         public FileModel<string[]> GoodsListImage { get; set; }

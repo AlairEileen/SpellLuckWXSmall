@@ -19,8 +19,15 @@ namespace WXSmallAppCommon.WXTool
             //直接确认，否则打不开    
             return true;
         }
-
-        public static string Post(string xml, string url, bool isUseCert, int timeout)
+        /// <summary>
+        /// 向腾讯发起post请求
+        /// </summary>
+        /// <param name="xml">数据</param>
+        /// <param name="url">请求地址</param>
+        /// <param name="isUseCert">是否需要证书</param>
+        /// <param name="timeout">超时设置</param>
+        /// <returns></returns>
+        public static string Post(string xml, string url, bool isUseCert=true, int timeout=10)
         {
             System.GC.Collect();//垃圾回收，回收没有正常关闭的http连接
 

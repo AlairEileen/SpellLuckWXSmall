@@ -14,6 +14,10 @@ namespace SpellLuckWXSmall.Models
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId OrderID { get; set; }
+        /// <summary>
+        /// 订单号码
+        /// </summary>
+        public string OrderNumber { get; set; }
         public OrderGoodsInfo GoodsInfo { get; set; }
         public decimal OrderPrice { get; set; }
         public DateTime CreateTime { get; set; }
@@ -22,6 +26,10 @@ namespace SpellLuckWXSmall.Models
         /// </summary>
         public int OrderStatus { get; set; }
         public string WXOrderId { get; set; }
+        /// <summary>
+        /// 运单号
+        /// </summary>
+        public string TrackingNumber { get; set; }
     }
 
     public class OrderGoodsInfo

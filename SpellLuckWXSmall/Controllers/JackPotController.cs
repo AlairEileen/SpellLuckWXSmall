@@ -253,7 +253,6 @@ namespace SpellLuckWXSmall.Controllers
             string json = "";
             try
             {
-
                 ///获取拼团ID
                 var mongo = new MongoDBTool();
                 var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();

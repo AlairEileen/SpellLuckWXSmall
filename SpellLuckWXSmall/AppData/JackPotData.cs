@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Tools;
 using Tools.DB;
+using Tools.Strings;
 using WXSmallAppCommon.WXInteractions;
 
 namespace SpellLuckWXSmall.AppData
@@ -226,6 +227,7 @@ namespace SpellLuckWXSmall.AppData
                 OrderStatus = 0,
                 OrderPrice = jackPot.JackGoods.GoodsPrice,
                 CreateTime = DateTime.Now,
+                OrderNumber = new RandomNumber().GetRandom1(),
                 WXOrderId = account.WXOrderId,
                 GoodsInfo = new OrderGoodsInfo()
                 {

@@ -10,6 +10,8 @@ using Tools;
 using Tools.DB;
 using Tools.Json;
 using Tools.ResponseModels;
+using Tools.Strings;
+using WXSmallAppCommon.WXInteractions;
 
 namespace SpellLuckWXSmall.Controllers
 {
@@ -186,7 +188,7 @@ namespace SpellLuckWXSmall.Controllers
 
             return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
         }
-        
+
         /// <summary>
         /// 设置收货地址
         /// </summary>
@@ -222,5 +224,18 @@ namespace SpellLuckWXSmall.Controllers
             return JsonConvert.SerializeObject(responseModel);
         }
 
+
+        public string GetRedPacket(string accountID)
+        {
+            string json = "";
+            var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
+            var account = collection.Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+            if (!account.HasRedPocket)
+            {
+                int redPacket = 20;
+                Refund.Run("", new RandomNumber().GetRandom1(), redPacket, redPacket);
+            }
+            return json;
+        }
     }
 }

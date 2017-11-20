@@ -51,6 +51,7 @@ namespace Tools.DB
             string collectionName = packageName.Substring(packageName.LastIndexOf(".") + 1);
             return GetMongoDatabase().GetCollection<T>(collectionName);
         }
+
         /// <summary>
         /// 获取集合
         /// </summary>

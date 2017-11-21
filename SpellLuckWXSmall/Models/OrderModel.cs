@@ -41,7 +41,10 @@ namespace SpellLuckWXSmall.Models
         /// <summary>
         /// 快递公司
         /// </summary>
-        public string  TrackingCompany { get; set; }
+        public string TrackingCompany { get; set; }
+        [JsonIgnore]
+        [BsonIgnore]
+        public string OrderIDText { get { return OrderID.ToString(); } }
     }
 
     public class OrderGoodsInfo

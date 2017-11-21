@@ -18,13 +18,14 @@
     <br />
     <div class="row">
         <h2 class="sub-header  col-xs-6">订单列表</h2>
-        <form class="col-xs-6">
+        <form class="col-xs-6" method="get" asp-page-handler="changeOrderStatus">
             <h3>选择  订单状态</h3>
-            <select class="form-control">
-                <option>待发货</option>
-                <option>待确认发货</option>
-                <option>待评价</option>
+            <select class="form-control" asp-for="OrderStatus">
+                <option value="0">待发货</option>
+                <option value="1">待确认发货</option>
+                <option value="2">待评价</option>
             </select>
+            <button type="submit" class="btn btn-default">筛选</button>
         </form>
     </div>
     <div class="table-responsive">
@@ -82,7 +83,7 @@
                                 <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
                                 <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
                                 <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
-                                <input class="hidden" asp-for="OrderId" type="text" />
+                                <input class="hidden" asp-for="OrderId" value="@Model.OrderList[sendGoodsIndex].OrderID" type="text" />
                                 <label>物流公司</label>
                                 <input class="form-control" asp-for="TrackingCompany" type="text" />
                                 <label>运单号</label>

@@ -181,6 +181,7 @@ namespace SpellLuckWXSmall.Controllers
                 "WaitingJoin",
                 "WaitingSend",
                 "WaitingAssess",
+                "OrderLocation",
                 "OrderLocationPhone",
                 "OrderLocationPersonName",
                 "ProvinceCityArea",

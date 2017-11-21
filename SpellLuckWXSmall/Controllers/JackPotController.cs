@@ -91,7 +91,7 @@ namespace SpellLuckWXSmall.Controllers
                 jsApiPay.openid = account.OpenID;
                 jsApiPay.total_fee = goods != null ? goods.GoodsPrice.ConvertToMoneyCent() : jackPot.JackGoods.GoodsPrice.ConvertToMoneyCent();
                 var body = "test";
-                var attach = JsonConvert.SerializeObject(payWaitingModel.PayWaitingID);
+                var attach = payWaitingModel.PayWaitingID.ToString();
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
                 jsApiPay.GetUnifiedOrderResult(body, attach, goods_tag);
                 var param = jsApiPay.GetJsApiParameters();

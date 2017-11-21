@@ -50,22 +50,39 @@
             <label class="col-xs-6 col-sm-4" for="goodsOldPrice">商品原价</label>
             <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" />
         </div>
-
+        <br />
         <div class="row">
-            <label class="col-xs-6 col-sm-2" for="goodsListPic">商品列表图片</label>
-            <input type="file" asp-for="ListImage" max="5" class="col-xs-6 col-sm-2" id="goodsListPic" />
-
-            <label class="col-xs-6 col-sm-2" for="goodsHomePic">商品主图</label>
-            <input type="file" asp-for="MainImages" multiple max="5" class="col-xs-6 col-sm-2" id="goodsHomePic" />
-
-            <label class="col-xs-6 col-sm-2" for="goodsOtherPic">商品其他图片</label>
-            <input type="file" asp-for="OtherImages" class="col-xs-6 col-sm-2" id="goodsOtherPic" multiple />
+            <div class="col-xs-6 col-sm-4">
+                <input type="file" asp-for="ListImage" max="5" id="goodsListPic" class="hidden"/>
+                <div class="input-append">
+                    <a class="btn btn-default" onclick="$('input[id=goodsListPic]').click();">选择商品列表图片</a>
+                    <span>未选择（必须选择）</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <input type="file" asp-for="MainImages" multiple max="5" id="goodsHomePic" class="hidden"/>
+                <div class="input-append">
+                    <a class="btn btn-default" onclick="$('input[id=goodsHomePic]').click();">选择商品主图</a>
+                    <span>未选择（必须选择）</span>
+                </div>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <input type="file" asp-for="OtherImages" class="hidden" id="goodsOtherPic" multiple />
+                <div class="input-append">
+                    <a class="btn btn-default" onclick="$('input[id=goodsOtherPic]').click();">选择商品其他图片</a>
+                    <span>未选择（必须选择）</span>
+                </div>
+            </div>
         </div>
+        <br />
         <div class="row">
             <button style="margin-top:30px;" class="btn btn-lg btn-success col-xs-6 col-sm-4" type="submit">提 交</button>
         </div>
     </form>
 </div>
+<br />
+<br />
+<br />
 <script>
     function OnPayTypeChanged(obj) {
         var pn = $("#goodsPeopleNum");

@@ -8,7 +8,7 @@ namespace Tools
     {
         public static int ConvertToMoneyCent(this decimal money)
         {
-            int cent = (int)money * 100;
+            int cent = (int)(money * 100);
             return cent;
         }
     }

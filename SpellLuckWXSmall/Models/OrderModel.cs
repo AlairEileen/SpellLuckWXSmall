@@ -30,6 +30,10 @@ namespace SpellLuckWXSmall.Models
         /// 运单号
         /// </summary>
         public string TrackingNumber { get; set; }
+        /// <summary>
+        /// 快递公司
+        /// </summary>
+        public string  TrackingCompany { get; set; }
     }
 
     public class OrderGoodsInfo

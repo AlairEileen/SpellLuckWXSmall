@@ -3,9 +3,29 @@
 @{
     ViewData["Title"] = "订单";
     ViewData["Index"] = 1;
+    int sendGoodsIndex = -1;
 }
+
 <div class="container">
-    <h2 class="sub-header">订单列表</h2>
+    <form>
+        <h3>根据订单号码查询订单</h3>
+        <input class="form-control" type="text" placeholder="请输入订单号" />
+        <a class="btn btn-default pull-right">查  询</a>
+    </form>
+    <br />
+    <br />
+    <br />
+    <div class="row">
+        <h2 class="sub-header  col-xs-6">订单列表</h2>
+        <form class="col-xs-6">
+            <h3>选择  订单状态</h3>
+            <select class="form-control">
+                <option>待发货</option>
+                <option>待确认发货</option>
+                <option>待评价</option>
+            </select>
+        </form>
+    </div>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -25,17 +45,50 @@
                 @for (int i = 0; i < Model.OrderList.Count(); i++)
                 {
                     <tr>
-                        <td>@Model.OrderList[i].OrderNumber</td>
-                        <td><img src="/file/FileDownload?fileUrl=@Model.OrderList[i].GoodsInfo.GoodsListImage.FileUrlData[0]" /></td>
-                        <td>@Model.OrderList[i].GoodsInfo.GoodsTitle</td>
-                        <td>@Model.OrderList[i].GoodsInfo.GoodsColor</td>
-                        <td>@Model.OrderList[i].GoodsInfo.GoodsRule</td>
-                        <td>@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
-                        <td>@Model.OrderList[i].OrderPrice</td>
-                        <td>@Model.OrderList[i].CreateTime</td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].OrderNumber</td>
+                        <td style="vertical-align:middle"><img width="90" height="60" src="/file/FileDownload?fileUrl=@Model.OrderList[i].GoodsInfo.GoodsListImage.FileUrlData[2]" /></td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsTitle</td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsColor</td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsRule</td>
+                        <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
+                        <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
+                        <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="javascript: function() { @(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
                     </tr>
                 }
             </tbody>
         </table>
+    </div>
+</div>
+<div class="modal fade" id="sendGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="sendGoodsTitle">发货信息</h4>
+            </div>
+            <form method="post" asp-page-handler="sendGoods">
+                <div class="modal-body">
+                    <div>
+                        @{ var currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
+
+
+                        }
+                        <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
+                        <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
+                        <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
+                        <input class="hidden" asp-for="OrderId" type="text" />
+                        <label>物流公司</label>
+                        <input class="form-control" asp-for="TrackingCompany" type="text" />
+                        <label>运单号</label>
+                        <input class="form-control" asp-for="TrackingNumber" type="text" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

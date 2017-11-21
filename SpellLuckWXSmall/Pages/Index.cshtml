@@ -1,5 +1,6 @@
 ﻿@page
 @model IndexModel
+@using SpellLuckWXSmall.Models
 @{
     ViewData["Title"] = "订单";
     ViewData["Index"] = 1;
@@ -42,6 +43,7 @@
                 </tr>
             </thead>
             <tbody>
+
                 @for (int i = 0; i < Model.OrderList.Count(); i++)
                 {
                     <tr>
@@ -56,6 +58,7 @@
                         <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="javascript: function() { @(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
                     </tr>
                 }
+
             </tbody>
         </table>
     </div>
@@ -70,18 +73,22 @@
             <form method="post" asp-page-handler="sendGoods">
                 <div class="modal-body">
                     <div>
-                        @{ var currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
+                        @{
+                            AccountModel currentAccount = null;
+                            if (Model.AccountList != null && Model.OrderList != null)
+                            {
+                                currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
 
-
+                                <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
+                                <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
+                                <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
+                                <input class="hidden" asp-for="OrderId" type="text" />
+                                <label>物流公司</label>
+                                <input class="form-control" asp-for="TrackingCompany" type="text" />
+                                <label>运单号</label>
+                                <input class="form-control" asp-for="TrackingNumber" type="text" />
+                            }
                         }
-                        <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
-                        <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
-                        <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
-                        <input class="hidden" asp-for="OrderId" type="text" />
-                        <label>物流公司</label>
-                        <input class="form-control" asp-for="TrackingCompany" type="text" />
-                        <label>运单号</label>
-                        <input class="form-control" asp-for="TrackingNumber" type="text" />
                     </div>
                 </div>
                 <div class="modal-footer">

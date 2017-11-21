@@ -39,7 +39,7 @@ namespace SpellLuckWXSmall.Pages
 
         private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend)
         {
-            AccountList = accountWaitingSend;
+            
             List<OrderModel> list = new List<OrderModel>();
             foreach (var item in accountWaitingSend)
             {
@@ -54,6 +54,7 @@ namespace SpellLuckWXSmall.Pages
                         list.Add(order);
                     }
                 }
+                AccountList.Add(item);
             }
             return list;
         }

@@ -97,17 +97,60 @@ namespace SpellLuckWXSmall.Controllers
 
         private string GetSimpleGoodsDetail(string goodsID)
         {
+            string json = "";
             BaseResponseModel<ResponseGoodsDetail> responseModel = new BaseResponseModel<ResponseGoodsDetail>();
             var goods = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(x => x.GoodsID.Equals(new ObjectId(goodsID))).FirstOrDefault();
             if (goods == null)
             {
                 responseModel.StatusCode = (int)ActionParams.code_null;
             }
-            responseModel.StatusCode = (int)ActionParams.code_ok;
-
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
-                new string[] {
+            if (goods.GoodsPayType == 0)
+            {
+                var filter = Builders<JackPotModel>.Filter;
+                var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq(x => x.JackGoods.GoodsID, goods.GoodsID);
+                var jackpotList = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
+                var waitingJackPots = GetWaitingJackPots(jackpotList);
+                responseModel.StatusCode = (int)ActionParams.code_ok;
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                    new string[] {
+                    "StatusCode",
+                    "JsonData",
+                    "GoodsInfo",
+                    "JackGoods",
+                "GoodsID",
+                "GoodsTitle",
+                "GoodsColor",
+                "GoodsRule",
+                "GoodsDetail",
+                "GoodsPrice",
+                "GoodsOldPrice",
+                "GoodsPayType",
+                "GoodsMainImages",
+                "GoodsSales",
+                "GoodsOtherImages",
+                "FileUrlData",
+                "GoodsPeopleNum",
+                "AssessmentList",
+                "WaitingJackPotList",
+                "JackPotID",
+                "WaitingAccount",
+                "AccountID",
+                "WaitingJackPotList",
+                "AssessmentContent",
+                "AssessAccount",
+                "AccountName",
+                "AssessTime",
+                "AccountAvatar"});
+                responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = new JackPotModel() { JackGoods = goods }, WaitingJackPotList = waitingJackPots };
+                json = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+            }
+            else if (goods.GoodsPayType == 1)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_ok;
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                    new string[] {
                     "StatusCode",
                     "JsonData",
                     "GoodsInfo",
@@ -131,10 +174,23 @@ namespace SpellLuckWXSmall.Controllers
                 "AccountName",
                 "AssessTime",
                 "AccountAvatar"});
+                responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = new JackPotModel() { JackGoods = goods } };
+                json = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+            }
+            return json;
+        }
 
-
-            responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = new JackPotModel() { JackGoods = goods } };
-            return JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+        private List<WaitingJackPot> GetWaitingJackPots(List<JackPotModel> jackpotList)
+        {
+            List<WaitingJackPot> list = new List<WaitingJackPot>();
+            if (jackpotList != null)
+            {
+                foreach (var item in jackpotList)
+                {
+                    list.Add(new WaitingJackPot() { WaitingAccount = item.Participator[0], JackPotID = item.JackPotID });
+                }
+            }
+            return list;
         }
 
         private string GetJackPotGoodsDetail(string jackPotID)

@@ -78,13 +78,23 @@ namespace SpellLuckWXSmall.Controllers
                 if (account == null)
                 {
                     json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_null }.ToJson();
+                    return json;
                 }
+                if (account.OrderList!=null)
+                {
+
                 var orderList = account.OrderList.OrderByDescending(x => x.CreateTime).ToList();
                 if (orderList != null)
                 {
                     orderList = orderList.FindAll(x => x.OrderStatus == orderStatus).Skip(pageIndex * AppConstData.MobilePageSize).Take(AppConstData.MobilePageSize).ToList();
                 }
                 json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
+                }
+                else
+                {
+                    json = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_null }.ToJson();
+                }
+
             }
             catch (Exception)
             {

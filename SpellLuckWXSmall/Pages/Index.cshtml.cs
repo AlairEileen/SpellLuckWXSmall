@@ -22,6 +22,13 @@ namespace SpellLuckWXSmall.Pages
         public string TrackingNumber { get; set; }
         [BindProperty]
         public string OrderId { get; set; }
+        [BindProperty]
+        public string SearchParam { get; set; }
+        private int orderStatus=0;
+        [BindProperty]
+        public int OrderStatus { get => orderStatus; set => orderStatus = value; }
+
+
         public void OnGet()
         {
             GetAllOrder();

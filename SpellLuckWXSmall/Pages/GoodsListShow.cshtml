@@ -6,7 +6,11 @@
 
     int pageIndex = Model.PageIndex;
 }
-<h2>@ViewData["Title"]</h2>
+<div class="jumbotron">
+    <div class="container">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+</div>
 <div class="container marketing">
     <div class="row">
         @if (Model.GoodsModelList != null && Model.GoodsModelList.Count > 0)
@@ -19,7 +23,7 @@
                     </figure>
                     <h2>@item.GoodsTitle</h2>
                     <p>@item.GoodsDetail</p>
-                    <p>原价：@item.GoodsOldPrice ￥ &nbsp;  团价：@item.GoodsPrice ￥ &nbsp; 购买方式：@(item.GoodsPayType==0?"2人团购":item.GoodsPayType==1?item.GoodsPeopleNum+"人团购":"一分夺宝")</p>
+                    <p>原价：@item.GoodsOldPrice ￥ &nbsp;  团价：@item.GoodsPrice ￥ &nbsp; 购买方式：@(item.GoodsPayType == 0 ? "2人团购" : item.GoodsPayType == 1 ? item.GoodsPeopleNum + "人团购" : "一分夺宝")</p>
                     <p><a class="btn btn-danger" asp-page-handler="delGoods" asp-route-goodsID="@item.GoodsID.ToString()">删除</a></p>
                 </div>
             }

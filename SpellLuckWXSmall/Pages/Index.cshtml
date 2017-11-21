@@ -6,28 +6,37 @@
     ViewData["Index"] = 1;
     int sendGoodsIndex = -1;
 }
-
-<div class="container">
-    <form>
-        <h3>根据订单号码查询订单</h3>
-        <input class="form-control" type="text" placeholder="请输入订单号" />
-        <a class="btn btn-default pull-right">查  询</a>
-    </form>
-    <br />
-    <br />
-    <br />
-    <div class="row">
-        <h2 class="sub-header  col-xs-6">订单列表</h2>
-        <form class="col-xs-6" method="get" asp-page-handler="changeOrderStatus">
-            <h3>选择  订单状态</h3>
-            <select class="form-control" asp-for="OrderStatus">
-                <option value="0">待发货</option>
-                <option value="1">待确认发货</option>
-                <option value="2">待评价</option>
-            </select>
-            <button type="submit" class="btn btn-default">筛选</button>
-        </form>
+<div class="jumbotron">
+    <div class="container">
+        <h1>订单查看</h1>
     </div>
+</div>
+<div class="container">
+    <form class="col-xs-6 " id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
+        <h3>根据订单状态查询订单</h3>
+        <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
+            <option value="0">待发货</option>
+            <option value="1">待确认发货</option>
+            <option value="2">待评价</option>
+        </select>
+    </form>
+
+    <form class="col-xs-6">
+        <h3>根据订单号码查询订单</h3>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-lg-8">
+                <input class="form-control" type="text" placeholder="请输入订单号" />
+            </div>
+            <div class="col-xs-6 col-lg-4">
+                <a class="col-xs-12 btn btn-primary pull-right">查&nbsp;&nbsp;&nbsp;&nbsp;询</a>
+            </div>
+        </div>
+    </form>
+    <br style="clear:both" />
+    <br />
+    <br />
+
+     <h2 class="sub-header">订单列表</h2>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -100,3 +109,12 @@
         </div>
     </div>
 </div>
+
+
+<script>
+
+    function changeOrderStatus() {
+
+        $("#changeOrderStatusForm").submit();
+    }
+</script>

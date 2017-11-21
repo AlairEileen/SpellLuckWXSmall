@@ -30,22 +30,47 @@ namespace SpellLuckWXSmall.Pages
 
         public void OnGet()
         {
-            GetAllOrder();
+            GetWaitingSendOrder();
         }
 
-        private void GetAllOrder()
+        private void GetWaitingSendOrder()
         {
-            var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
-            var waitFilter = Builders<AccountModel>.Filter;
-            string noTacking = null;
-            var waitFilterSum = waitFilter.Eq("OrderList.$.OrderStatus", 1) & waitFilter.Eq("OrderList.$.TrackingNumber", noTacking);
-            var accountWaitingSend = collection.Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend);
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
+            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            {
+                if (o.OrderStatus == 1 && string.IsNullOrEmpty(o.TrackingNumber))
+                {
+                    return true;
+                }
+                return false;
+            });
         }
-
-        private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend)
+        private void GetWaitingSendOkOrder()
         {
-
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
+            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            {
+                if (o.OrderStatus == 0)
+                {
+                    return true;
+                }
+                return false;
+            });
+        }
+        private void GetWaitingAssessOrder()
+        {
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
+            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            {
+                if (o.OrderStatus == 1 && !string.IsNullOrEmpty(o.TrackingNumber))
+                {
+                    return true;
+                }
+                return false;
+            });
+        }
+        private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend, Func<OrderModel, bool> func)
+        {
             List<OrderModel> list = new List<OrderModel>();
             foreach (var item in accountWaitingSend)
             {
@@ -55,7 +80,7 @@ namespace SpellLuckWXSmall.Pages
                 }
                 foreach (var order in item.OrderList)
                 {
-                    if (order.OrderStatus == 1 && order.TrackingNumber == null)
+                    if (func(order))
                     {
                         list.Add(order);
                     }
@@ -71,9 +96,23 @@ namespace SpellLuckWXSmall.Pages
             return Page();
         }
 
-        public IActionResult OnGetChangeOrderStatus()
+        public IActionResult OnPostChangeOrderStatus()
         {
-            Console.WriteLine(OrderStatus);
+            switch (OrderStatus)
+            {
+                case 0:
+                    OnGet();
+                    break;
+                case 1:
+                    GetWaitingSendOkOrder();
+                    break;
+                case 2:
+                    GetWaitingAssessOrder();
+                    break;
+                default:
+                    OnGet();
+                    break;
+            }
             return Page();
         }
     }

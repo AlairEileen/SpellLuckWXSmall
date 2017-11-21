@@ -5,7 +5,11 @@
     ViewData["Index"] = 2;
 
 }
-<h2>@ViewData["Title"]</h2>
+<div class="jumbotron">
+    <div class="container">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+</div>
 <div class="container">
     <form class="form" method="post" asp-page-handler="submitGoods" enctype="multipart/form-data">
         <div style="margin-top:50px;" class="row">
@@ -40,13 +44,13 @@
         </div>
         <div class="row" id="goodsPriceRow">
             <label class="col-xs-6 col-sm-4" for="goodsPrice">商品团价</label>
-            <input id="goodsPrice"  asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
+            <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
         </div>
         <div class="row">
             <label class="col-xs-6 col-sm-4" for="goodsOldPrice">商品原价</label>
             <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" />
         </div>
-        
+
         <div class="row">
             <label class="col-xs-6 col-sm-2" for="goodsListPic">商品列表图片</label>
             <input type="file" asp-for="ListImage" max="5" class="col-xs-6 col-sm-2" id="goodsListPic" />

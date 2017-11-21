@@ -14,7 +14,14 @@ namespace SpellLuckWXSmall.Pages
     {
 
         public List<OrderModel> OrderList { get; set; }
+        public List<AccountModel> AccountList { get; set; }
 
+        [BindProperty]
+        public string TrackingCompany { get; set; }
+        [BindProperty]
+        public string TrackingNumber { get; set; }
+        [BindProperty]
+        public string OrderId { get; set; }
         public void OnGet()
         {
             GetAllOrder();
@@ -32,6 +39,7 @@ namespace SpellLuckWXSmall.Pages
 
         private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend)
         {
+            AccountList = accountWaitingSend;
             List<OrderModel> list = new List<OrderModel>();
             foreach (var item in accountWaitingSend)
             {
@@ -48,6 +56,12 @@ namespace SpellLuckWXSmall.Pages
                 }
             }
             return list;
+        }
+
+        public IActionResult OnPostSendGoods()
+        {
+            Console.WriteLine(OrderId + TrackingNumber + TrackingCompany);
+            return Page();
         }
     }
 }

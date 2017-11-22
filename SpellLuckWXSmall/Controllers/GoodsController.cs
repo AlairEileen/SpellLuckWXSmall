@@ -145,7 +145,7 @@ namespace SpellLuckWXSmall.Controllers
                 responseModel.JsonData = new ResponseGoodsDetail() { GoodsInfo = new JackPotModel() { JackGoods = goods }, WaitingJackPotList = waitingJackPots };
                 json = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
             }
-            else if (goods.GoodsPayType == 1)
+            else
             {
                 responseModel.StatusCode = (int)ActionParams.code_ok;
                 JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();

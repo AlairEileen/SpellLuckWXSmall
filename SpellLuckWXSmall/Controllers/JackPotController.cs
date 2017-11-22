@@ -239,7 +239,7 @@ namespace SpellLuckWXSmall.Controllers
         }
 
         /// <summary>
-        /// 获取拼团分享ID
+        /// 获取拼团分享ID以及等待人列表
         /// </summary>
         /// <param name="payWaitingID">支付前的支付ID</param>
         /// <returns></returns>
@@ -256,10 +256,10 @@ namespace SpellLuckWXSmall.Controllers
                 ///获取拼团ID
                 var mongo = new MongoDBTool();
                 var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
-                var response = new BaseResponseModel<string>()
+                var response = new BaseResponseModel<JackPotModel>()
                 {
                     StatusCode = jackpot == null ? (int)ActionParams.code_null : (int)ActionParams.code_ok,
-                    JsonData = jackpot == null ? "" : jackpot.JackPotID.ToString()
+                    JsonData = jackpot
                 };
                 json = response.ToJson();
             }

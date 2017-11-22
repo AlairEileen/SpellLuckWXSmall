@@ -16,7 +16,9 @@ namespace Tools.Models
         public string AccountPhoneNumber { get; set; }
         public int Gender { get; set; }
         public string AccountAvatar { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime CreateTime { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime LastChangeTime { get; set; }
     }
 }

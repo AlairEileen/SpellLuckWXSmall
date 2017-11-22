@@ -23,7 +23,7 @@ namespace SpellLuckWXSmall.Models
         public OrderGoodsInfo GoodsInfo { get; set; }
 
         public decimal OrderPrice { get; set; }
-
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime CreateTime { get; set; }
 
         /// <summary>

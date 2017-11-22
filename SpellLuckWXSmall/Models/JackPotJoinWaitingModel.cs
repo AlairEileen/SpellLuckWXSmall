@@ -22,6 +22,7 @@ namespace SpellLuckWXSmall.Models
         public string GoodsColor { get; set; }
         public string GoodsRule { get; set; }
         public string WXOrderId { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime CreateTime { get; set; }
     }
 }

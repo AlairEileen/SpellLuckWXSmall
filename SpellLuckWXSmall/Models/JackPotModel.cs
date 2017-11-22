@@ -21,6 +21,7 @@ namespace SpellLuckWXSmall.Models
         /// 0:等待加入，1：等待开奖，2：已开奖
         /// </summary>
         public int JackPotStatus { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime CreateTime { get; set; }
         public string JackPotPassword { get; set; }
         public int JackPotPeopleNum { get; set; }

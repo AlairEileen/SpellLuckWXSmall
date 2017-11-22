@@ -50,6 +50,7 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId OrderID { get; set; }
         public string AssessmentContent { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         public DateTime AssessTime { get; set; }
         public AccountPotModel AssessAccount { get; set; }
     }

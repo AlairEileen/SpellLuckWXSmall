@@ -127,7 +127,7 @@ namespace SpellLuckWXSmall.AppData
                 var filter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, jackPot.JackPotID);
                 var update = Builders<JackPotModel>.Update.Set(x => x.Participator, jackPot.Participator).Set(x => x.JackPotStatus, jackPot.JackPotStatus);
                 mongo.GetMongoCollection<JackPotModel>().UpdateOne(filter, update);
-                mongo.GetMongoCollection<PayWaitingModel>().DeleteOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID));
+                mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID), Builders<PayWaitingModel>.Update.Set(x => x.isDisabled, true));
 
             }
             else if (jackPot.JackPotPeopleNum >= jackPot.Participator.Count)
@@ -135,7 +135,7 @@ namespace SpellLuckWXSmall.AppData
                 var filter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, jackPot.JackPotID);
                 var update = Builders<JackPotModel>.Update.Set(x => x.Participator, jackPot.Participator);
                 mongo.GetMongoCollection<JackPotModel>().UpdateOne(filter, update);
-                mongo.GetMongoCollection<PayWaitingModel>().DeleteOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID));
+                mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID), Builders<PayWaitingModel>.Update.Set(x => x.isDisabled, true));
             }
 
         }
@@ -190,7 +190,7 @@ namespace SpellLuckWXSmall.AppData
                 } }
                     };
                     mongo.GetMongoCollection<JackPotModel>().InsertOne(jackPotModel);
-                    mongo.GetMongoCollection<PayWaitingModel>().DeleteOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID));
+                    mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID),Builders<PayWaitingModel>.Update.Set(x=>x.isDisabled,true));
                 }
             }
             catch (Exception ex)

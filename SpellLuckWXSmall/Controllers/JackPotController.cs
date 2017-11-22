@@ -115,7 +115,8 @@ namespace SpellLuckWXSmall.Controllers
                     JackPotKey = jackPotPassword,
                     JackPotPrice = price,
                     JackPotPeopleNum = peopleNum,
-                    GoodsRule = goodsRule
+                    GoodsRule = goodsRule,
+                    CreateTime=DateTime.Now
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();

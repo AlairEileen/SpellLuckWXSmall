@@ -27,5 +27,8 @@ namespace SpellLuckWXSmall.Models
         public int JackPotPeopleNum { get; set; }
         public decimal JackPotPrice { get; set; }
         public WXPayModel WXPayData { get; set; }
+        public bool isDisabled { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        public DateTime CreateTime { get; set; }
     }
 }

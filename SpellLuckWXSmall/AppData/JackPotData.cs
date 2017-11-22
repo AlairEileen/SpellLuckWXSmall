@@ -101,7 +101,7 @@ namespace SpellLuckWXSmall.AppData
         /// <param name="payWaitingModel"></param>
         private void JoinJackPot(MongoDBTool mongo, AccountModel account, JackPotModel jackPot, PayWaitingModel payWaitingModel)
         {
-            if (jackPot.JackGoods.GoodsPeopleNum <= jackPot.Participator.Count)//奖池已关闭
+            if (jackPot.JackPotPeopleNum <= jackPot.Participator.Count)//奖池已关闭
             {
                 OpenedJack(mongo, account, payWaitingModel);
                 return;
@@ -119,7 +119,7 @@ namespace SpellLuckWXSmall.AppData
                 WXOrderId = payWaitingModel.WXOrderId,
                 AccountName = account.AccountName
             });
-            if (jackPot.JackGoods.GoodsPeopleNum == jackPot.Participator.Count)
+            if (jackPot.JackPotPeopleNum == jackPot.Participator.Count)
             {
                 ObjectId accountID = JackTool.CalcJackAccount(jackPot.Participator);
                 JackTool.CreateOrder(jackPot, accountID);
@@ -130,7 +130,7 @@ namespace SpellLuckWXSmall.AppData
                 mongo.GetMongoCollection<PayWaitingModel>().DeleteOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID));
 
             }
-            else if (jackPot.JackGoods.GoodsPeopleNum >= jackPot.Participator.Count)
+            else if (jackPot.JackPotPeopleNum >= jackPot.Participator.Count)
             {
                 var filter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, jackPot.JackPotID);
                 var update = Builders<JackPotModel>.Update.Set(x => x.Participator, jackPot.Participator);
@@ -178,6 +178,7 @@ namespace SpellLuckWXSmall.AppData
                         CreateTime = DateTime.Now,
                         JackPotPassword = payWaitingModel.JackPotKey,
                         JackPotStatus = 0,
+                        JackPotPeopleNum = payWaitingModel.JackPotPeopleNum,
                         PayWaitingID = payWaitingModel.PayWaitingID,
                         Participator = new List<AccountPotModel>() { new AccountPotModel() {
                     AccountAvatar=account.AccountAvatar,
@@ -225,7 +226,7 @@ namespace SpellLuckWXSmall.AppData
             {
                 OrderID = ObjectId.GenerateNewId(),
                 OrderStatus = 0,
-                OrderPrice = jackPot.JackGoods.GoodsPrice,
+                OrderPrice = jackPot.JackPotPrice,
                 CreateTime = DateTime.Now,
                 OrderNumber = new RandomNumber().GetRandom1(),
                 WXOrderId = account.WXOrderId,
@@ -235,7 +236,7 @@ namespace SpellLuckWXSmall.AppData
                     GoodsID = jackPot.JackGoods.GoodsID,
                     GoodsListImage = jackPot.JackGoods.GoodsListImage,
                     GoodsPayType = jackPot.JackGoods.GoodsPayType,
-                    GoodsPeopleNum = jackPot.JackGoods.GoodsPeopleNum,
+                    GoodsPeopleNum = jackPot.JackPotPeopleNum,
                     GoodsTitle = jackPot.JackGoods.GoodsTitle,
                     GoodsRule = account.GoodsRule,
                     GoodsColor = account.GoodsColor,
@@ -320,7 +321,7 @@ namespace SpellLuckWXSmall.AppData
             {
                 if ((DateTime.Now - item.CreateTime).Hours > AppConstData.OverTimeGroupJack)
                 {
-                    if (item.JackGoods.GoodsPeopleNum > item.Participator.Count)
+                    if (item.JackPotPeopleNum > item.Participator.Count)
                     {
                         GoRefund(item);
                     }
@@ -341,9 +342,6 @@ namespace SpellLuckWXSmall.AppData
                 Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice.ConvertToMoneyCent(), item.JackGoods.GoodsPrice.ConvertToMoneyCent());
             }
         }
-
-
-
 
         /// <summary>
         /// 检测1分夺宝

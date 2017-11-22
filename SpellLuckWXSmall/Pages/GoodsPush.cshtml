@@ -31,15 +31,8 @@
             <label class="col-xs-6 col-sm-3" for="goodsPayType">商品购买类型</label>
             <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
                 <option value="0">2人拼团</option>
-                <option value="1">多人拼团</option>
+                <option value="1">3-6人拼团</option>
                 <option value="2">1分夺宝</option>
-            </select>
-            <label id="goodsPeopleNumLabel" class="col-xs-6 col-sm-3" style="display:none" for="goodsPeopleNum">参团人数</label>
-            <select id="goodsPeopleNum" class="form-control col-xs-6 col-sm-3" style="display:none" asp-for="GoodsModel.GoodsPeopleNum">
-                <option value="3">3人</option>
-                <option value="4">4人</option>
-                <option value="5">5人</option>
-                <option value="6">6人</option>
             </select>
         </div>
         <div class="row" id="goodsPriceRow">
@@ -85,15 +78,6 @@
 <br />
 <script>
     function OnPayTypeChanged(obj) {
-        var pn = $("#goodsPeopleNum");
-        var pnl = $("#goodsPeopleNumLabel");
-        if ($(obj).val() == 1) {
-            pn.show();
-            pnl.show();
-        } else {
-            pn.hide();
-            pnl.hide();
-        }
         var priceRow = $("#goodsPriceRow");
         if ($(obj).val() == 2) {
             priceRow.hide();

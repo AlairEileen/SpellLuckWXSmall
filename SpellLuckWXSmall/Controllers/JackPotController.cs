@@ -31,8 +31,9 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="goodsColor">商品颜色</param>
         /// <param name="goodsRule">商品尺寸</param>
         /// <param name="jackPotPassword">参团密码（3-6人开团可选项目）</param>
+        /// <param name="jackPotPeopleNum">参团人数（3-6人开团可选项目）</param>
         /// <returns></returns>
-        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword)
+        public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword, int jackPotPeopleNum)
         {
             if (string.IsNullOrEmpty(accountID) ||
                 (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) ||
@@ -77,6 +78,34 @@ namespace SpellLuckWXSmall.Controllers
                 //    }
 
                 //};
+                int peopleNum = 0;
+                decimal price = 0;
+                if (goods != null)
+                {
+                    switch (goods.GoodsPayType)
+                    {
+                        case 0:
+                            peopleNum = 2;
+                            price = GetJackPotPrice(goods.GoodsPrice, peopleNum);
+                            break;
+                        case 1:
+                            peopleNum = jackPotPeopleNum;
+                            price = GetJackPotPrice(goods.GoodsPrice, peopleNum);
+                            break;
+                        case 2:
+                        default:
+                            peopleNum = 0;
+                            price = goods.GoodsPrice;
+                            break;
+                    }
+                }
+                else if (jackPot != null)
+                {
+                    peopleNum = jackPot.JackPotPeopleNum;
+                    price = GetJackPotPrice(jackPot.JackGoods.GoodsPrice, peopleNum);
+                }
+
+
                 PayWaitingModel payWaitingModel = new PayWaitingModel()
                 {
                     AccountID = account.AccountID,
@@ -84,12 +113,14 @@ namespace SpellLuckWXSmall.Controllers
                     JackPotID = jackPot != null ? jackPot.JackPotID : ObjectId.Empty,
                     GoodsColor = goodsColor,
                     JackPotKey = jackPotPassword,
+                    JackPotPrice = price,
+                    JackPotPeopleNum = peopleNum,
                     GoodsRule = goodsRule
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();
                 jsApiPay.openid = account.OpenID;
-                jsApiPay.total_fee = goods != null ? goods.GoodsPrice.ConvertToMoneyCent() : jackPot.JackGoods.GoodsPrice.ConvertToMoneyCent();
+                jsApiPay.total_fee = payWaitingModel.JackPotPrice.ConvertToMoneyCent();
                 var body = "test";
                 var attach = payWaitingModel.PayWaitingID.ToString();
                 var goods_tag = goods != null ? goods.GoodsTitle : jackPot.JackGoods.GoodsTitle;
@@ -126,6 +157,39 @@ namespace SpellLuckWXSmall.Controllers
             return json;
         }
 
+        /// <summary>
+        /// 获取团价
+        /// </summary>
+        /// <param name="goodsPrice"></param>
+        /// <param name="peopleNum"></param>
+        /// <returns></returns>
+        private decimal GetJackPotPrice(decimal goodsPrice, int peopleNum)
+        {
+            decimal bb = Math.Ceiling((decimal)goodsPrice.ConvertToMoneyCent() / (decimal)peopleNum) / 100;
+            Console.WriteLine("bb:{0},goodsprice:{1}", bb, goodsPrice);
+            return bb;
+        }
+        /// <summary>
+        /// 根据人数获取团价
+        /// </summary>
+        /// <param name="goodsID">商品id</param>
+        /// <param name="peopleNum">人数</param>
+        /// <returns></returns>
+        public string GetJackPotPrice(string goodsID, int peopleNum)
+        {
+            var responseModel = new BaseResponseModel<decimal>() { StatusCode = (int)ActionParams.code_ok };
+            try
+            {
+                var goods = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(x => x.GoodsID.Equals(new ObjectId(goodsID))).FirstOrDefault();
+                responseModel.JsonData = GetJackPotPrice(goods.GoodsPrice, peopleNum);
+            }
+            catch (Exception)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error;
+                throw;
+            }
+            return JsonConvert.SerializeObject(responseModel);
+        }
         /// <summary>
         /// 查找待拼团列表
         /// </summary>
@@ -176,8 +240,8 @@ namespace SpellLuckWXSmall.Controllers
         /// <summary>
         /// 添加转发一分夺宝次数
         /// </summary>
-        /// <param name="jackPotJoinWaitingID"></param>
-        /// <param name="shareTimes"></param>
+        /// <param name="jackPotJoinWaitingID">等待id</param>
+        /// <param name="shareTimes">转发次数</param>
         /// <returns></returns>
         public string PutSharaTimes(string jackPotJoinWaitingID, int shareTimes)
         {

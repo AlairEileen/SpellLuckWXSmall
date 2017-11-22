@@ -24,15 +24,18 @@ namespace SpellLuckWXSmall.Controllers
         /// </summary>
         /// <param name="pageIndex">页码0-...</param>
         /// <param name="goodsPayType">商品交易类型：0.2人拼团，1.2-6人拼团，2.1分夺宝</param>
+        /// <param name="searchParam">搜索关键字</param>
         /// <returns></returns>
-        public string GetGoodsList(int pageIndex, int goodsPayType)
+        public string GetGoodsList(int pageIndex, int goodsPayType, string searchParam)
         {
             BaseResponseModel<List<GoodsModel>> responseModel = new BaseResponseModel<List<GoodsModel>>();
             responseModel.StatusCode = (int)ActionParams.code_ok;
             try
             {
-                var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsPayType, goodsPayType);
-                var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(filter).Skip(pageIndex * pageSize);
+                var filter = Builders<GoodsModel>.Filter;
+                var filterSum = filter.Eq(x => x.GoodsPayType, goodsPayType);
+                var filterSum2 = filter.Eq(x => x.GoodsPayType, goodsPayType) & filter.Regex(x => x.GoodsTitle, $"/{searchParam}/");
+                var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(string.IsNullOrEmpty(searchParam)?filterSum:filterSum2).Skip(pageIndex * pageSize);
                 var count = find.Count();
                 var pageSum = (count / pageSize) + (count % pageSize == 0 ? 0 : 1);
                 List<GoodsModel> GoodsModelList = null;
@@ -296,5 +299,6 @@ namespace SpellLuckWXSmall.Controllers
             }
             return responseModel.ToJson();
         }
+
     }
 }

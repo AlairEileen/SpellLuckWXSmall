@@ -80,13 +80,7 @@ namespace SpellLuckWXSmall.Pages
             if (GoodsModel.GoodsPayType == 2)
             {
                 GoodsModel.GoodsPrice = new decimal(0.01);
-                GoodsModel.GoodsPeopleNum = 0;
             }
-            if (GoodsModel.GoodsPayType==0)
-            {
-                GoodsModel.GoodsPeopleNum = 2;
-            }
-           
             try
             {
                 new MongoDBTool().GetMongoCollection<GoodsModel>().InsertOne(GoodsModel);

@@ -23,6 +23,8 @@ namespace SpellLuckWXSmall.Models
         public int JackPotStatus { get; set; }
         public DateTime CreateTime { get; set; }
         public string JackPotPassword { get; set; }
+        public int JackPotPeopleNum { get; set; }
+        public decimal JackPotPrice { get; set; }
     }
 
     public class AccountPotModel

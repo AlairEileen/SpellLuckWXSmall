@@ -10,50 +10,57 @@
         <h1>@ViewData["Title"]</h1>
     </div>
 </div>
-<div class="container">
+<div class="container" style="padding-left:0px;padding-right:30px;">
     <form class="form" method="post" asp-page-handler="submitGoods" enctype="multipart/form-data">
-        <div style="margin-top:50px;" class="row">
-            <label class="col-xs-6 col-sm-4 " for="goodsTitle">商品标题</label>
-            <input id="goodsTitle" asp-for="GoodsModel.GoodsTitle" class="form-control col-xs-6 col-sm-4" type="text" />
-        </div>
-
         <div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsDetail">商品简介</label>
-            <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
-        </div><div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsColor">商品颜色(每行一个)</label>
-            <textarea id="goodsColor" asp-for="GoodsColor" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
-        </div><div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsRule">商品尺寸(每行一个)</label>
-            <textarea id="goodsRule" asp-for="GoodsRule" class="form-control col-xs-6 col-sm-4" rows="6"></textarea>
-        </div>
-        <div class="row">
-            <label class="col-xs-6 col-sm-3" for="goodsPayType">商品购买类型</label>
-            <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
-                <option value="0">2人拼团</option>
-                <option value="1">3-6人拼团</option>
-                <option value="2">1分夺宝</option>
-            </select>
-        </div>
-        <div class="row" id="goodsPriceRow">
-            <label class="col-xs-6 col-sm-4" for="goodsPrice">商品团价</label>
-            <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" />
-        </div>
-        <div class="row">
-            <label class="col-xs-6 col-sm-4" for="goodsOldPrice">商品原价</label>
-            <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" />
+            <div class="col-xs-6 col-sm-3">
+                <label for="goodsTitle">商品标题</label>
+                <input id="goodsTitle" asp-for="GoodsModel.GoodsTitle" maxlength="20" class="form-control col-xs-6 col-sm-4" type="text" placeholder="标题（最多20字）"/>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <label for="goodsPayType">商品购买类型</label>
+                <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
+                    <option value="0">2人拼团</option>
+                    <option value="1">3-6人拼团</option>
+                    <option value="2">1分夺宝</option>
+                </select>
+            </div>
+            <div class="col-xs-6 col-sm-3" id="goodsPriceRow">
+                <label for="goodsPrice">商品团价</label>
+                <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）"/>
+            </div>
+            <div class="col-xs-6 col-sm-3">
+                <label for="goodsOldPrice">商品原价</label>
+                <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）"/>
+            </div>
         </div>
         <br />
         <div class="row">
             <div class="col-xs-6 col-sm-4">
-                <input type="file" asp-for="ListImage" max="5" id="goodsListPic" class="hidden"/>
+                <label for="goodsDetail">商品简介</label>
+                <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" maxlength="2000" class="form-control" rows="6" placeholder="简介字数2000以内"></textarea>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <label class="" for="goodsColor">商品颜色(每行一个)</label>
+                <textarea id="goodsColor" asp-for="GoodsColor" class="form-control" placeholder="颜色（每行一个，不能有空行，最后不能加回车）" rows="6"></textarea>
+            </div>
+            <div class="col-xs-6 col-sm-4">
+                <label class="" for="goodsRule">商品尺寸(每行一个)</label>
+                <textarea id="goodsRule" asp-for="GoodsRule" class="form-control" rows="6" placeholder="尺寸（每行一个，不能有空行，最后不能加回车）" ></textarea>
+            </div>
+        </div>
+       
+        <br />
+        <div class="row">
+            <div class="col-xs-6 col-sm-4">
+                <input type="file" asp-for="ListImage" max="5" id="goodsListPic" class="hidden" />
                 <div class="input-append">
                     <a class="btn btn-default" onclick="$('input[id=goodsListPic]').click();">选择商品列表图片</a>
                     <span>未选择（必须选择）</span>
                 </div>
             </div>
             <div class="col-xs-6 col-sm-4">
-                <input type="file" asp-for="MainImages" multiple max="5" id="goodsHomePic" class="hidden"/>
+                <input type="file" asp-for="MainImages" multiple max="5" id="goodsHomePic" class="hidden" />
                 <div class="input-append">
                     <a class="btn btn-default" onclick="$('input[id=goodsHomePic]').click();">选择商品主图</a>
                     <span>未选择（必须选择）</span>
@@ -68,8 +75,9 @@
             </div>
         </div>
         <br />
-        <div class="row">
-            <button style="margin-top:30px;" class="btn btn-lg btn-success col-xs-6 col-sm-4" type="submit">提 交</button>
+        <br />
+        <div class="row" style="padding-right:15px;">
+            <button class="btn btn-lg btn-success col-xs-6 col-sm-4 pull-right" type="submit">提 交</button>
         </div>
     </form>
 </div>

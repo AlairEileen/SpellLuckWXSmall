@@ -23,6 +23,8 @@ namespace SpellLuckWXSmall.Pages
         [BindProperty]
         public string OrderId { get; set; }
         [BindProperty]
+        public string OrderNumber { get; set; }
+        [BindProperty]
         public string SearchParam { get; set; }
         [BindProperty]
         public int OrderStatus { get; set; }
@@ -113,6 +115,28 @@ namespace SpellLuckWXSmall.Pages
                     OnGet();
                     break;
             }
+            return Page();
+        }
+        public IActionResult OnPostSearchByOrderNumber()
+        {
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq("OrderList.$.OrderNumber", OrderNumber);
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filterSum).ToList();
+            List<OrderModel> list = new List<OrderModel>();
+            foreach (var item in accountWaitingSend)
+            {
+                if (item.OrderList == null || item.OrderList.Count == 0)
+                {
+                    continue;
+                }
+                foreach (var order in item.OrderList)
+                {
+                    list.Add(order);
+                }
+                AccountList.Add(item);
+            }
+            OrderList = list;
+
             return Page();
         }
     }

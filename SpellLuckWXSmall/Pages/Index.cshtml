@@ -11,32 +11,34 @@
         <h1>订单查看</h1>
     </div>
 </div>
-<div class="container">
-    <form class="col-xs-6 " id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
-        <h3>根据订单状态查询订单</h3>
-        <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
-            <option value="0">待发货</option>
-            <option value="1">待确认发货</option>
-            <option value="2">待评价</option>
-        </select>
-    </form>
+<div class="container" style="padding-left:0px;padding-right:30px;">
+    <div class="row">
+        <form class="col-xs-6 col-lg-4" id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
+            <h3>根据订单状态查询订单</h3>
+            <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
+                <option value="0">待发货</option>
+                <option value="1">待确认发货</option>
+                <option value="2">待评价</option>
+            </select>
+        </form>
 
-    <form class="col-xs-6">
-        <h3>根据订单号码查询订单</h3>
-        <div class="row">
-            <div class="col-xs-12 col-sm-6 col-lg-8">
-                <input class="form-control" type="text" placeholder="请输入订单号" />
+        <form class="col-xs-12 col-sm-6 col-lg-8" asp-page-handler="searchByOrderNumber">
+            <h3>根据订单号码查询订单</h3>
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-lg-8">
+                    <input class="form-control" type="text" asp-for="OrderNumber" placeholder="请输入订单号" />
+                </div>
+                <div class="col-xs-6 col-lg-4">
+                    <button class="col-xs-12 btn btn-primary pull-right" type="submit">查&nbsp;&nbsp;&nbsp;&nbsp;询</button>
+                </div>
             </div>
-            <div class="col-xs-6 col-lg-4">
-                <a class="col-xs-12 btn btn-primary pull-right">查&nbsp;&nbsp;&nbsp;&nbsp;询</a>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
     <br style="clear:both" />
     <br />
     <br />
 
-     <h2 class="sub-header">订单列表</h2>
+    <h2 class="sub-header">订单列表</h2>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
@@ -65,7 +67,7 @@
                         <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
                         <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
                         <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                        <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="javascript: function() { @(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
+                        <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="onSendGoods(@i) " data-target="#sendGoodsModal">发货</button></td>
                     </tr>
                 }
 
@@ -117,4 +119,9 @@
 
         $("#changeOrderStatusForm").submit();
     }
+
+    function onSendGoods(i) {
+         @sendGoodsIndex = i;
+    }
+
 </script>

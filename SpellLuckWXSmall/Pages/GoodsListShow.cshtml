@@ -24,7 +24,7 @@
                     <h2>@item.GoodsTitle</h2>
                     <p>@item.GoodsDetail</p>
                     <p>原价：@item.GoodsOldPrice ￥ &nbsp;  团价：@item.GoodsPrice ￥ &nbsp; 购买方式：@(item.GoodsPayType == 0 ? "2人团购" : item.GoodsPayType == 1 ? "3-6人团购" : "一分夺宝")</p>
-                    <p><a class="btn btn-danger" asp-page-handler="delGoods" asp-route-goodsID="@item.GoodsID.ToString()">删除</a></p>
+                    <p><button class="btn btn-danger" asp-page-handler="delGoods" data-target="#delGoodsModal" data-toggle="modal" asp-route-goodsID="@item.GoodsID.ToString()">删除</button></p>
                 </div>
             }
         }
@@ -48,5 +48,28 @@
                 <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex+1)">&raquo;</a></li>
             }
         </ul>
+    </div>
+</div>
+
+
+<div class="modal fade" id="delGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="sendGoodsTitle">删除商品</h4>
+            </div>
+            <form method="post" asp-page-handler="sendGoods">
+                <div class="modal-body">
+                    <div>
+                       fkdsjflsjflkdsjf
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">确 认</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

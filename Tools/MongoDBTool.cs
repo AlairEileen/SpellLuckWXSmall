@@ -10,7 +10,7 @@ namespace Tools.DB
         /// 数据库连接
         /// </summary>
         private const string conn = "mongodb://localhost:27027";
-        private const string lineConn = "mongodb://47.94.208.29:27027";
+        private const string lineConn = "mongodb://119.27.179.81:27027";
 
 
         private const string debugConn = "mongodb://192.168.1.222:27027";

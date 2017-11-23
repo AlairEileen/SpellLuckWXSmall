@@ -21,6 +21,7 @@ namespace SpellLuckWXSmall.Pages
         public int MaxPageShow { get => maxPageShow; }
         public int PageSize { get => pageSize; }
 
+        public GoodsModel SelectedGoods { get; set; }
         public void OnGet()
         {
            SetPage(0);
@@ -50,11 +51,11 @@ namespace SpellLuckWXSmall.Pages
          
         }
 
-        public async Task<IActionResult> OnGetDelGoods(string goodsID)
+        public async Task<IActionResult> OnGetDelGoods(string goodsId)
         {
            await Task.Run(()=> {
 
-                var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsID));
+                var filter = Builders<GoodsModel>.Filter.Eq(x => x.GoodsID, new ObjectId(goodsId));
                 new MongoDBTool().GetMongoCollection<GoodsModel>().DeleteOne(filter);
             });
          

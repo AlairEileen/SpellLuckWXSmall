@@ -8,7 +8,7 @@
     int pageIndex = Model.PageIndex;
 }
 <div class="jumbotron">
-        <h1>@ViewData["Title"]</h1>
+    <h1>@ViewData["Title"]</h1>
 </div>
 <div class="marketing">
     <div class="row">
@@ -20,16 +20,20 @@
                     <figure style="width:350px;height:200px;overflow:hidden;">
                         <img class="img-responsive" src="/file/FileDownload?fileUrl=@item.GoodsListImage.FileUrlData[1]" />
                     </figure>
-                    <h2>@item.GoodsTitle</h2>
-                    <p>@item.GoodsDetail</p>
-                    <p>原价：@item.GoodsOldPrice ￥ &nbsp;  团价：@item.GoodsPrice ￥ &nbsp; 购买方式：@(item.GoodsPayType == 0 ? "2人团购" : item.GoodsPayType == 1 ? "3-6人团购" : "一分夺宝")</p>
+                    <h2 class="text-primary">@item.GoodsTitle</h2>
+                    <p class="text-info">@item.GoodsDetail</p>
+                    <p class="bg-danger">
+                    原价：<span class="text-danger">@item.GoodsOldPrice</span> ￥ &nbsp;  
+                    团价：<span class="text-danger">@item.GoodsPrice</span> ￥ &nbsp; 
+                    购买方式：<span class="text-danger">@(item.GoodsPayType == 0 ? "2人团购" : item.GoodsPayType == 1 ? "3-6人团购" : "一分夺宝")</span></p>
                     <p><button class="btn btn-danger" data-target="#delGoodsModal" onclick="setDelGoodsId('@item.GoodsID.ToString()')" data-toggle="modal">删除</button></p>
                     @* asp-page-handler="delGoods" asp-route-goodsID="@item.GoodsID.ToString()" *@
                 </div>
             }
         }
     </div>
-    <div class="row">
+    <br />
+    <div class="col-xs-12 col-lg-9">
         <ul class="pagination pagination-lg">
 
             @if (Model.PageIndex != 0)
@@ -50,7 +54,7 @@
         </ul>
     </div>
 </div>
-
+<br style="clear:both;"/>
 
 <div class="modal fade" id="delGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
     <div class="modal-dialog">

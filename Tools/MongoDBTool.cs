@@ -31,7 +31,7 @@ namespace Tools.DB
         {
             if (mongoDatabase == null)
             {
-                var connectionString = lineConn;
+                var connectionString = conn;
 #if DEBUG
                 connectionString = debugConn;
 #endif

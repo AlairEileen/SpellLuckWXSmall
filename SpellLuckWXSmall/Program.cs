@@ -24,6 +24,7 @@ namespace SpellLuckWXSmall
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            .ConfigureLogging(factory => factory.AddConsole().AddDebug())
                 .UseStartup<Startup>()
                 .Build();
     }

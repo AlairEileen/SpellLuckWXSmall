@@ -6,11 +6,10 @@
 
 }
 <div class="jumbotron">
-    <div class="container">
-        <h1>设置</h1>
-        <h2>设置公司信息</h2>
-    </div>
+    <h1>设置</h1>
 </div>
+<h2>设置公司信息</h2>
+<hr />
 <form class="form" method="post" asp-page-handler="submitCompany" enctype="multipart/form-data">
     <div class="row">
         <div class="col-xs-6 col-sm-3">
@@ -27,3 +26,37 @@
     <button class="btn btn-primary pull-right" type="submit">提 交</button>
     <br style="clear:both;" />
 </form>
+<br />
+<h2>设置管理员用户信息</h2>
+<hr />
+<form class="form-signin" asp-page-handler="login" method="post">
+    <div class="row">
+
+        <div class="col-xs-6 col-sm-3">
+            <label for="inputEmail" class="sr-only">用户名</label>
+            <input type="text" id="inputEmail" asp-for="CAM.CompanyAccountName" value="@Model.CAMOut.CompanyAccountName" class="form-control" placeholder="用户名" required autofocus>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+
+            <label for="inputOlderPassword" class="sr-only">旧密码</label>
+            <input type="password" id="inputOlderPassword" asp-for="CAM.CompanyAccountOlderPassword" class="form-control" placeholder="旧密码" required>
+        </div>
+        <div class="col-xs-6 col-sm-3">
+
+            <label for="inputPassword" class="sr-only">新密码</label>
+            <input type="password" id="inputPassword" asp-for="CAM.CompanyAccountPassword" class="form-control" placeholder="新密码" required>
+        </div>  <div class="col-xs-6 col-sm-3">
+            <label for="inputVerifyPassword" class='sr-only'>确认密码</label>
+            <input type="password" id="inputVerifyPassword" asp-for="CAM.CompanyAccountVerifyPassword"
+                   class='form-control' placeholder="确认密码">
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <p class=' form-control  label-danger @(Model.ErrorAccount?"":"hidden")'>旧密码有误！</p>
+            <p class=' form-control  label-danger @(Model.ErrorVerify?"":"hidden")'>两次密码不一致！</p>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary pull-right" type="submit">提 交</button>
+</form>
+<br style="clear:both;" />
+<br />

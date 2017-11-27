@@ -15,5 +15,21 @@ namespace SpellLuckWXSmall.Models
         public ObjectId CompanyID { get; set; }
         public string CompanyName { get; set; }
         public string ServicePhone { get; set; }
+        public List<CompanyAccountModel> CompanyAccountList { get; set; }
     }
+    public class CompanyAccountModel
+    {
+        [BsonId]
+        [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
+        public ObjectId CompanyAccountID { get; set; }
+        public string CompanyAccountName { get; set; }
+        public string CompanyAccountPassword { get; set; }
+        [BsonIgnore]
+        public string CompanyAccountVerifyPassword { get; set; }
+        public string CompanyAccountOlderPassword { get; set; }
+        public string Token { get; set; }
+        public DateTime CreateTime { get; set; }
+        public DateTime LastLoginTime { get; set; }
+    }
+
 }

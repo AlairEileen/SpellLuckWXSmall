@@ -7,137 +7,115 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpellLuckWXSmall.Models;
 using Tools.DB;
 using MongoDB.Driver;
+using SpellLuckWXSmall.Interceptors;
+using System.Text;
 
 namespace SpellLuckWXSmall.Pages
 {
     public class IndexModel : PageModel
     {
+        [BindProperty]
+        public CompanyAccountModel CAM { get; set; }
+        MongoDBTool mongo = new MongoDBTool();
 
-        public List<OrderModel> OrderList { get; set; }
-        public List<AccountModel> AccountList { get; set; }
-
-        [BindProperty]
-        public string TrackingCompany { get; set; }
-        [BindProperty]
-        public string TrackingNumber { get; set; }
-        [BindProperty]
-        public string OrderId { get; set; }
-        [BindProperty]
-        public string OrderNumber { get; set; }
-        [BindProperty]
-        public string SearchParam { get; set; }
-        [BindProperty]
-        public int OrderStatus { get; set; }
-
-
+        public CompanyAccountModel CAMOut { get; set; }
+        private CompanyModel company;
+        public bool ErrorAccount { get; set; }
+        public bool ErrorVerify { get; set; }
         public void OnGet()
         {
-            GetWaitingSendOrder();
+            company = GetCompany();
+
+            if (company != null && company.CompanyAccountList != null && company.CompanyAccountList.Count != 0)
+            {
+                CAMOut = company.CompanyAccountList.FirstOrDefault();
+            }
+            else
+            {
+                CAMOut = null;
+            }
         }
 
-        private void GetWaitingSendOrder()
+        private CompanyModel GetCompany()
         {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            return mongo.GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+
+        }
+
+        public async Task<IActionResult> OnPostLogin()
+        {
+
+            bool isSuccess;
+            CAMOut = GetCAM();
+            if (CAMOut == null)
             {
-                if (o.OrderStatus == 1 && string.IsNullOrEmpty(o.TrackingNumber))
+                if (!CAM.CompanyAccountPassword.Equals(CAM.CompanyAccountVerifyPassword))
+                {
+                    ErrorVerify = true;
+                    OnGet();
+                    return Page();
+                }
+                isSuccess = await DoSetAdmin();
+            }
+            else
+            {
+                isSuccess = await DoLogin();
+            }
+            if (isSuccess)
+            {
+                HttpContext.Session.Set("CompanyAccountName", Encoding.UTF8.GetBytes(CAM.CompanyAccountName.ToString()));
+                return RedirectToPage("/OrderListShow");
+            }
+            else
+            {
+                OnGet();
+                ErrorAccount = true;
+                return Page();
+            }
+        }
+
+        private async Task<bool> DoLogin()
+        {
+            return await Task.Run(() =>
+            {
+                CAMOut = GetCAM();
+                if (CAM.CompanyAccountPassword.Equals(CAMOut.CompanyAccountPassword) && CAM.CompanyAccountName.Equals(CAMOut.CompanyAccountName))
                 {
                     return true;
                 }
                 return false;
             });
+
         }
-        private void GetWaitingSendOkOrder()
+
+        private CompanyAccountModel GetCAM()
         {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            var company = GetCompany();
+            if (company.CompanyAccountList == null || company.CompanyAccountList.Count == 0)
             {
-                if (o.OrderStatus == 0)
-                {
-                    return true;
-                }
-                return false;
-            });
+                return null;
+            }
+            return company.CompanyAccountList.FirstOrDefault();
         }
-        private void GetWaitingAssessOrder()
+
+        private async Task<bool> DoSetAdmin()
         {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
-            {
-                if (o.OrderStatus == 1 && !string.IsNullOrEmpty(o.TrackingNumber))
+            return await Task.Run(
+                () =>
                 {
-                    return true;
-                }
-                return false;
-            });
-        }
-        private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend, Func<OrderModel, bool> func)
-        {
-            List<OrderModel> list = new List<OrderModel>();
-            foreach (var item in accountWaitingSend)
-            {
-                if (item.OrderList == null || item.OrderList.Count == 0)
-                {
-                    continue;
-                }
-                foreach (var order in item.OrderList)
-                {
-                    if (func(order))
+                    List<CompanyAccountModel> list = new List<CompanyAccountModel>() { CAM };
+                    company = GetCompany();
+                    if (company != null && company.CompanyAccountList == null)
                     {
-                        list.Add(order);
+                        mongo.GetMongoCollection<CompanyModel>().UpdateOne(x => x.CompanyID.Equals(company.CompanyID), Builders<CompanyModel>.Update.Set(x => x.CompanyAccountList, list));
                     }
+                    else if (company == null)
+                    {
+                        mongo.GetMongoCollection<CompanyModel>().InsertOne(new CompanyModel() { CompanyAccountList = list });
+                    }
+                    return true;
                 }
-                AccountList.Add(item);
-            }
-            return list;
-        }
-
-        public IActionResult OnPostSendGoods()
-        {
-            Console.WriteLine(OrderId + TrackingNumber + TrackingCompany);
-            return Page();
-        }
-
-        public IActionResult OnPostChangeOrderStatus()
-        {
-            switch (OrderStatus)
-            {
-                case 0:
-                    OnGet();
-                    break;
-                case 1:
-                    GetWaitingSendOkOrder();
-                    break;
-                case 2:
-                    GetWaitingAssessOrder();
-                    break;
-                default:
-                    OnGet();
-                    break;
-            }
-            return Page();
-        }
-        public IActionResult OnPostSearchByOrderNumber()
-        {
-            var filter = Builders<AccountModel>.Filter;
-            var filterSum = filter.Eq("OrderList.$.OrderNumber", OrderNumber);
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filterSum).ToList();
-            List<OrderModel> list = new List<OrderModel>();
-            foreach (var item in accountWaitingSend)
-            {
-                if (item.OrderList == null || item.OrderList.Count == 0)
-                {
-                    continue;
-                }
-                foreach (var order in item.OrderList)
-                {
-                    list.Add(order);
-                }
-                AccountList.Add(item);
-            }
-            OrderList = list;
-
-            return Page();
+                );
         }
     }
 }

@@ -7,15 +7,33 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SpellLuckWXSmall.Models;
 using Tools.DB;
 using MongoDB.Driver;
+using System.Text;
 
 namespace SpellLuckWXSmall.Pages
 {
     public class SettingsModel : PageModel
     {
+        [BindProperty]
+        public CompanyAccountModel CAM { get; set; }
+        MongoDBTool mongo = new MongoDBTool();
+
+        public CompanyAccountModel CAMOut { get; set; }
+        private CompanyModel company;
+        public bool ErrorAccount { get; set; }
+        public bool ErrorVerify { get; set; }
         public void OnGet()
         {
             Company = new MongoDBTool().GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+            company = Company;
 
+            if (company != null && company.CompanyAccountList != null && company.CompanyAccountList.Count != 0)
+            {
+                CAMOut = company.CompanyAccountList.FirstOrDefault();
+            }
+            else
+            {
+                CAMOut = null;
+            }
         }
         [BindProperty]
         public CompanyModel Company { get; set; }
@@ -36,10 +54,63 @@ namespace SpellLuckWXSmall.Pages
             else
             {
                 Company.CompanyID = company.CompanyID;
-                collection.ReplaceOne(x=>x.CompanyID.Equals(company.CompanyID),Company);
+                collection.ReplaceOne(x => x.CompanyID.Equals(company.CompanyID), Company);
             }
 
             return Page();
+        }
+        private CompanyModel GetCompany()
+        {
+            return mongo.GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+
+        }
+
+        public async Task<IActionResult> OnPostLogin()
+        {
+            CAMOut = GetCAM();
+            if (!CAM.CompanyAccountPassword.Equals(CAM.CompanyAccountVerifyPassword))
+            {
+                ErrorVerify = true;
+                OnGet();
+                return Page();
+            }
+            if (!CAM.CompanyAccountOlderPassword.Equals(CAMOut.CompanyAccountPassword))
+            {
+                ErrorAccount = true;
+                OnGet();
+                return Page();
+            }
+            await DoSetAdmin();
+            HttpContext.Session.Set("CompanyAccountName", Encoding.UTF8.GetBytes(CAM.CompanyAccountName.ToString()));
+            OnGet();
+            return Page();
+        }
+
+
+        private CompanyAccountModel GetCAM()
+        {
+            var company = GetCompany();
+            if (company.CompanyAccountList == null || company.CompanyAccountList.Count == 0)
+            {
+                return null;
+            }
+            return company.CompanyAccountList.FirstOrDefault();
+        }
+
+        private async Task<bool> DoSetAdmin()
+        {
+            return await Task.Run(
+                () =>
+                {
+                    List<CompanyAccountModel> list = new List<CompanyAccountModel>() { CAM };
+                    company = GetCompany();
+                    if (company != null && company.CompanyAccountList != null)
+                    {
+                        mongo.GetMongoCollection<CompanyModel>().UpdateOne(x => x.CompanyID.Equals(company.CompanyID), Builders<CompanyModel>.Update.Set(x => x.CompanyAccountList, list));
+                    }
+                    return true;
+                }
+                );
         }
     }
 }

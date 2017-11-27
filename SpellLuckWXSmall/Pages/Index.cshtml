@@ -1,124 +1,69 @@
 ﻿@page
 @model IndexModel
-@using SpellLuckWXSmall.Models
 @{
-    ViewData["Title"] = "订单";
-    ViewData["Index"] = 1;
-    int sendGoodsIndex = -1;
+    ViewData["Title"] = "登录";
+    ViewData["Index"] = -1000;
 }
-<div class="jumbotron">
-    <div class="container">
-        <h1>订单查看</h1>
-    </div>
-</div>
-<div class="container" style="padding-left:0px;padding-right:30px;">
-    <div class="row">
-        <form class="col-xs-6 col-lg-4" id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
-            <h3>根据订单状态查询订单</h3>
-            <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
-                <option value="0">待发货</option>
-                <option value="1">待确认发货</option>
-                <option value="2">待评价</option>
-            </select>
-        </form>
-        <form class="col-xs-12 col-sm-6 col-lg-8" asp-page-handler="searchByOrderNumber">
-            <h3>根据订单号码查询订单</h3>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-lg-8">
-                    <input class="form-control" type="text" asp-for="OrderNumber" placeholder="请输入订单号" />
-                </div>
-                <div class="col-xs-6 col-lg-4">
-                    <button class="col-xs-12 btn btn-primary pull-right" type="submit">查&nbsp;&nbsp;&nbsp;&nbsp;询</button>
-                </div>
-            </div>
-        </form>
-    </div>
-    <br style="clear:both" />
-    <br />
-    <br />
-
-    <h2 class="sub-header">订单列表</h2>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <td>订单号</td>
-                    <td>订单商品</td>
-                    <td>商品标题</td>
-                    <td>商品颜色</td>
-                    <td>商品尺寸</td>
-                    <td>商品类型</td>
-                    <td>订单金额</td>
-                    <td>下单时间</td>
-                    <td>操作</td>
-                </tr>
-            </thead>
-            <tbody>
-
-                @for (int i = 0; i < Model.OrderList.Count(); i++)
-                {
-                    <tr>
-                        <td style="vertical-align:middle">@Model.OrderList[i].OrderNumber</td>
-                        <td style="vertical-align:middle"><img width="90" height="60" src="/file/FileDownload?fileUrl=@Model.OrderList[i].GoodsInfo.GoodsListImage.FileUrlData[2]" /></td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsTitle</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsColor</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsRule</td>
-                        <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                        <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="function(){@(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="modal fade" id="sendGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="sendGoodsTitle">发货信息</h4>
-            </div>
-            <form method="post" asp-page-handler="sendGoods">
-                <div class="modal-body">
-                    <div>
-                        @{
-                            AccountModel currentAccount = null;
-                            if (Model.AccountList != null && Model.OrderList != null)
-                            {
-                                currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
-
-                                <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
-                                <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
-                                <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
-                                <input class="hidden" asp-for="OrderId" value="@Model.OrderList[sendGoodsIndex].OrderID" type="text" />
-                                <label>物流公司</label>
-                                <input class="form-control" asp-for="TrackingCompany" type="text" />
-                                <label>运单号</label>
-                                <input class="form-control" asp-for="TrackingNumber" type="text" />
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">提交</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-<script type="text/javascript">
-    function changeOrderStatus() {
-        alert("fdfd");
-        location.href = "/?handler=changeOrderStatusForm";
-        //$("#changeOrderStatusForm").submit();
+<style>
+    body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #eee;
     }
-    function onSendGoods(i) {
-        
+
+    .form-signin {
+        max-width: 330px;
+        padding: 15px;
+        margin: 0 auto;
     }
-</script>
+
+        .form-signin .form-signin-heading,
+        .form-signin .checkbox {
+            margin-bottom: 10px;
+        }
+
+        .form-signin .checkbox {
+            font-weight: normal;
+        }
+
+        .form-signin .form-control {
+            position: relative;
+            height: auto;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+            .form-signin .form-control:focus {
+                z-index: 2;
+            }
+
+        .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+</style>
+    <form class="form-signin" asp-page-handler="login" method="post">
+        <h2 class="form-signin-heading">管理员@(Model.CAMOut == null ? "用户设置" : "登录")</h2>
+        <label for="inputEmail" class="sr-only">用户名</label>
+        <input type="text" id="inputEmail" asp-for="CAM.CompanyAccountName" class="form-control" placeholder="用户名" required autofocus>
+        <label for="inputPassword" class="sr-only">密码</label>
+        <input type="password" id="inputPassword" asp-for="CAM.CompanyAccountPassword" class="form-control" placeholder="密码" required>
+        <label for="inputVerifyPassword" class='sr-only @(Model.CAMOut == null ?"":"hidden")'>确认密码</label>
+        <input type="password" id="inputVerifyPassword" asp-for="CAM.CompanyAccountVerifyPassword" 
+               class='form-control @(Model.CAMOut == null ?"":"hidden")' placeholder="确认密码">
+       
+        <p class=' form-control  label-danger @(Model.ErrorAccount?"":"hidden")'>用户名或者密码有误！</p>
+        <p class=' form-control  label-danger @(Model.ErrorVerify?"":"hidden")'>两次密码不一致！</p>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">@(Model.CAMOut == null ? "提交设置" : "登录")</button>
+    </form>

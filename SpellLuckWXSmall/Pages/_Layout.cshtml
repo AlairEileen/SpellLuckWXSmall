@@ -17,7 +17,7 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class='navbar navbar-inverse navbar-fixed-top @((int)ViewData["Index"] == -1000 ? "hidden" : "")'>
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -30,19 +30,29 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class='@((int)ViewData["Index"]==1?"active":"")'>
-                            <a asp-page="/Index">订单</a>
+                    <li class='@((int)ViewData["Index"] == 1 ? "active" : "")'>
+                        <a asp-page="/OrderListShow">订单</a>
                     </li>
 
-                    <li class='@((int)ViewData["Index"]==2?"active":"")'>
+                    <li class='@((int)ViewData["Index"] == 2 ? "active" : "")'>
 
                         <a asp-page="/GoodsPush">添加商品</a>
                     </li>
-                    <li class='@((int)ViewData["Index"]==3?"active":"")'>
+                    <li class='@((int)ViewData["Index"] == 3 ? "active" : "")'>
                         <a asp-page="/GoodsListShow">商品展示</a>
                     </li>
                     <li><a asp-page="/GoodsCentAdd">添加1分夺宝商品</a></li>
-                    <li class='@((int)ViewData["Index"]==0?"active":"")'><a asp-page="/Settings">设置信息</a></li>
+                    <li class='@((int)ViewData["Index"] == 0 ? "active" : "")'><a asp-page="/Settings">设置信息</a></li>
+                </ul>
+                <ul class="nav navbar-right navbar-nav">
+                    @{   byte[] data; Context.Session.TryGetValue("CompanyAccountName", out data);
+                        string acName = "";
+                        if (data != null)
+                        {
+                            acName = System.Text.Encoding.UTF8.GetString(data);
+                        }
+                    }
+                    <li class="active"><a>@(acName)</a></li>
                 </ul>
             </div>
         </div>
@@ -50,7 +60,7 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
+        <footer class='@((int)ViewData["Index"]==-1000?"hidden":"")'>
             <p>&copy; 2017 - 拼手气后台管理</p>
         </footer>
     </div>

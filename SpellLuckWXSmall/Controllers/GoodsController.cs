@@ -35,7 +35,7 @@ namespace SpellLuckWXSmall.Controllers
                 var filter = Builders<GoodsModel>.Filter;
                 var filterSum = filter.Eq(x => x.GoodsPayType, goodsPayType);
                 var filterSum2 = filter.Eq(x => x.GoodsPayType, goodsPayType) & filter.Regex(x => x.GoodsTitle, $"/{searchParam}/");
-                var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(string.IsNullOrEmpty(searchParam)?filterSum:filterSum2).Skip(pageIndex * pageSize);
+                var find = new MongoDBTool().GetMongoCollection<GoodsModel>().Find(string.IsNullOrEmpty(searchParam) ? filterSum : filterSum2).Skip(pageIndex * pageSize);
                 var count = find.Count();
                 var pageSum = (count / pageSize) + (count % pageSize == 0 ? 0 : 1);
                 List<GoodsModel> GoodsModelList = null;
@@ -198,7 +198,7 @@ namespace SpellLuckWXSmall.Controllers
 
         private string GetJackPotGoodsDetail(string jackPotID)
         {
-            BaseResponseModel<ResponseGoodsDetail> responseModel = new BaseResponseModel<ResponseGoodsDetail>();
+            BaseResponseModel<ResponseGoodsDetail> responseModel = new BaseResponseModel<ResponseGoodsDetail>() { StatusCode = (int)ActionParams.code_ok };
             var jackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(x => x.JackPotID.Equals(new ObjectId(jackPotID))).FirstOrDefault();
             if (jackPot == null)
             {

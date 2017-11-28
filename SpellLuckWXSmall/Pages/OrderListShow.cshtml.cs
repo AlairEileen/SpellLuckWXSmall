@@ -95,6 +95,10 @@ namespace SpellLuckWXSmall.Pages
                         list.Add(order);
                     }
                 }
+                if (AccountList == null)
+                {
+                    AccountList = new List<AccountModel>();
+                }
                 AccountList.Add(item);
             }
             list.Sort((x, y) => DateTime.Compare(x.CreateTime, y.CreateTime));

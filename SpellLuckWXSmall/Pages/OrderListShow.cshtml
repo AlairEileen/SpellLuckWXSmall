@@ -115,7 +115,7 @@
 </div>
 
 
-<script type="text/javascript">
+<script>
     function changeOrderStatus() {
         alert("fdfd");
         //location.href = "/CompanyAccountLogin?handler=changeOrderStatus";
@@ -124,30 +124,22 @@
     function onSendGoods(i) {
 
     }
-     @*@{
-                            AccountModel currentAccount = null;
-                            if (Model.AccountList != null && Model.OrderList != null && Model.AccountList.Count > 0 && Model.OrderList.Count > 0)
-                            {
-                                currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
-
-                                <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
-                                <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
-                                <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
-                                <input class="hidden" asp-for="OrderId" value="@Model.OrderList[sendGoodsIndex].OrderID" type="text" />
-                                <label>物流公司</label>
-                                <input class="form-control" asp-for="TrackingCompany" type="text" />
-                                <label>运单号</label>
-                                <input class="form-control" asp-for="TrackingNumber" type="text" />
-                            }
-                        }*@
+   
     function getSendGoodsInfo(orderId) {
-
+        
         $.get("/order/GetOrderAndPersonInfo?orderId=" + orderId, function (data, status) {
-
-
-            $("#goodSendInfoContainer").html("<p><label>收件人：</label>" + data.JsonData1.OrderLocationPersonName + "</p>" +
+            alert(data);
+            alert(data.statusCode);
+            alert(data.JsonData1);
+            var container = $("#goodSendInfoContainer");
+            container.html("");
+            container.append("<p><label>收件人：</label>" +
+                data.JsonData1.OrderLocationPersonName + "</p>" +
                 "<p><label>收件人手机号码：</label>" + data.JsonData1.OrderLocationPhone + "</p>" +
-                "<p><label>收件地址：</label>" + data.JsonData1.ProvinceCityArea[0] + data.JsonData1.ProvinceCityArea[1] + data.JsonData1.ProvinceCityArea[2] + data.JsonData1.AddressDetail + "</p>" +
+                "<p><label>收件地址：</label>" + data.JsonData1.ProvinceCityArea[0] +
+                data.JsonData1.ProvinceCityArea[1] +
+                data.JsonData1.ProvinceCityArea[2] +
+                data.JsonData1.AddressDetail + "</p>" +
                 "<input class='hidden' value='"+ data.JsonData2.OrderID + "' type='text' />"+
                              "<label>物流公司</label>"+
                                "<input class='form-control' name='TrackingCompany' type='text' />"+

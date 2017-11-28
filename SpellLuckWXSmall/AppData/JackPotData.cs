@@ -118,6 +118,7 @@ namespace SpellLuckWXSmall.AppData
                 GoodsColor = payWaitingModel.GoodsColor,
                 GoodsRule = payWaitingModel.GoodsRule,
                 WXOrderId = payWaitingModel.WXOrderId,
+                PayWaitingID=payWaitingModel.PayWaitingID,
                 AccountName = account.AccountName
             });
             if (jackPot.JackPotPeopleNum == jackPot.Participator.Count)

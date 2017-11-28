@@ -24,7 +24,7 @@ namespace SpellLuckWXSmall.Pages
         private void GetAllJackPot()
         {
             var listJackPot = mongo.GetMongoCollection<JackPotModel>().Find(Builders<JackPotModel>.Filter.In(x => x.JackPotStatus, new int[] { 0, 1 })).ToList();
-            var listWaiting = mongo.GetMongoCollection<JackPotJoinWaitingModel>().Find(Builders<JackPotJoinWaitingModel>.Filter.Gt(x => x.ShareTimes, AppConstData.SharaMinAdd)).ToList();
+            var listWaiting = mongo.GetMongoCollection<JackPotJoinWaitingModel>().Find(Builders<JackPotJoinWaitingModel>.Filter.Lt(x => x.ShareTimes, AppConstData.SharaMinAdd)).ToList();
             if (listWaiting != null && listWaiting.Count != 0)
             {
                 var waitingJackPot = new List<JackPotModel>();

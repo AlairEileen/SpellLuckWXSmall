@@ -54,6 +54,13 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     var jackPotFilter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, new ObjectId(jackPotID));
                     jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
+                    if (jackPot!=null)
+                    {
+                        if (!jackPot.JackPotPassword.Equals(jackPotPassword)||jackPot.JackPotPeopleNum==jackPot.Participator.Count)
+                        {
+                            return new BaseResponseModel<string>() {StatusCode=(int)ActionParams.code_error_verify,JsonData="该团人数已满或者密码有误" }.ToJson();
+                        }
+                    }
 
                 }
                 else if (!string.IsNullOrEmpty(goodsID))

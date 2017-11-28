@@ -54,15 +54,24 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     var jackPotFilter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, new ObjectId(jackPotID));
                     jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
-                    if (jackPot!=null)
+                    if (jackPot != null)
                     {
-                        if (!jackPot.JackPotPassword.Equals(jackPotPassword)||jackPot.JackPotPeopleNum==jackPot.Participator.Count)
+                        if (!jackPot.JackPotPassword.Equals(jackPotPassword) ||
+                            jackPot.JackPotPeopleNum == jackPot.Participator.Count)
                         {
-                            return new BaseResponseModel<string>() {StatusCode=(int)ActionParams.code_error_verify,JsonData="该团人数已满或者密码有误" }.ToJson();
+                            return new BaseResponseModel<string>()
+                            {
+                                StatusCode = (int)ActionParams.code_error_verify,
+                                JsonData = "团满或密码有误"
+                            }.ToJson();
                         }
-                        if (jackPot.Participator.Exists(x=>x.AccountID.Equals(account.AccountID)))
+                        if (jackPot.Participator.Exists(x => x.AccountID.Equals(account.AccountID)))
                         {
-                            return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_exists, JsonData = "你已经参加过此团" }.ToJson();
+                            return new BaseResponseModel<string>()
+                            {
+                                StatusCode = (int)ActionParams.code_error_exists,
+                                JsonData = "你已参此团"
+                            }.ToJson();
 
                         }
                     }
@@ -128,7 +137,7 @@ namespace SpellLuckWXSmall.Controllers
                     JackPotPrice = price,
                     JackPotPeopleNum = peopleNum,
                     GoodsRule = goodsRule,
-                    CreateTime=DateTime.Now
+                    CreateTime = DateTime.Now
                 };
                 mongo.GetMongoCollection<PayWaitingModel>().InsertOne(payWaitingModel);
                 JsApiPay jsApiPay = new JsApiPay();
@@ -226,7 +235,7 @@ namespace SpellLuckWXSmall.Controllers
 
                 ///一分夺宝列表
                 var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
-                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID))&waitingFilter.Gt(x=>x.ShareTimes,AppConstData.SharaMinAdd);
+                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID)) & waitingFilter.Gt(x => x.ShareTimes, AppConstData.SharaMinAdd);
                 var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
                 if (listWaiting != null && listWaiting.Count != 0)
                 {

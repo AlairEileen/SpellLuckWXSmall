@@ -6,77 +6,77 @@
 
 }
 <div class="jumbotron">
-        <h1>@ViewData["Title"]</h1>
+    <h1>@ViewData["Title"]</h1>
 </div>
-    <form class="form" method="post" asp-page-handler="submitGoods" enctype="multipart/form-data">
-        <div class="row">
-            <div class="col-xs-6 col-sm-3">
-                <label for="goodsTitle">商品标题</label>
-                <input id="goodsTitle" asp-for="GoodsModel.GoodsTitle" maxlength="20" class="form-control col-xs-6 col-sm-4" type="text" placeholder="标题（最多20字）"/>
-            </div>
-            <div class="col-xs-6 col-sm-3">
-                <label for="goodsPayType">商品购买类型</label>
-                <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
-                    <option value="0">2人拼团</option>
-                    <option value="1">3-6人拼团</option>
-                    <option value="2">1分夺宝</option>
-                </select>
-            </div>
-            <div class="col-xs-6 col-sm-3" id="goodsPriceRow">
-                <label for="goodsPrice">商品团价</label>
-                <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）"/>
-            </div>
-            <div class="col-xs-6 col-sm-3">
-                <label for="goodsOldPrice">商品原价</label>
-                <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）"/>
+<form class="form" method="post" asp-page-handler="submitGoods" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-xs-6 col-sm-3">
+            <label for="goodsTitle">商品标题</label>
+            <input id="goodsTitle" asp-for="GoodsModel.GoodsTitle" maxlength="20" class="form-control col-xs-6 col-sm-4" type="text" placeholder="标题（最多20字）" />
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <label for="goodsPayType">商品购买类型</label>
+            <select id="goodsPayType" onchange="OnPayTypeChanged(this)" class="form-control col-xs-6 col-sm-3" asp-for="GoodsModel.GoodsPayType">
+                <option value="0">2人拼团</option>
+                <option value="1">3-6人拼团</option>
+                <option value="2">1分夺宝</option>
+            </select>
+        </div>
+        <div class="col-xs-6 col-sm-3" id="goodsPriceRow">
+            <label for="goodsPrice">商品团价</label>
+            <input id="goodsPrice" asp-for="GoodsModel.GoodsPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）" />
+        </div>
+        <div class="col-xs-6 col-sm-3">
+            <label for="goodsOldPrice">商品原价</label>
+            <input id="goodsOldPrice" asp-for="GoodsModel.GoodsOldPrice" class="form-control col-xs-6 col-sm-4" placeholder="价格（实例12.42）" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-6 col-sm-4">
+            <label for="goodsDetail">商品简介</label>
+            <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" maxlength="2000" class="form-control" rows="6" placeholder="简介字数2000以内"></textarea>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            <label class="" for="goodsColor">商品颜色(每行一个)</label>
+            <textarea id="goodsColor" asp-for="GoodsColor" class="form-control" placeholder="颜色（每行一个，不能有空行，最后不能加回车）" rows="6"></textarea>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            <label class="" for="goodsRule">商品尺寸(每行一个)</label>
+            <textarea id="goodsRule" asp-for="GoodsRule" class="form-control" rows="6" placeholder="尺寸（每行一个，不能有空行，最后不能加回车）"></textarea>
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+        <div class="col-xs-6 col-sm-4">
+            <input type="file" asp-for="ListImage" max="5" id="goodsListPic" onchange="loadFile(this)" class="hidden" />
+            <div class="input-append">
+                <a class="btn btn-default" onclick="$('input[id=goodsListPic]').click();">选择商品列表图片</a>
+                <span>未选择（必须选择）</span>
             </div>
         </div>
-        <br />
-        <div class="row">
-            <div class="col-xs-6 col-sm-4">
-                <label for="goodsDetail">商品简介</label>
-                <textarea id="goodsDetail" asp-for="GoodsModel.GoodsDetail" maxlength="2000" class="form-control" rows="6" placeholder="简介字数2000以内"></textarea>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <label class="" for="goodsColor">商品颜色(每行一个)</label>
-                <textarea id="goodsColor" asp-for="GoodsColor" class="form-control" placeholder="颜色（每行一个，不能有空行，最后不能加回车）" rows="6"></textarea>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <label class="" for="goodsRule">商品尺寸(每行一个)</label>
-                <textarea id="goodsRule" asp-for="GoodsRule" class="form-control" rows="6" placeholder="尺寸（每行一个，不能有空行，最后不能加回车）" ></textarea>
+        <div class="col-xs-6 col-sm-4">
+            <input type="file" asp-for="MainImages" multiple max="5" onchange="loadFile(this,5)" id="goodsHomePic" class="hidden" />
+            <div class="input-append">
+                <a class="btn btn-default" onclick="$('input[id=goodsHomePic]').click();">选择商品主图</a>
+                <span>未选择（必须选择）</span>
             </div>
         </div>
-       
-        <br />
-        <div class="row">
-            <div class="col-xs-6 col-sm-4">
-                <input type="file" asp-for="ListImage" max="5" id="goodsListPic" class="hidden" />
-                <div class="input-append">
-                    <a class="btn btn-default" onclick="$('input[id=goodsListPic]').click();">选择商品列表图片</a>
-                    <span>未选择（必须选择）</span>
-                </div>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <input type="file" asp-for="MainImages" multiple max="5" id="goodsHomePic" class="hidden" />
-                <div class="input-append">
-                    <a class="btn btn-default" onclick="$('input[id=goodsHomePic]').click();">选择商品主图</a>
-                    <span>未选择（必须选择）</span>
-                </div>
-            </div>
-            <div class="col-xs-6 col-sm-4">
-                <input type="file" asp-for="OtherImages" class="hidden" id="goodsOtherPic" multiple />
-                <div class="input-append">
-                    <a class="btn btn-default" onclick="$('input[id=goodsOtherPic]').click();">选择商品其他图片</a>
-                    <span>未选择（必须选择）</span>
-                </div>
+        <div class="col-xs-6 col-sm-4">
+            <input type="file" asp-for="OtherImages" onchange="loadFile(this)" class="hidden" id="goodsOtherPic" multiple />
+            <div class="input-append">
+                <a class="btn btn-default" onclick="$('input[id=goodsOtherPic]').click();">选择商品其他图片</a>
+                <span>未选择（必须选择）</span>
             </div>
         </div>
-        <br />
-        <br />
-        <div class="row" style="padding-right:15px;">
-            <button class="btn btn-lg btn-success col-xs-6 col-sm-4 pull-right" type="submit">提 交</button>
-        </div>
-    </form>
+    </div>
+    <br />
+    <br />
+    <div class="row" style="padding-right:15px;">
+        <button class="btn btn-lg btn-success col-xs-6 col-sm-4 pull-right" type="submit">提 交</button>
+    </div>
+</form>
 <br />
 <br />
 <br />
@@ -89,5 +89,13 @@
 
             priceRow.show();
         }
+    }
+    function loadFile(o, maxLength) {
+        if (maxLength != undefined && o.files.length > maxLength) {
+            alert("最多可以选择" + maxLength + "张");
+            return;
+        }
+        var text = o.files.length == 1 ? o.files[0].name : o.files.length + "张图片";
+        $(o).next().find("span").html(text);
     }
 </script>

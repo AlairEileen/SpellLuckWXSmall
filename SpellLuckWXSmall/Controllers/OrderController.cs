@@ -104,5 +104,22 @@ namespace SpellLuckWXSmall.Controllers
             return json;
         }
 
+
+        public string GetOrderAndPersonInfo(string orderId)
+        {
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq("OrderList.OrderID", new ObjectId(orderId));
+            var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filterSum).FirstOrDefault();
+
+            if (account != null)
+            {
+                var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderId)));
+                return new BaseResponseModel2<OrderLocation, OrderModel>() { StatusCode = (int)ActionParams.code_ok, JsonData1 = account.OrderLocation, JsonData2 = order }.ToJson();
+            }
+
+            return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+        }
+
+
     }
 }

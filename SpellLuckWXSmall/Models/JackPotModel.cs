@@ -15,8 +15,7 @@ namespace SpellLuckWXSmall.Models
         public ObjectId JackPotID { get; set; }
         public List<AccountPotModel> Participator { get; set; }
         public GoodsModel JackGoods { get; set; }
-        [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
-        public ObjectId PayWaitingID { get; set; }
+      
         /// <summary>
         /// 0:等待加入，1：等待开奖，2：已开奖
         /// </summary>
@@ -40,6 +39,7 @@ namespace SpellLuckWXSmall.Models
         public string WXOrderId { get; set; }
         public string GoodsColor { get; set; }
         public string GoodsRule { get; set; }
-
+        [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
+        public ObjectId PayWaitingID { get; set; }
     }
 }

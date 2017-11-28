@@ -170,7 +170,7 @@ namespace SpellLuckWXSmall.AppData
         {
             try
             {
-                var jackPot = mongo.GetMongoCollection<JackPotModel>().Find(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID));
+                var jackPot = mongo.GetMongoCollection<JackPotModel>().Find(Builders<JackPotModel>.Filter.Eq("Participator.PayWaitingID", payWaitingModel.PayWaitingID));
                 if (jackPot == null || jackPot.Count() == 0)
                 {
                     JackPotModel jackPotModel = new JackPotModel()
@@ -181,10 +181,10 @@ namespace SpellLuckWXSmall.AppData
                         JackPotStatus = 0,
                         JackPotPrice = JackPotController.GetJackPotPrice(goods.GoodsPrice, payWaitingModel.JackPotPeopleNum),
                         JackPotPeopleNum = payWaitingModel.JackPotPeopleNum,
-                        PayWaitingID = payWaitingModel.PayWaitingID,
                         Participator = new List<AccountPotModel>() { new AccountPotModel() {
                     AccountAvatar=account.AccountAvatar,
                     AccountID=account.AccountID,
+                    PayWaitingID = payWaitingModel.PayWaitingID,
                     GoodsColor = payWaitingModel.GoodsColor,
                     GoodsRule = payWaitingModel.GoodsRule,
                     WXOrderId=payWaitingModel.WXOrderId,

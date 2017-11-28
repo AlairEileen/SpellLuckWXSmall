@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "订单";
     ViewData["Index"] = 1;
-    int sendGoodsIndex = -1;
+    //int sendGoodsIndex = 0;
 }
 <div class="jumbotron">
     <h1>订单查看</h1>
@@ -63,7 +63,7 @@
                     <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                    <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="function(){@(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
+                    <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button></td>
                 </tr>
             }
 
@@ -91,7 +91,7 @@
         }
     </ul>
 </div>
-<br style="clear:both;"/>
+<br style="clear:both;" />
 <div class="modal fade" id="sendGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -101,23 +101,8 @@
             </div>
             <form method="post" asp-page-handler="sendGoods">
                 <div class="modal-body">
-                    <div>
-                        @{
-                            AccountModel currentAccount = null;
-                            if (Model.AccountList != null && Model.OrderList != null)
-                            {
-                                currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
+                    <div id="goodSendInfoContainer">
 
-                                <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
-                                <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
-                                <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
-                                <input class="hidden" asp-for="OrderId" value="@Model.OrderList[sendGoodsIndex].OrderID" type="text" />
-                                <label>物流公司</label>
-                                <input class="form-control" asp-for="TrackingCompany" type="text" />
-                                <label>运单号</label>
-                                <input class="form-control" asp-for="TrackingNumber" type="text" />
-                            }
-                        }
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -133,10 +118,41 @@
 <script type="text/javascript">
     function changeOrderStatus() {
         alert("fdfd");
-        location.href = "/CompanyAccountLogin?handler=changeOrderStatusForm";
-        //$("#changeOrderStatusForm").submit();
+        //location.href = "/CompanyAccountLogin?handler=changeOrderStatus";
+        $("#changeOrderStatusForm").submit();
     }
     function onSendGoods(i) {
 
+    }
+     @*@{
+                            AccountModel currentAccount = null;
+                            if (Model.AccountList != null && Model.OrderList != null && Model.AccountList.Count > 0 && Model.OrderList.Count > 0)
+                            {
+                                currentAccount = Model.AccountList.Find(x => x.OrderList.Exists(y => y.OrderID.Equals(Model.OrderList[sendGoodsIndex].OrderID)));
+
+                                <p><label>收件人：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPersonName)</p>
+                                <p><label>收件人手机号码：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.OrderLocationPhone)</p>
+                                <p><label>收件地址：</label>@(currentAccount.OrderLocation == null ? "错误" : currentAccount.OrderLocation.ProvinceCityArea[0] + currentAccount.OrderLocation.ProvinceCityArea[1] + currentAccount.OrderLocation.ProvinceCityArea[2] + currentAccount.OrderLocation.AddressDetail)</p>
+                                <input class="hidden" asp-for="OrderId" value="@Model.OrderList[sendGoodsIndex].OrderID" type="text" />
+                                <label>物流公司</label>
+                                <input class="form-control" asp-for="TrackingCompany" type="text" />
+                                <label>运单号</label>
+                                <input class="form-control" asp-for="TrackingNumber" type="text" />
+                            }
+                        }*@
+    function getSendGoodsInfo(orderId) {
+
+        $.get("/order/GetOrderAndPersonInfo?orderId=" + orderId, function (data, status) {
+
+
+            $("#goodSendInfoContainer").html("<p><label>收件人：</label>" + data.JsonData1.OrderLocationPersonName + "</p>" +
+                "<p><label>收件人手机号码：</label>" + data.JsonData1.OrderLocationPhone + "</p>" +
+                "<p><label>收件地址：</label>" + data.JsonData1.ProvinceCityArea[0] + data.JsonData1.ProvinceCityArea[1] + data.JsonData1.ProvinceCityArea[2] + data.JsonData1.AddressDetail + "</p>" +
+                "<input class='hidden' value='"+ data.JsonData2.OrderID + "' type='text' />"+
+                             "<label>物流公司</label>"+
+                               "<input class='form-control' name='TrackingCompany' type='text' />"+
+                               "<label>运单号</label>"+
+                              "<input class='form-control' name='TrackingNumber' type='text' />");
+        });
     }
 </script>

@@ -291,6 +291,7 @@ namespace SpellLuckWXSmall.Controllers
                         AccountAvatar = account.AccountAvatar,
                         GoodsColor = jackpotWait.GoodsColor,
                         GoodsRule = jackpotWait.GoodsRule,
+                        PayWaitingID = jackpotWait.PayWaitingID,
                         WXOrderId = jackpotWait.WXOrderId
                     };
                     if (jackPot == null)
@@ -300,8 +301,7 @@ namespace SpellLuckWXSmall.Controllers
                             CreateTime = DateTime.Now,
                             JackGoods = jackpotWait.Goods,
                             JackPotStatus = 0,
-                            Participator = new List<AccountPotModel>() { accountPot },
-                            PayWaitingID = jackpotWait.PayWaitingID
+                            Participator = new List<AccountPotModel>() { accountPot }
                         });
                     }
                     else
@@ -341,7 +341,7 @@ namespace SpellLuckWXSmall.Controllers
             {
                 ///获取拼团ID
                 var mongo = new MongoDBTool();
-                var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
+                var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(Builders<JackPotModel>.Filter.Eq("Participator.PayWaitingID", new ObjectId(payWaitingID))).FirstOrDefault();
                 var response = new BaseResponseModel<JackPotModel>()
                 {
                     StatusCode = jackpot == null ? (int)ActionParams.code_null : (int)ActionParams.code_ok,

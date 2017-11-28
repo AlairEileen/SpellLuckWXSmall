@@ -60,6 +60,11 @@ namespace SpellLuckWXSmall.Controllers
                         {
                             return new BaseResponseModel<string>() {StatusCode=(int)ActionParams.code_error_verify,JsonData="该团人数已满或者密码有误" }.ToJson();
                         }
+                        if (jackPot.Participator.Exists(x=>x.AccountID.Equals(account.AccountID)))
+                        {
+                            return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_exists, JsonData = "你已经参加过此团" }.ToJson();
+
+                        }
                     }
 
                 }

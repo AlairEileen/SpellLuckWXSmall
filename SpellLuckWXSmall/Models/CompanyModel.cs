@@ -28,7 +28,9 @@ namespace SpellLuckWXSmall.Models
         public string CompanyAccountVerifyPassword { get; set; }
         public string CompanyAccountOlderPassword { get; set; }
         public string Token { get; set; }
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime LastLoginTime { get; set; }
     }
 

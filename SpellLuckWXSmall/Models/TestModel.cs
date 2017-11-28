@@ -3,24 +3,21 @@ using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Tools.Models
+namespace SpellLuckWXSmall.Models
 {
-    public class BaseAccount
+    public class TestModel
     {
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
-        public ObjectId AccountID { get; set; }
-        public string AccountName { get; set; }
-        public string AccountPhoneNumber { get; set; }
-        public int Gender { get; set; }
-        public string AccountAvatar { get; set; }
+        public ObjectId TestID { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
-        public DateTime CreateTime { get; set; }
+        public DateTime CDate { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
-        public DateTime LastChangeTime { get; set; }
+        public DateTime MDate { get; set; }
     }
 }

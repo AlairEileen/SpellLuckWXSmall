@@ -51,6 +51,7 @@ namespace SpellLuckWXSmall.Models
         public ObjectId OrderID { get; set; }
         public string AssessmentContent { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime AssessTime { get; set; }
         public AccountPotModel AssessAccount { get; set; }
     }

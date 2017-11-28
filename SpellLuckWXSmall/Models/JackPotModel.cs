@@ -22,6 +22,7 @@ namespace SpellLuckWXSmall.Models
         /// </summary>
         public int JackPotStatus { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
         public string JackPotPassword { get; set; }
         public int JackPotPeopleNum { get; set; }

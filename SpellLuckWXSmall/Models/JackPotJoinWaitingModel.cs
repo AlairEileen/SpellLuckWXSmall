@@ -23,6 +23,7 @@ namespace SpellLuckWXSmall.Models
         public string GoodsRule { get; set; }
         public string WXOrderId { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
     }
 }

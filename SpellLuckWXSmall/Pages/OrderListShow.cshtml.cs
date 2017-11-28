@@ -29,6 +29,14 @@ namespace SpellLuckWXSmall.Pages
         [BindProperty]
         public int OrderStatus { get; set; }
 
+        #region ·ÖÒ³Ïà¹Ø
+        private int pageSize = 5;
+        public int PageIndex { get; set; }
+        public int PageCount { get; set; }
+        private int maxPageShow = 10;
+        public int MaxPageShow { get => maxPageShow; }
+        public int PageSize { get => pageSize; }
+        #endregion
 
         public void OnGet()
         {
@@ -89,7 +97,9 @@ namespace SpellLuckWXSmall.Pages
                 }
                 AccountList.Add(item);
             }
-            return list;
+            list.Sort((x, y) => DateTime.Compare(x.CreateTime, y.CreateTime));
+
+            return list.Skip(PageIndex * PageSize).Take(PageSize).ToList();
         }
 
         public IActionResult OnPostSendGoods()
@@ -100,6 +110,7 @@ namespace SpellLuckWXSmall.Pages
 
         public IActionResult OnPostChangeOrderStatus()
         {
+            PageIndex = 0;
             switch (OrderStatus)
             {
                 case 0:

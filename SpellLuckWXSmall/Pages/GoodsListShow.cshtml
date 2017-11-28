@@ -32,28 +32,29 @@
             }
         }
     </div>
-    <br />
-    <div class="col-xs-12 col-lg-9">
-        <ul class="pagination pagination-lg">
+</div>
+<br />
+<div class="col-xs-12 col-lg-9">
+    <ul class="pagination pagination-lg">
 
-            @if (Model.PageIndex != 0)
+        @if (Model.PageIndex != 0)
             {
-                <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex - 1)">&laquo;</a></li>
-            }
-            @for (int i = 1; i < 10 && i < Model.PageCount + 1; i++)
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex - 1)">&laquo;</a></li>
+        }
+        @for (int i = 1; i < 10 && i < Model.PageCount + 1; i++)
             {
                 if (Model.PageIndex + i <= Model.PageCount)
                 {
-                    <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + i - 1)">@(Model.PageIndex + i)</a></li>
-                }
+                <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + i - 1)">@(Model.PageIndex + i)</a></li>
             }
-            @if (Model.PageIndex + 1 < Model.PageCount)
+        }
+        @if (Model.PageIndex + 1 < Model.PageCount)
             {
-                <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + 1)">&raquo;</a></li>
-            }
-        </ul>
-    </div>
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + 1)">&raquo;</a></li>
+        }
+    </ul>
 </div>
+
 <br style="clear:both;"/>
 
 <div class="modal fade" id="delGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">

@@ -29,6 +29,7 @@ namespace SpellLuckWXSmall.Models
         public WXPayModel WXPayData { get; set; }
         public bool isDisabled { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
     }
 }

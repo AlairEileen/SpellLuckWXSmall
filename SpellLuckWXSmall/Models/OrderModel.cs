@@ -24,6 +24,7 @@ namespace SpellLuckWXSmall.Models
 
         public decimal OrderPrice { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
 
         /// <summary>

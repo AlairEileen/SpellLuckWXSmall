@@ -214,7 +214,7 @@ namespace SpellLuckWXSmall.Controllers
 
                 ///一分夺宝列表
                 var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
-                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID));
+                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID))&waitingFilter.Gt(x=>x.ShareTimes,AppConstData.SharaMinAdd);
                 var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
                 if (listWaiting != null && listWaiting.Count != 0)
                 {

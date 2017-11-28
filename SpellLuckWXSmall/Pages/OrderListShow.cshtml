@@ -7,69 +7,91 @@
     int sendGoodsIndex = -1;
 }
 <div class="jumbotron">
-        <h1>订单查看</h1>
+    <h1>订单查看</h1>
 </div>
-    <div class="row">
-        <form class="col-xs-6 col-lg-4" id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
-            <h3>根据订单状态查询订单</h3>
-            <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
-                <option value="0">待发货</option>
-                <option value="1">待确认发货</option>
-                <option value="2">待评价</option>
-            </select>
-        </form>
-        <form class="col-xs-12 col-sm-6 col-lg-8" asp-page-handler="searchByOrderNumber">
-            <h3>根据订单号码查询订单</h3>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-lg-8">
-                    <input class="form-control" type="text" asp-for="OrderNumber" placeholder="请输入订单号" />
-                </div>
-                <div class="col-xs-6 col-lg-4">
-                    <button class="col-xs-12 btn btn-primary pull-right" type="submit">查&nbsp;&nbsp;&nbsp;&nbsp;询</button>
-                </div>
+<div class="row">
+    <form class="col-xs-6 col-lg-4" id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
+        <h3>根据订单状态查询订单</h3>
+        <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
+            <option value="0">待发货</option>
+            <option value="1">待确认发货</option>
+            <option value="2">待评价</option>
+        </select>
+    </form>
+    <form class="col-xs-12 col-sm-6 col-lg-8" asp-page-handler="searchByOrderNumber">
+        <h3>根据订单号码查询订单</h3>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-lg-8">
+                <input class="form-control" type="text" asp-for="OrderNumber" placeholder="请输入订单号" />
             </div>
-        </form>
-    </div>
-    <br style="clear:both" />
-    <br />
-    <br />
+            <div class="col-xs-6 col-lg-4">
+                <button class="col-xs-12 btn btn-primary pull-right" type="submit">查&nbsp;&nbsp;&nbsp;&nbsp;询</button>
+            </div>
+        </div>
+    </form>
+</div>
+<br style="clear:both" />
+<br />
+<br />
 
-    <h2 class="sub-header">订单列表</h2>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
+<h2 class="sub-header">订单列表</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>订单号</td>
+                <td>订单商品</td>
+                <td>商品标题</td>
+                <td>商品颜色</td>
+                <td>商品尺寸</td>
+                <td>商品类型</td>
+                <td>订单金额</td>
+                <td>下单时间</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+
+            @for (int i = 0; i < Model.OrderList.Count(); i++)
+            {
                 <tr>
-                    <td>订单号</td>
-                    <td>订单商品</td>
-                    <td>商品标题</td>
-                    <td>商品颜色</td>
-                    <td>商品尺寸</td>
-                    <td>商品类型</td>
-                    <td>订单金额</td>
-                    <td>下单时间</td>
-                    <td>操作</td>
+                    <td style="vertical-align:middle">@Model.OrderList[i].OrderNumber</td>
+                    <td style="vertical-align:middle"><img width="90" height="60" src="/file/FileDownload?fileUrl=@Model.OrderList[i].GoodsInfo.GoodsListImage.FileUrlData[2]" /></td>
+                    <td style="vertical-align:middle;max-width:100px;">@Model.OrderList[i].GoodsInfo.GoodsTitle</td>
+                    <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsColor</td>
+                    <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsRule</td>
+                    <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
+                    <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
+                    <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
+                    <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="function(){@(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
                 </tr>
-            </thead>
-            <tbody>
+            }
 
-                @for (int i = 0; i < Model.OrderList.Count(); i++)
+        </tbody>
+    </table>
+</div>
+
+<div class="col-xs-12 col-lg-9">
+    <ul class="pagination pagination-lg">
+
+        @if (Model.PageIndex != 0)
+            {
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex - 1)">&laquo;</a></li>
+        }
+        @for (int i = 1; i < 10 && i < Model.PageCount + 1; i++)
+            {
+                if (Model.PageIndex + i <= Model.PageCount)
                 {
-                    <tr>
-                        <td style="vertical-align:middle">@Model.OrderList[i].OrderNumber</td>
-                        <td style="vertical-align:middle"><img width="90" height="60" src="/file/FileDownload?fileUrl=@Model.OrderList[i].GoodsInfo.GoodsListImage.FileUrlData[2]" /></td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsTitle</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsColor</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].GoodsInfo.GoodsRule</td>
-                        <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
-                        <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                        <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick="function(){@(sendGoodsIndex = i)}" data-target="#sendGoodsModal">发货</button></td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
+                <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + i - 1)">@(Model.PageIndex + i)</a></li>
+            }
+        }
+        @if (Model.PageIndex + 1 < Model.PageCount)
+            {
+            <li><a asp-page-handler="goPage" asp-route-pageIndex="@(Model.PageIndex + 1)">&raquo;</a></li>
+        }
+    </ul>
+</div>
+<br style="clear:both;"/>
 <div class="modal fade" id="sendGoodsModal" tabindex="-1" role="dialog" aria-labelledby="sendGoodsTitle" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

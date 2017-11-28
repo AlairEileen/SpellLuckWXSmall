@@ -40,7 +40,7 @@
                         <td style="vertical-align:middle">@Model.AllJackPotList[i].Participator[j].GoodsRule</td>
                         <td style="vertical-align:middle">@(Model.AllJackPotList[i].JackGoods.GoodsPayType == 0 ? "2人拼团" : @Model.AllJackPotList[i].JackGoods.GoodsPayType == 1 ?@Model.AllJackPotList[i].JackGoods.GoodsPayType + "人拼团" : "一分夺宝")</td>
                         <td style="vertical-align:middle">@Model.AllJackPotList[i].JackPotPrice</td>
-                        <td style="vertical-align:middle">@Model.AllJackPotList[i].CreateTime.ToString("yyyy/MM/dd hh:mm:ss")</td>
+                        <td style="vertical-align:middle">@Model.AllJackPotList[i].CreateTime.ToString("yyyy/MM/dd HH:mm:ss")</td>
                     </tr>
                     }
             }

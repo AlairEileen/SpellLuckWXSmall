@@ -46,5 +46,10 @@ namespace SpellLuckWXSmall.Controllers
         {
             return JsonConvert.SerializeObject(new MongoDBTool().GetMongoCollection<TestModel>().Find(Builders<TestModel>.Filter.Empty).ToList());
         }
+        public string TestReFund(string orderId,int money)
+        {
+            Refund.Run(orderId, "", money, money);
+            return "success!";
+        }
     }
 }

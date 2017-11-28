@@ -127,10 +127,7 @@
    
     function getSendGoodsInfo(orderId) {
         
-        $.get("/order/GetOrderAndPersonInfo?orderId=" + orderId, function (data, status) {
-            alert(data);
-            alert(data.statusCode);
-            alert(data.JsonData1);
+        $.getJSON("/order/GetOrderAndPersonInfo?orderId=" + orderId, function (data, status) {
             var container = $("#goodSendInfoContainer");
             container.html("");
             container.append("<p><label>收件人：</label>" +

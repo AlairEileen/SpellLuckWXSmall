@@ -83,7 +83,7 @@ namespace SpellLuckWXSmall.Controllers
                 {
                     Console.WriteLine("####微信订单号为空");
                 }
-                var payWaitingModel = new MongoDBTool().GetMongoCollection<PayWaitingModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(attach))).FirstOrDefault();
+                var payWaitingModel = new MongoDBTool().GetMongoCollection<PayWaitingModel>().FindOneAndUpdate(x => x.PayWaitingID.Equals(new ObjectId(attach)),Builders<PayWaitingModel>.Update.Set(x=>x.WXOrderId,wxOrderId));
                 if (payWaitingModel != null&&!payWaitingModel.isDisabled)
                 {
                     payWaitingModel.WXOrderId = wxOrderId;

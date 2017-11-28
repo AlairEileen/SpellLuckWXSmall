@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using SpellLuckWXSmall.Controllers;
 using SpellLuckWXSmall.Models;
 using System;
 using System.Collections.Generic;
@@ -178,6 +179,7 @@ namespace SpellLuckWXSmall.AppData
                         CreateTime = DateTime.Now,
                         JackPotPassword = payWaitingModel.JackPotKey,
                         JackPotStatus = 0,
+                        JackPotPrice = JackPotController.GetJackPotPrice(goods.GoodsPrice, payWaitingModel.JackPotPeopleNum),
                         JackPotPeopleNum = payWaitingModel.JackPotPeopleNum,
                         PayWaitingID = payWaitingModel.PayWaitingID,
                         Participator = new List<AccountPotModel>() { new AccountPotModel() {
@@ -190,7 +192,7 @@ namespace SpellLuckWXSmall.AppData
                 } }
                     };
                     mongo.GetMongoCollection<JackPotModel>().InsertOne(jackPotModel);
-                    mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID),Builders<PayWaitingModel>.Update.Set(x=>x.isDisabled,true));
+                    mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID), Builders<PayWaitingModel>.Update.Set(x => x.isDisabled, true));
                 }
             }
             catch (Exception ex)

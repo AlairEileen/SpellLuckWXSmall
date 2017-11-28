@@ -176,7 +176,7 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="goodsPrice"></param>
         /// <param name="peopleNum"></param>
         /// <returns></returns>
-        private decimal GetJackPotPrice(decimal goodsPrice, int peopleNum)
+        public static decimal GetJackPotPrice(decimal goodsPrice, int peopleNum)
         {
             decimal bb = Math.Ceiling((decimal)goodsPrice.ConvertToMoneyCent() / (decimal)peopleNum) / 100;
             Console.WriteLine("bb:{0},goodsprice:{1}", bb, goodsPrice);

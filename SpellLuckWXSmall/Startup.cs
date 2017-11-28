@@ -52,6 +52,7 @@ namespace SpellLuckWXSmall
            context.Request.Path.StartsWithSegments("/GoodsListShow") ||
            context.Request.Path.StartsWithSegments("/GoodsPush") ||
            context.Request.Path.StartsWithSegments("/Settings") ||
+           context.Request.Path.StartsWithSegments("/PayList") ||
            context.Request.Path.StartsWithSegments("/OrderListShow"), x =>
            {
                x.UseSampleMiddleware();

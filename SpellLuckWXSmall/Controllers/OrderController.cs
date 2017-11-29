@@ -10,6 +10,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Tools.ResponseModels;
 using Tools;
+using Tools.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -104,7 +105,11 @@ namespace SpellLuckWXSmall.Controllers
             return json;
         }
 
-
+        /// <summary>
+        /// 后台 获取订单信息和个人信息
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         public string GetOrderAndPersonInfo(string orderId)
         {
             var filter = Builders<AccountModel>.Filter;
@@ -119,7 +124,40 @@ namespace SpellLuckWXSmall.Controllers
 
             return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
         }
-
-
+        /// <summary>
+        /// 获取获奖者ID
+        /// </summary>
+        /// <param name="accountID">账号id</param>
+        /// <param name="wXOrderId">微信订单号</param>
+        /// <returns></returns>
+        public string GetWinnerWithAccount(string accountID, string wXOrderId)
+        {
+            var responseModel = new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok };
+            string json = responseModel.ToJson();
+            try
+            {
+                var mongo = new MongoDBTool();
+                var filter = Builders<AccountModel>.Filter;
+                var filterSum = filter.Eq("OrderList.WXOrderId", wXOrderId) & filter.Eq("OrderList.OrderStatus", 0);
+                var account = mongo.GetMongoCollection<AccountModel>().Find(filterSum).FirstOrDefault();
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+                jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(
+                    new string[] {
+                    "StatusCode",
+                    "JsonData1",
+                    "JsonData2" ,
+                    "AccountAvatar",
+                    "AccountName",
+                    "AccountID"});
+                var response = JsonConvert.SerializeObject(new BaseResponseModel2<bool, AccountModel>() { StatusCode = (int)ActionParams.code_ok, JsonData1 = account.AccountID.Equals(new ObjectId(accountID)), JsonData2 = account }, jsonSerializerSettings);
+                return response;
+            }
+            catch (Exception)
+            {
+                responseModel.StatusCode = (int)ActionParams.code_error;
+                json = responseModel.ToJson();
+            }
+            return json;
+        }
     }
 }

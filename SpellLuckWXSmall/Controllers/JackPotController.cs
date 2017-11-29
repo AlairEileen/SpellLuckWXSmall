@@ -38,13 +38,13 @@ namespace SpellLuckWXSmall.Controllers
             if (
                 string.IsNullOrEmpty(accountID) ||
                 (
-                string.IsNullOrEmpty(goodsID) && 
+                string.IsNullOrEmpty(goodsID) &&
                 (
-                string.IsNullOrEmpty(jackPotID) || 
+                string.IsNullOrEmpty(jackPotID) ||
                 string.IsNullOrEmpty(jackPotPassword)
                 )
                 ) ||
-                string.IsNullOrEmpty(goodsColor) || 
+                string.IsNullOrEmpty(goodsColor) ||
                 string.IsNullOrEmpty(goodsRule)
                 )
             {
@@ -353,6 +353,20 @@ namespace SpellLuckWXSmall.Controllers
                 ///获取拼团ID
                 var mongo = new MongoDBTool();
                 var jackpot = mongo.GetMongoCollection<JackPotModel>().Find(Builders<JackPotModel>.Filter.Eq("Participator.PayWaitingID", new ObjectId(payWaitingID))).FirstOrDefault();
+                if (jackpot == null)
+                {
+                    var payWaiting = mongo.GetMongoCollection<PayWaitingModel>().Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
+                    if (payWaiting != null)
+                    {
+                        var goods = mongo.GetMongoCollection<GoodsModel>().Find(x => x.GoodsID.Equals(payWaiting.GoodsID)).FirstOrDefault();
+                        if (goods != null)
+                        {
+                            goods.GoodsColor = new List<string>() { payWaiting.GoodsColor };
+                            goods.GoodsRule = new List<string>() { payWaiting.GoodsRule };
+                            jackpot = new JackPotModel() { JackGoods = goods, JackPotPrice = goods.GoodsPrice };
+                        }
+                    }
+                }
                 var response = new BaseResponseModel<JackPotModel>()
                 {
                     StatusCode = jackpot == null ? (int)ActionParams.code_null : (int)ActionParams.code_ok,

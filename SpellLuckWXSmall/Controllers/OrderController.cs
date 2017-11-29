@@ -87,7 +87,14 @@ namespace SpellLuckWXSmall.Controllers
                     var orderList = account.OrderList.OrderByDescending(x => x.CreateTime).ToList();
                     if (orderList != null)
                     {
-                        orderList = orderList.FindAll(x => x.OrderStatus == orderStatus);
+                        if (orderStatus==0)
+                        {
+                            orderList = orderList.FindAll(x => x.OrderStatus == 0||x.OrderStatus==-1);
+                        }
+                        else
+                        {
+                            orderList = orderList.FindAll(x => x.OrderStatus == orderStatus);
+                        }
                     }
                     json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
                 }

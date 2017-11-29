@@ -63,7 +63,7 @@
                     <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                    <td style="vertical-align:middle"><button class="btn btn-primary" data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button></td>
+                    <td style="vertical-align:middle"><button class='btn btn-primary @(Model.OrderList[i].OrderStatus!=0?"hidden":"")' data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button></td>
                 </tr>
             }
 
@@ -106,8 +106,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">提交</button>
+                    <button type="button" id="sendGoodsModalClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" onclick="doSendGoods()" class="btn btn-primary">提交</button>
                 </div>
             </form>
         </div>
@@ -117,16 +117,12 @@
 
 <script>
     function changeOrderStatus() {
-        alert("fdfd");
-        //location.href = "/CompanyAccountLogin?handler=changeOrderStatus";
+        //alert("fdfd");
+        //location.href = "/OrderListShow?handler=changeOrderStatus";
         $("#changeOrderStatusForm").submit();
     }
-    function onSendGoods(i) {
-
-    }
-   
     function getSendGoodsInfo(orderId) {
-        
+
         $.getJSON("/order/GetOrderAndPersonInfo?orderId=" + orderId, function (data, status) {
             var container = $("#goodSendInfoContainer");
             container.html("");
@@ -137,11 +133,30 @@
                 data.JsonData1.ProvinceCityArea[1] +
                 data.JsonData1.ProvinceCityArea[2] +
                 data.JsonData1.AddressDetail + "</p>" +
-                "<input class='hidden' value='"+ data.JsonData2.OrderID + "' type='text' />"+
-                             "<label>物流公司</label>"+
-                               "<input class='form-control' name='TrackingCompany' type='text' />"+
-                               "<label>运单号</label>"+
-                              "<input class='form-control' name='TrackingNumber' type='text' />");
+                "<input class='hidden' value='" + data.JsonData2.OrderID + "' id='sd_orderID' type='text' />" +
+                "<label>物流公司</label>" +
+                "<input class='form-control' id='sd_trackingCompany' type='text' />" +
+                "<label>运单号</label>" +
+                "<input class='form-control' id='sd_trackingNumber' type='text' />");
         });
+    }
+    function doSendGoods() {
+        var orderID = $("#sd_orderID").val();
+        var trackingCompany = $("#sd_trackingCompany").val();
+        var trackingNumber = $("#sd_trackingNumber").val();
+        $.getJSON("/order/SendOrderByTrackingCompany", {
+            orderID: orderID,
+            trackingCompany: trackingCompany,
+            trackingNumber: trackingNumber
+        },
+            function (data, status) {
+                if (data.StatusCode == 1000) {
+                    alert("发货成功！");
+                    $("#sendGoodsModalClose").click();
+                    location.reload();
+                } else {
+                    alert("发货失败！");
+                }
+            });
     }
 </script>

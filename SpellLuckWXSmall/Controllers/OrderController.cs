@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Tools.ResponseModels;
 using Tools;
 using Tools.Json;
+using WXSmallAppCommon.WXInteractions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -87,9 +88,9 @@ namespace SpellLuckWXSmall.Controllers
                     var orderList = account.OrderList.OrderByDescending(x => x.CreateTime).ToList();
                     if (orderList != null)
                     {
-                        if (orderStatus==0)
+                        if (orderStatus == 0)
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == 0||x.OrderStatus==-1);
+                            orderList = orderList.FindAll(x => x.OrderStatus == 0 || x.OrderStatus == -1);
                         }
                         else
                         {
@@ -168,5 +169,73 @@ namespace SpellLuckWXSmall.Controllers
             return json;
         }
 
+        /// <summary>
+        /// 后台 发货
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="trackingCompany">快递公司</param>
+        /// <param name="trackingNumber">运单号</param>
+        /// <returns></returns>
+        public string SendOrderByTrackingCompany(string orderID, string trackingCompany, string trackingNumber)
+        {
+            try
+            {
+                var filter = Builders<AccountModel>.Filter;
+                var filterSum = filter.Eq("OrderList.OrderID", new ObjectId(orderID));
+                var update = Builders<AccountModel>.Update
+                    .Set("OrderList.$.TrackingNumber", trackingNumber)
+                    .Set("OrderList.$.TrackingCompany", trackingCompany)
+                    .Set("OrderList.$.OrderStatus", 1);
+                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filterSum, update);
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 用户确认发货
+        /// </summary>
+        /// <param name="orderID">订单号</param>
+        /// <returns></returns>
+        public string AgreeSendGoods(string orderID)
+        {
+            try
+            {
+                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 1));
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+
+                throw;
+            }
+        }
+        /// <summary>
+        /// 用户同意退款
+        /// </summary>
+        /// <param name="accountID">账户id</param>
+        /// <param name="orderID">订单号</param>
+        /// <returns></returns>
+        public string AgreeRefund(string accountID, string orderID)
+        {
+            try
+            {
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID))).FirstOrDefault();
+                var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderID)));
+                Refund.Run(order.WXOrderId, order.OrderNumber, order.OrderPrice.ConvertToMoneyCent(), order.OrderPrice.ConvertToMoneyCent());
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
+        }
     }
 }

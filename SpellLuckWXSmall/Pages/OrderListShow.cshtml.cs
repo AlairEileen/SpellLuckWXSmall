@@ -135,7 +135,7 @@ namespace SpellLuckWXSmall.Pages
         public IActionResult OnPostSearchByOrderNumber()
         {
             var filter = Builders<AccountModel>.Filter;
-            var filterSum = filter.Eq("OrderList.$.OrderNumber", OrderNumber);
+            var filterSum = filter.Eq("OrderList.OrderNumber", OrderNumber);
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filterSum).ToList();
             List<OrderModel> list = new List<OrderModel>();
             foreach (var item in accountWaitingSend)
@@ -147,6 +147,10 @@ namespace SpellLuckWXSmall.Pages
                 foreach (var order in item.OrderList)
                 {
                     list.Add(order);
+                }
+                if (AccountList == null)
+                {
+                    AccountList = new List<AccountModel>();
                 }
                 AccountList.Add(item);
             }

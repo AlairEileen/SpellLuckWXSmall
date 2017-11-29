@@ -65,7 +65,11 @@
                     <td style="vertical-align:middle">@(Model.OrderList[i].GoodsInfo.GoodsPayType == 0 ? "2人拼团" : Model.OrderList[i].GoodsInfo.GoodsPayType == 1 ? Model.OrderList[i].GoodsInfo.GoodsPayType + "人拼团" : "一分夺宝")</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
-                    <td style="vertical-align:middle"><button class='btn btn-primary @(Model.OrderList[i].OrderStatus!=0?"hidden":"")' data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button></td>
+                    <td style="vertical-align:middle">
+                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus==1?"":"hidden")' data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button>
+                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus == 1 && !Model.OrderList[i].hasRefoundByCompany && Model.OrderList[i].isRefound ? "" : "hidden")' data-toggle="modal" onclick='refoundOrder("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">手动退款</button>
+
+                    </td>
                 </tr>
             }
 
@@ -141,6 +145,10 @@
                 "<label>运单号</label>" +
                 "<input class='form-control' id='sd_trackingNumber' type='text' />");
         });
+    }
+    function refoundOrder(orderId) {
+        alert("refound:" + orderId);
+
     }
     function doSendGoods() {
         var orderID = $("#sd_orderID").val();

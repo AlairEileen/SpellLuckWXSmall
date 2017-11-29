@@ -12,6 +12,7 @@ using Tools.ResponseModels;
 using Tools;
 using Tools.Json;
 using WXSmallAppCommon.WXInteractions;
+using SpellLuckWXSmall.AppData;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,6 +58,71 @@ namespace SpellLuckWXSmall.Controllers
             }
             return json;
         }
+        JackPotData jpd = new JackPotData();
+
+        /// <summary>
+        /// 获取所有订单
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <returns></returns>
+        public string GetOrderList(string accountID)
+        {
+            try
+            {
+                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(filter).FirstOrDefault();
+                var jackpotList = jpd.GetAllWaitJackPot(accountID);
+                if (account.OrderList != null)
+                {
+                    foreach (var item in account.OrderList)
+                    {
+                        jackpotList.Add(new JackPotModel()
+                        {
+                            CreateTime = item.CreateTime,
+                            Description = GetOrderStatusText(item.OrderStatus),
+                            JackGoods = new GoodsModel()
+                            {
+                                GoodsID = item.GoodsInfo.GoodsID,
+                                GoodsColor = new List<string>() { item.GoodsInfo.GoodsColor },
+                                GoodsRule = new List<string>() { item.GoodsInfo.GoodsRule },
+                                GoodsListImage = item.GoodsInfo.GoodsListImage,
+                                GoodsPayType = item.GoodsInfo.GoodsPayType,
+                                GoodsPrice = item.GoodsInfo.GoodsPrice,
+                                GoodsTitle = item.GoodsInfo.GoodsTitle
+                            }
+                        });
+                    }
+                }
+                jackpotList.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
+                return new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = jackpotList }.ToJson(); ;
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
+        }
+
+        private string GetOrderStatusText(int orderStatus)
+        {
+            switch (orderStatus)
+            {
+                case -1:
+                    return "未获奖";
+                case 0:
+                    return "待确认发货";
+                case 1:
+                    return "待商家发货";
+                case 2:
+                    return "待评价";
+                case 3:
+                    return "完成";
+                default:
+                    return "未知";
+            }
+        }
+
+
 
         /// <summary>
         /// 获取待发货、待评价列表
@@ -90,11 +156,11 @@ namespace SpellLuckWXSmall.Controllers
                     {
                         if (orderStatus == 0)
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == 0 || x.OrderStatus == -1||x.OrderStatus==1);
+                            orderList = orderList.FindAll(x => x.OrderStatus == 0 || x.OrderStatus == -1);
                         }
                         else
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == 2);
+                            orderList = orderList.FindAll(x => x.OrderStatus == 2 || x.OrderStatus == 1);
                         }
                     }
                     json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
@@ -216,6 +282,7 @@ namespace SpellLuckWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 用户同意退款
         /// </summary>

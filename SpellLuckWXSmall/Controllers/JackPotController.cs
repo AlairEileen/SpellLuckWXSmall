@@ -15,6 +15,7 @@ using Tools.ResponseModels;
 using System.Globalization;
 using WXSmallAppCommon.Models;
 using Tools.Json;
+using SpellLuckWXSmall.AppData;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,6 +23,7 @@ namespace SpellLuckWXSmall.Controllers
 {
     public class JackPotController : Controller
     {
+        JackPotData jpd = new JackPotData();
         /// <summary>
         /// 请求参奖
         /// </summary>
@@ -240,25 +242,8 @@ namespace SpellLuckWXSmall.Controllers
             string json = "";
             try
             {
-                ///拼团商品
-                var filter = Builders<JackPotModel>.Filter;
-                var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
-                var listJackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
+                var listWaiting = jpd.GetAllWaitJackPot(accountID);
 
-                ///一分夺宝列表
-                var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
-                var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID)) & waitingFilter.Gt(x => x.ShareTimes, AppConstData.SharaMinAdd);
-                var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
-                if (listWaiting != null && listWaiting.Count != 0)
-                {
-                    var waitingJackPot = new List<JackPotModel>();
-                    foreach (var item in listWaiting)
-                    {
-                        waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods });
-                    }
-                    listJackPot.AddRange(waitingJackPot);
-                }
-                listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
 
                 json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = listJackPot }.ToJson();
             }
@@ -269,6 +254,8 @@ namespace SpellLuckWXSmall.Controllers
             }
             return json;
         }
+
+
 
         /// <summary>
         /// 添加转发一分夺宝次数

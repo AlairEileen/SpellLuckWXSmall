@@ -203,7 +203,38 @@ namespace SpellLuckWXSmall.AppData
             }
         }
 
+        /// <summary>
+        /// 获取带拼团列表
+        /// </summary>
+        /// <param name="accountID">用户ID</param>
+        /// <returns></returns>
+        public List<JackPotModel> GetAllWaitJackPot(string accountID)
+        {
+            ///拼团商品
+            var filter = Builders<JackPotModel>.Filter;
+            var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
+            var listJackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
 
+            ///一分夺宝列表
+            var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
+            var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID)) & waitingFilter.Gt(x => x.ShareTimes, AppConstData.SharaMinAdd);
+            var listWaiting = new MongoDBTool().GetMongoCollection<JackPotJoinWaitingModel>().Find(waitingFilterSum).ToList();
+            if (listWaiting != null && listWaiting.Count != 0)
+            {
+                var waitingJackPot = new List<JackPotModel>();
+                foreach (var item in listWaiting)
+                {
+                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods });
+                }
+                listJackPot.AddRange(waitingJackPot);
+            }
+            listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
+            foreach (var item in listJackPot)
+            {
+                item.Description = "待拼团";
+            }
+            return listJackPot;
+        }
 
     }
 

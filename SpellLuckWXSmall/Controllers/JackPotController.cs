@@ -245,7 +245,7 @@ namespace SpellLuckWXSmall.Controllers
                 var listWaiting = jpd.GetAllWaitJackPot(accountID);
 
 
-                json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = listJackPot }.ToJson();
+                json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = listWaiting }.ToJson();
             }
             catch (Exception)
             {

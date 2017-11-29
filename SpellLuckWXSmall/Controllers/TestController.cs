@@ -46,10 +46,47 @@ namespace SpellLuckWXSmall.Controllers
         {
             return JsonConvert.SerializeObject(new MongoDBTool().GetMongoCollection<TestModel>().Find(Builders<TestModel>.Filter.Empty).ToList());
         }
-        public string TestReFund(string orderId,int money)
+#if DEBUG
+        public string TestReFund(string orderId, int money)
         {
-            Refund.Run(orderId, "", money, money);
-            return "success!";
+            string status = Refund.Run(orderId, "", money, money);
+            return status;
         }
+
+        public string ReFundAllMoney()
+        {
+            var jackPots = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(Builders<JackPotModel>.Filter.Empty).ToList();
+            var waits = new MongoDBTool().GetMongoCollection<PayWaitingModel>().Find(Builders<PayWaitingModel>.Filter.Empty).ToList();
+
+            if (jackPots != null)
+            {
+                foreach (var item in jackPots)
+                {
+                    foreach (var per in item.Participator)
+                    {
+                        if (!string.IsNullOrEmpty(per.WXOrderId))
+                        {
+                            Refund.Run(per.WXOrderId, "", 1, 1);
+
+                        }
+                    }
+                }
+            }
+            if (waits != null)
+            {
+                foreach (var item in waits)
+                {
+
+                    if (!string.IsNullOrEmpty(item.WXOrderId))
+                    {
+                        Refund.Run(item.WXOrderId, "", 1, 1);
+
+                    }
+
+                }
+            }
+            return "success";
+        }
+#endif
     }
 }

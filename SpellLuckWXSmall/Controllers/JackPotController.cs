@@ -191,6 +191,7 @@ namespace SpellLuckWXSmall.Controllers
             Console.WriteLine("bb:{0},goodsprice:{1}", bb, goodsPrice);
             return bb;
         }
+
         /// <summary>
         /// 根据人数获取团价
         /// </summary>
@@ -212,6 +213,7 @@ namespace SpellLuckWXSmall.Controllers
             }
             return JsonConvert.SerializeObject(responseModel);
         }
+
         /// <summary>
         /// 查找待拼团列表
         /// </summary>

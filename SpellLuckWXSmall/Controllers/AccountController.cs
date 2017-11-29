@@ -142,7 +142,7 @@ namespace SpellLuckWXSmall.Controllers
                 ///查询待拼单
 
                 var jackFilter = Builders<JackPotModel>.Filter;
-                var jackFilterSum = jackFilter.Eq("Participator.AccountID", account.AccountID) & jackFilter.Eq(x => x.JackPotStatus, 1);
+                var jackFilterSum = jackFilter.Eq("Participator.AccountID", account.AccountID) & jackFilter.Eq(x => x.JackPotStatus, 0);
                 var jackList = mongo.GetMongoCollection<JackPotModel>().Find(jackFilterSum).ToList();
                 if (jackList != null)
                 {

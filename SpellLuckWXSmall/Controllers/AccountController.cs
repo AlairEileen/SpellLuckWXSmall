@@ -151,8 +151,8 @@ namespace SpellLuckWXSmall.Controllers
 
                 if (account.OrderList != null)
                 {
-                    account.WaitingSend = account.OrderList.FindAll(x => x.OrderStatus == 0).Count;
-                    account.WaitingAssess = account.OrderList.FindAll(x => x.OrderStatus == 1).Count;
+                    account.WaitingSend = account.OrderList.FindAll(x => x.OrderStatus == 0||x.OrderStatus==1).Count;
+                    account.WaitingAssess = account.OrderList.FindAll(x => x.OrderStatus == 2).Count;
                 }
 
                 var company = mongo.GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();

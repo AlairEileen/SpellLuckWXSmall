@@ -48,7 +48,7 @@ namespace SpellLuckWXSmall.Pages
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
             OrderList = ConvertToOrderList(accountWaitingSend, o =>
             {
-                if (o.OrderStatus == 1 && string.IsNullOrEmpty(o.TrackingNumber))
+                if (o.OrderStatus == 1)
                 {
                     return true;
                 }
@@ -72,7 +72,7 @@ namespace SpellLuckWXSmall.Pages
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
             OrderList = ConvertToOrderList(accountWaitingSend, o =>
             {
-                if (o.OrderStatus == 1 && !string.IsNullOrEmpty(o.TrackingNumber))
+                if (o.OrderStatus == 2 && !string.IsNullOrEmpty(o.TrackingNumber))
                 {
                     return true;
                 }
@@ -126,12 +126,45 @@ namespace SpellLuckWXSmall.Pages
                 case 2:
                     GetWaitingAssessOrder();
                     break;
+                case 3:
+                    GetWaitingRefundOrder();
+                    break;
+                case 4:
+                    GetRefundOrder();
+                    break;
                 default:
                     OnGet();
                     break;
             }
             return Page();
         }
+
+        private void GetRefundOrder()
+        {
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
+            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            {
+                if (o.OrderStatus == 1 && o.isRefound&&o.hasRefoundByCompany)
+                {
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        private void GetWaitingRefundOrder()
+        {
+            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
+            OrderList = ConvertToOrderList(accountWaitingSend, o =>
+            {
+                if (o.OrderStatus == 1 && o.isRefound && !o.hasRefoundByCompany)
+                {
+                    return true;
+                }
+                return false;
+            });
+        }
+
         public IActionResult OnPostSearchByOrderNumber()
         {
             var filter = Builders<AccountModel>.Filter;

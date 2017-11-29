@@ -24,11 +24,11 @@ namespace SpellLuckWXSmall.Models
 
         public decimal OrderPrice { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
-        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
 
         /// <summary>
-        /// 0:待确认发货，1：待评价，2：结束
+        /// 0:待确认发货，1：确认发货，，2：待评价，3：结束
         /// </summary>
         public int OrderStatus { get; set; }
 
@@ -43,6 +43,9 @@ namespace SpellLuckWXSmall.Models
         /// 快递公司
         /// </summary>
         public string TrackingCompany { get; set; }
+        public bool isRefound { get; set; }
+        public bool hasRefoundByCompany { get; set; }
+
         [JsonIgnore]
         [BsonIgnore]
         public string OrderIDText { get { return OrderID.ToString(); } }

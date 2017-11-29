@@ -285,7 +285,7 @@ namespace SpellLuckWXSmall.Controllers
             var goods = mongo.GetMongoCollection<GoodsModel>().Find(filter).FirstOrDefault();
             var orderFilter = Builders<AccountModel>.Filter;
             var orderFilterSum = orderFilter.Eq(x => x.AccountID, account.AccountID) & orderFilter.Eq("OrderList.OrderID", order.OrderID);
-            mongo.GetMongoCollection<AccountModel>().UpdateOne(orderFilterSum, Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 2));
+            mongo.GetMongoCollection<AccountModel>().UpdateOne(orderFilterSum, Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 3));
             if (goods.AssessmentList == null)
             {
                 goods.AssessmentList = new List<AssessmentModel>();

@@ -118,13 +118,14 @@ namespace SpellLuckWXSmall.AppData
                 GoodsColor = payWaitingModel.GoodsColor,
                 GoodsRule = payWaitingModel.GoodsRule,
                 WXOrderId = payWaitingModel.WXOrderId,
-                PayWaitingID=payWaitingModel.PayWaitingID,
+                PayWaitingID = payWaitingModel.PayWaitingID,
                 AccountName = account.AccountName
             });
             if (jackPot.JackPotPeopleNum == jackPot.Participator.Count)
             {
-                ObjectId accountID = JackTool.CalcJackAccount(jackPot.Participator);
-                JackTool.CreateOrder(jackPot, accountID);
+                //ObjectId accountID = JackTool.CalcJackAccount(jackPot.Participator);
+                //JackTool.CreateOrder(jackPot, accountID);
+                JackTool.CalcCreateOrder(jackPot, jackPot.Participator);
                 jackPot.JackPotStatus = 2;
                 var filter = Builders<JackPotModel>.Filter.Eq(x => x.JackPotID, jackPot.JackPotID);
                 var update = Builders<JackPotModel>.Update.Set(x => x.Participator, jackPot.Participator).Set(x => x.JackPotStatus, jackPot.JackPotStatus);
@@ -217,7 +218,7 @@ namespace SpellLuckWXSmall.AppData
         /// </summary>
         /// <param name="jackPot"></param>
         /// <param name="accountID"></param>
-        internal static void CreateOrder(JackPotModel jackPot, ObjectId accountID)
+        internal static void CreateOrder(JackPotModel jackPot, ObjectId accountID, int orderStatus = 0)
         {
             var account = jackPot.Participator.Find(x => x.AccountID.Equals(accountID));
             if (account == null)
@@ -228,7 +229,7 @@ namespace SpellLuckWXSmall.AppData
             OrderModel orderModel = new OrderModel()
             {
                 OrderID = ObjectId.GenerateNewId(),
-                OrderStatus = 0,
+                OrderStatus = orderStatus,
                 OrderPrice = jackPot.JackPotPrice,
                 CreateTime = DateTime.Now,
                 OrderNumber = new RandomNumber().GetRandom1(),
@@ -255,8 +256,24 @@ namespace SpellLuckWXSmall.AppData
             accountCurrent.OrderList.Add(orderModel);
             var update = Builders<AccountModel>.Update.Set(x => x.OrderList, accountCurrent.OrderList);
             collection.UpdateOne(filter, update);
-
         }
+
+        internal static void CalcCreateOrder(JackPotModel jackPot, List<AccountPotModel> participator)
+        {
+            ObjectId objectId = CalcJackAccount(participator);
+            for (int i = 0; i < participator.Count; i++)
+            {
+                if (participator[i].AccountID.Equals(objectId))
+                {
+                    CreateOrder(jackPot, participator[i].AccountID);
+                }
+                else
+                {
+                    CreateOrder(jackPot, participator[i].AccountID, -1);
+                }
+            }
+        }
+
 
         /// <summary>
         /// 计算获奖者
@@ -360,6 +377,7 @@ namespace SpellLuckWXSmall.AppData
                 if ((DateTime.Now - item.CreateTime).Hours > AppConstData.OverTimeGroupJack)
                 {
                     OpenJackPot(item);
+
                 }
 
             }
@@ -371,8 +389,9 @@ namespace SpellLuckWXSmall.AppData
         /// <param name="item"></param>
         private void OpenJackPot(JackPotModel item)
         {
-            ObjectId luckAccount = JackTool.CalcJackAccount(item.Participator);
-            JackTool.CreateOrder(item, luckAccount);
+            //ObjectId luckAccount = JackTool.CalcJackAccount(item.Participator);
+            //JackTool.CreateOrder(item, luckAccount);
+            JackTool.CalcCreateOrder(item, item.Participator);
         }
 
     }

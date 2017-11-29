@@ -124,6 +124,7 @@ namespace SpellLuckWXSmall.Controllers
 
             return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
         }
+
         /// <summary>
         /// 获取获奖者ID
         /// </summary>
@@ -159,5 +160,6 @@ namespace SpellLuckWXSmall.Controllers
             }
             return json;
         }
+
     }
 }

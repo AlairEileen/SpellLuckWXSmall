@@ -35,12 +35,22 @@ namespace SpellLuckWXSmall.Controllers
         /// <returns></returns>
         public string RequestCreateJackPot(string accountID, string goodsID, string jackPotID, string goodsColor, string goodsRule, string jackPotPassword, int jackPotPeopleNum)
         {
-            if (string.IsNullOrEmpty(accountID) ||
-                (string.IsNullOrEmpty(goodsID) && string.IsNullOrEmpty(jackPotID)) ||
-                string.IsNullOrEmpty(goodsColor) || string.IsNullOrEmpty(goodsRule))
+            if (
+                string.IsNullOrEmpty(accountID) ||
+                (
+                string.IsNullOrEmpty(goodsID) && 
+                (
+                string.IsNullOrEmpty(jackPotID) || 
+                string.IsNullOrEmpty(jackPotPassword)
+                )
+                ) ||
+                string.IsNullOrEmpty(goodsColor) || 
+                string.IsNullOrEmpty(goodsRule)
+                )
             {
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
             }
+
             string json = "";
             try
             {

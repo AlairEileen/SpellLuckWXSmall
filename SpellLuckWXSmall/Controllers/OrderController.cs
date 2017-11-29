@@ -63,7 +63,7 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="orderStatus">0：待发货，1：待评价</param>
         /// <param name="pageIndex">页码（从0开始）</param>
         /// <returns></returns>
-        public string GetWaitingOrderList(string accountID, int orderStatus, int pageIndex)
+        public string GetWaitingOrderList(string accountID, int orderStatus)
         {
             if (string.IsNullOrEmpty(accountID))
             {
@@ -86,7 +86,7 @@ namespace SpellLuckWXSmall.Controllers
                     var orderList = account.OrderList.OrderByDescending(x => x.CreateTime).ToList();
                     if (orderList != null)
                     {
-                        orderList = orderList.FindAll(x => x.OrderStatus == orderStatus).Skip(pageIndex * AppConstData.MobilePageSize).Take(AppConstData.MobilePageSize).ToList();
+                        orderList = orderList.FindAll(x => x.OrderStatus == orderStatus);
                     }
                     json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
                 }

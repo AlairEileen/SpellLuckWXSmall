@@ -220,7 +220,7 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="accountID">账户Id</param>
         /// <param name="pageIndex">页码</param>
         /// <returns></returns>
-        public string GetWaitingJoinJackPotList(string accountID, int pageIndex)
+        public string GetWaitingJoinJackPotList(string accountID)
         {
 
             if (string.IsNullOrEmpty(accountID))
@@ -249,9 +249,8 @@ namespace SpellLuckWXSmall.Controllers
                     listJackPot.AddRange(waitingJackPot);
                 }
                 listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
-                var list = listJackPot.Skip(pageIndex * AppConstData.MobilePageSize).Take(AppConstData.MobilePageSize).ToList();
 
-                json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = list }.ToJson();
+                json = new BaseResponseModel<List<JackPotModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = listJackPot }.ToJson();
             }
             catch (Exception)
             {

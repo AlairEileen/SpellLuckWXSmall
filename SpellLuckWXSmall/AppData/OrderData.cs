@@ -30,7 +30,7 @@ namespace SpellLuckWXSmall.AppData
             var yesterday = DateTime.Now.AddDays(-1);
             ///case1
             var filterSum = filter.Eq("OrderList.OrderStatus", 0) & filter.Lte("OrderList.CreateTime", yesterday);
-            var update = Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 1);
+            var update = Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", (int)OrderStatusType.WaitCompanySendGoods);
             mongo.GetMongoCollection<AccountModel>().UpdateMany(filterSum, update);
             /// case2
             //var collection = mongo.GetMongoCollection<AccountModel>();

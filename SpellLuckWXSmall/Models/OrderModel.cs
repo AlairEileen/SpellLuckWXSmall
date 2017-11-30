@@ -28,7 +28,7 @@ namespace SpellLuckWXSmall.Models
         public DateTime CreateTime { get; set; }
 
         /// <summary>
-        /// 0:待确认发货，1：确认发货，，2：待评价，3：结束
+        /// -2:确认退款,-1：未中奖，0:待确认发货与退款，1：确认发货，，2：待评价，3：结束
         /// </summary>
         public int OrderStatus { get; set; }
 
@@ -49,8 +49,59 @@ namespace SpellLuckWXSmall.Models
         [JsonIgnore]
         [BsonIgnore]
         public string OrderIDText { get { return OrderID.ToString(); } }
-    }
 
+        public string OrderStatusText
+        {
+            get
+            {
+                switch ((OrderStatusType)OrderStatus)
+                {
+                    case OrderStatusType.WaitCompanyRefund:
+                        return "待商家退款";
+                    case OrderStatusType.NoGetJack:
+                        return "未中奖";
+                    case OrderStatusType.WaitAgreeSendGoods:
+                        return "待确认发货";
+                    case OrderStatusType.WaitCompanySendGoods:
+                        return "待商家发货";
+                    case OrderStatusType.WaitAssess:
+                        return "待评价";
+                    case OrderStatusType.FinishOrder:
+                        return "完成";
+                    default:
+                        return "未知";
+                }
+            }
+        }
+    }
+    public enum OrderStatusType
+    {
+        /// <summary>
+        /// 待商家退款
+        /// </summary>
+        WaitCompanyRefund = -2,
+        /// <summary>
+        /// 未中奖
+        /// </summary>
+        NoGetJack = -1,
+        /// <summary>
+        /// 待确认发货
+        /// </summary>
+        WaitAgreeSendGoods = 0,
+        /// <summary>
+        /// 待商家发货
+        /// </summary>
+        WaitCompanySendGoods = 1,
+        /// <summary>
+        /// 待评价
+        /// </summary>
+        WaitAssess = 2,
+        /// <summary>
+        /// 完成
+        /// </summary>
+        FinishOrder = 3
+
+    }
     public class OrderGoodsInfo
     {
         [BsonId]

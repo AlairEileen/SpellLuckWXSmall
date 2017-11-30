@@ -40,45 +40,9 @@ namespace SpellLuckWXSmall.Pages
 
         public void OnGet()
         {
-            GetWaitingSendOrder();
+            ChangeOrderStatus();
         }
 
-        private void GetWaitingSendOrder()
-        {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
-            {
-                if (o.OrderStatus == 1)
-                {
-                    return true;
-                }
-                return false;
-            });
-        }
-        private void GetWaitingSendOkOrder()
-        {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
-            {
-                if (o.OrderStatus == 0)
-                {
-                    return true;
-                }
-                return false;
-            });
-        }
-        private void GetWaitingAssessOrder()
-        {
-            var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
-            {
-                if (o.OrderStatus == 2 && !string.IsNullOrEmpty(o.TrackingNumber))
-                {
-                    return true;
-                }
-                return false;
-            });
-        }
         private List<OrderModel> ConvertToOrderList(List<AccountModel> accountWaitingSend, Func<OrderModel, bool> func)
         {
             List<OrderModel> list = new List<OrderModel>();
@@ -115,36 +79,22 @@ namespace SpellLuckWXSmall.Pages
         public IActionResult OnPostChangeOrderStatus()
         {
             PageIndex = 0;
-            switch (OrderStatus)
+            if (OrderStatus == -3)
             {
-                case 0:
-                    OnGet();
-                    break;
-                case 1:
-                    GetWaitingSendOkOrder();
-                    break;
-                case 2:
-                    GetWaitingAssessOrder();
-                    break;
-                case 3:
-                    GetWaitingRefundOrder();
-                    break;
-                case 4:
-                    GetRefundOrder();
-                    break;
-                default:
-                    OnGet();
-                    break;
+                GetAllOrders();
+                return Page();
             }
+            ChangeOrderStatus();
+
             return Page();
         }
 
-        private void GetRefundOrder()
+        private void ChangeOrderStatus()
         {
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
             OrderList = ConvertToOrderList(accountWaitingSend, o =>
             {
-                if (o.OrderStatus == 1 && o.isRefound&&o.hasRefoundByCompany)
+                if (o.OrderStatus == OrderStatus)
                 {
                     return true;
                 }
@@ -152,17 +102,10 @@ namespace SpellLuckWXSmall.Pages
             });
         }
 
-        private void GetWaitingRefundOrder()
+        private void GetAllOrders()
         {
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
-            OrderList = ConvertToOrderList(accountWaitingSend, o =>
-            {
-                if (o.OrderStatus == 1 && o.isRefound && !o.hasRefoundByCompany)
-                {
-                    return true;
-                }
-                return false;
-            });
+            OrderList = ConvertToOrderList(accountWaitingSend, o => true);
         }
 
         public IActionResult OnPostSearchByOrderNumber()

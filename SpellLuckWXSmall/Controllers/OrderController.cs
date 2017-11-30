@@ -79,7 +79,7 @@ namespace SpellLuckWXSmall.Controllers
                         jackpotList.Add(new JackPotModel()
                         {
                             CreateTime = item.CreateTime,
-                            Description = GetOrderStatusText(item.OrderStatus, item.isRefound, item.hasRefoundByCompany),
+                            Description = item.OrderStatusText,
                             JackGoods = new GoodsModel()
                             {
                                 GoodsID = item.GoodsInfo.GoodsID,
@@ -139,8 +139,6 @@ namespace SpellLuckWXSmall.Controllers
             }
         }
 
-
-
         /// <summary>
         /// 获取待发货、待评价列表
         /// </summary>
@@ -173,11 +171,11 @@ namespace SpellLuckWXSmall.Controllers
                     {
                         if (orderStatus == 0)
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == 0 || x.OrderStatus == -1);
+                            orderList = orderList.FindAll(x => x.OrderStatus == (int)OrderStatusType.WaitCompanySendGoods);
                         }
                         else
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == 2 || x.OrderStatus == 1);
+                            orderList = orderList.FindAll(x => x.OrderStatus == (int)OrderStatusType.WaitAssess);
                         }
                     }
                     json = new BaseResponseModel<List<OrderModel>>() { StatusCode = (int)ActionParams.code_ok, JsonData = orderList }.ToJson();
@@ -268,7 +266,7 @@ namespace SpellLuckWXSmall.Controllers
                 var update = Builders<AccountModel>.Update
                     .Set("OrderList.$.TrackingNumber", trackingNumber)
                     .Set("OrderList.$.TrackingCompany", trackingCompany)
-                    .Set("OrderList.$.OrderStatus", 2);
+                    .Set("OrderList.$.OrderStatus", (int)OrderStatusType.WaitAssess);
                 new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filterSum, update);
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
             }
@@ -289,7 +287,7 @@ namespace SpellLuckWXSmall.Controllers
         {
             try
             {
-                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", 1));
+                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.OrderStatus", (int)OrderStatusType.WaitCompanySendGoods));
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
             }
             catch (Exception)
@@ -314,7 +312,7 @@ namespace SpellLuckWXSmall.Controllers
                 var account = collection.Find(Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID))).FirstOrDefault();
                 var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderID)));
                 Refund.Run(order.WXOrderId, order.OrderNumber, order.OrderPrice.ConvertToMoneyCent(), order.OrderPrice.ConvertToMoneyCent());
-                collection.UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.isRefound", true));
+                collection.UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.isRefound", true).Set("OrderList.$.OrderStatus", (int)OrderStatusType.WaitCompanyRefund));
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
 
             }
@@ -323,6 +321,57 @@ namespace SpellLuckWXSmall.Controllers
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// 后台 获取退款信息
+        /// </summary>
+        /// <param name="orderID">订单ID</param>
+        /// <returns></returns>
+        public string GetRefundOrderByCompany(string orderID)
+        {
+            try
+            {
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID))).FirstOrDefault();
+                var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderID)));
+                return new BaseResponseModel3<OrderModel, string, decimal>()
+                {
+                    StatusCode = (int)ActionParams.code_ok,
+                    JsonData = order,
+                    JsonData1 = "目前商户号只能退给用户支付订单的最大金额，剩余部分请商户联系用户主动（通过微信或者支付宝等）打给用户",
+                    JsonData2 = order.GoodsInfo.GoodsPrice - order.OrderPrice
+                }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 后台 商户确认退款
+        /// </summary>
+        /// <param name="orderID">订单ID</param>
+        /// <returns></returns>
+        public string AgreeRefundOrderByCompany(string orderID)
+        {
+
+            try
+            {
+                var account = new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(
+                    Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.OrderStatus", (int)OrderStatusType.WaitAssess)
+                    );
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error }.ToJson();
+
+                throw;
+            }
+
+
         }
     }
 }

@@ -15,4 +15,11 @@ namespace Tools.ResponseModels
             return JsonConvert.SerializeObject(this);
         }
     }
+
+    public class BaseResponseModel3<T, P, H> : BaseResponseModel<T>
+    {
+        public P JsonData1 { get; set; }
+        public H JsonData2 { get; set; }
+
+    }
 }

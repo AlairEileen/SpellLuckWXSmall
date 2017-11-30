@@ -42,7 +42,7 @@ namespace SpellLuckWXSmall.Controllers
                 (
                 string.IsNullOrEmpty(goodsID) &&
                 (
-                string.IsNullOrEmpty(jackPotID) ||
+                string.IsNullOrEmpty(jackPotID) &&
                 string.IsNullOrEmpty(jackPotPassword)
                 )
                 ) ||
@@ -68,13 +68,20 @@ namespace SpellLuckWXSmall.Controllers
                     jackPot = mongo.GetMongoCollection<JackPotModel>().Find(jackPotFilter).FirstOrDefault();
                     if (jackPot != null)
                     {
-                        if (!jackPot.JackPotPassword.Equals(jackPotPassword) ||
-                            jackPot.JackPotPeopleNum == jackPot.Participator.Count)
+                        if (jackPot.JackPotPassword != null && !jackPot.JackPotPassword.Equals(jackPotPassword))
                         {
                             return new BaseResponseModel<string>()
                             {
                                 StatusCode = (int)ActionParams.code_error_verify,
-                                JsonData = "团满或密码有误"
+                                JsonData = "密码有误"
+                            }.ToJson();
+                        }
+                        if (jackPot.JackPotPeopleNum == jackPot.Participator.Count)
+                        {
+                            return new BaseResponseModel<string>()
+                            {
+                                StatusCode = (int)ActionParams.code_error_verify,
+                                JsonData = "团满了"
                             }.ToJson();
                         }
                         if (jackPot.Participator.Exists(x => x.AccountID.Equals(account.AccountID)))
@@ -263,7 +270,7 @@ namespace SpellLuckWXSmall.Controllers
         /// <param name="jackPotJoinWaitingID">等待id</param>
         /// <param name="shareTimes">转发次数</param>
         /// <returns></returns>
-        public string PutSharaTimes(string jackPotJoinWaitingID, int shareTimes)
+        public string PutShareTimes(string jackPotJoinWaitingID, int shareTimes)
         {
             if (string.IsNullOrEmpty(jackPotJoinWaitingID))
             {
@@ -323,6 +330,42 @@ namespace SpellLuckWXSmall.Controllers
         }
 
         /// <summary>
+        /// 获取一分夺宝已分享次数和剩余分享次数
+        /// </summary>
+        /// <param name="payWaitingID">支付等待ID</param>
+        /// <returns></returns>
+        public string GetShareTimes(string payWaitingID)
+        {
+            if (string.IsNullOrEmpty(payWaitingID))
+            {
+                return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_error_null }.ToJson();
+            }
+            try
+            {
+                var mongo = new MongoDBTool();
+                var jackpotWait = mongo.GetMongoCollection<JackPotJoinWaitingModel>()
+                    .Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
+
+                return new BaseResponseModel3<string,int,int>()
+                {
+                    JsonData = jackpotWait.JackPotJoinWaitingID.ToString(),
+                    JsonData1=jackpotWait.ShareTimes,
+                    JsonData2=AppConstData.SharaMinAdd-jackpotWait.ShareTimes,
+                    StatusCode = (int)ActionParams.code_ok
+                }.ToJson();
+            }
+            catch (Exception)
+            {
+                return new BaseResponseModel<string>()
+                {
+                    StatusCode = (int)ActionParams.code_error
+                }.ToJson();
+                throw;
+            }
+        }
+
+
+        /// <summary>
         /// 获取拼团分享ID以及等待人列表
         /// </summary>
         /// <param name="payWaitingID">支付前的支付ID</param>
@@ -350,7 +393,7 @@ namespace SpellLuckWXSmall.Controllers
                         {
                             goods.GoodsColor = new List<string>() { payWaiting.GoodsColor };
                             goods.GoodsRule = new List<string>() { payWaiting.GoodsRule };
-                            jackpot = new JackPotModel() { JackGoods = goods, JackPotPrice = goods.GoodsPrice ,CreateTime=payWaiting.CreateTime};
+                            jackpot = new JackPotModel() { JackGoods = goods, JackPotPrice = goods.GoodsPrice, CreateTime = payWaiting.CreateTime };
                         }
                     }
                 }

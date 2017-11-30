@@ -350,7 +350,7 @@ namespace SpellLuckWXSmall.Controllers
                         {
                             goods.GoodsColor = new List<string>() { payWaiting.GoodsColor };
                             goods.GoodsRule = new List<string>() { payWaiting.GoodsRule };
-                            jackpot = new JackPotModel() { JackGoods = goods, JackPotPrice = goods.GoodsPrice };
+                            jackpot = new JackPotModel() { JackGoods = goods, JackPotPrice = goods.GoodsPrice ,CreateTime=payWaiting.CreateTime};
                         }
                     }
                 }

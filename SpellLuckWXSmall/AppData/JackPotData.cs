@@ -79,7 +79,7 @@ namespace SpellLuckWXSmall.AppData
             var jackPotJoinWaiting = mongo.GetMongoCollection<JackPotJoinWaitingModel>().Find(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID)).FirstOrDefault();
             if (jackPotJoinWaiting == null)
             {
-                JackPotJoinWaitingModel jackPotJoinWaitingModel = new JackPotJoinWaitingModel()
+                jackPotJoinWaiting = new JackPotJoinWaitingModel()
                 {
                     Goods = goods,
                     AccountID = account.AccountID,

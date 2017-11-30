@@ -239,7 +239,7 @@ namespace WXSmallAppCommon.WXTool
 
             //在本地计算新的签名
             string cal_sign = MakeSign();
-
+            Console.WriteLine("#####验证Sign:" + cal_sign);
             if (cal_sign == return_sign)
             {
                 return true;

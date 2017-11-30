@@ -13,11 +13,11 @@ namespace SpellLuckWXSmall.Models
         [BsonId]
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId JackPotJoinWaitingID { get; set; }
-        public GoodsModel Goods { get; set; }
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId AccountID { get; set; }
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId PayWaitingID { get; set; }
+        public GoodsModel Goods { get; set; }
         public int ShareTimes { get; set; }
         public string GoodsColor { get; set; }
         public string GoodsRule { get; set; }

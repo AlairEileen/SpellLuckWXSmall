@@ -319,6 +319,13 @@ namespace SpellLuckWXSmall.Controllers
                     mongo.GetMongoCollection<JackPotJoinWaitingModel>().UpdateOne(Builders<JackPotJoinWaitingModel>.
                         Filter.Eq(x => x.JackPotJoinWaitingID, jackpotWait.JackPotJoinWaitingID),
                         Builders<JackPotJoinWaitingModel>.Update.Set(x => x.ShareTimes, jackpotWait.ShareTimes));
+                    json = new BaseResponseModel3<string, int, int>()
+                    {
+                        JsonData = jackpotWait.JackPotJoinWaitingID.ToString(),
+                        JsonData1 = jackpotWait.ShareTimes,
+                        JsonData2 = AppConstData.SharaMinAdd - jackpotWait.ShareTimes,
+                        StatusCode = (int)ActionParams.code_ok
+                    }.ToJson();
                 }
             }
             catch (Exception)
@@ -346,11 +353,11 @@ namespace SpellLuckWXSmall.Controllers
                 var jackpotWait = mongo.GetMongoCollection<JackPotJoinWaitingModel>()
                     .Find(x => x.PayWaitingID.Equals(new ObjectId(payWaitingID))).FirstOrDefault();
 
-                return new BaseResponseModel3<string,int,int>()
+                return new BaseResponseModel3<string, int, int>()
                 {
                     JsonData = jackpotWait.JackPotJoinWaitingID.ToString(),
-                    JsonData1=jackpotWait.ShareTimes,
-                    JsonData2=AppConstData.SharaMinAdd-jackpotWait.ShareTimes,
+                    JsonData1 = jackpotWait.ShareTimes,
+                    JsonData2 = AppConstData.SharaMinAdd - jackpotWait.ShareTimes,
                     StatusCode = (int)ActionParams.code_ok
                 }.ToJson();
             }

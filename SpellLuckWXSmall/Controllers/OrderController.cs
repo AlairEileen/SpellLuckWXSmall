@@ -79,7 +79,7 @@ namespace SpellLuckWXSmall.Controllers
                         jackpotList.Add(new JackPotModel()
                         {
                             CreateTime = item.CreateTime,
-                            Description = GetOrderStatusText(item.OrderStatus),
+                            Description = GetOrderStatusText(item.OrderStatus, item.isRefound, item.hasRefoundByCompany),
                             JackGoods = new GoodsModel()
                             {
                                 GoodsID = item.GoodsInfo.GoodsID,
@@ -103,19 +103,36 @@ namespace SpellLuckWXSmall.Controllers
             }
         }
 
-        private string GetOrderStatusText(int orderStatus)
+        private string GetOrderStatusText(int orderStatus, bool isRefound, bool hasRefoundByCompany)
         {
+
             switch (orderStatus)
             {
                 case -1:
                     return "未获奖";
                 case 0:
+                    if (isRefound && !hasRefoundByCompany)
+                    {
+                        return "等待商家退款";
+                    }
+                    else if (isRefound && hasRefoundByCompany)
+                    {
+                        return "退款完成";
+                    }
                     return "待确认发货";
                 case 1:
                     return "待商家发货";
                 case 2:
+                    if (isRefound && !hasRefoundByCompany)
+                    {
+                        return "等待商家退款";
+                    }
                     return "待评价";
                 case 3:
+                    if (isRefound && hasRefoundByCompany)
+                    {
+                        return "退款完成";
+                    }
                     return "完成";
                 default:
                     return "未知";
@@ -251,7 +268,7 @@ namespace SpellLuckWXSmall.Controllers
                 var update = Builders<AccountModel>.Update
                     .Set("OrderList.$.TrackingNumber", trackingNumber)
                     .Set("OrderList.$.TrackingCompany", trackingCompany)
-                    .Set("OrderList.$.OrderStatus", 1);
+                    .Set("OrderList.$.OrderStatus", 2);
                 new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filterSum, update);
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();
             }

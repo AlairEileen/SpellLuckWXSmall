@@ -13,13 +13,13 @@
     <form class="col-xs-6 col-lg-4" id="changeOrderStatusForm" method="post" asp-page-handler="changeOrderStatus">
         <h3>根据订单状态查询订单</h3>
         <select class="form-control" asp-for="OrderStatus" onchange="changeOrderStatus()">
-            <option value="1">待商家发货</option>
+            <option value="-3">全部</option>
+            <option value="1" selected="selected">待商家发货</option>
             <option value="-2">待商家退款</option>
             <option value="0">待确认发货</option>
             <option value="2">待评价</option>
             <option value="3">已完成</option>
             <option value="-1">未中奖</option>
-            <option value="-3">全部</option>
         </select>
     </form>
     <form class="col-xs-12 col-sm-6 col-lg-8" asp-page-handler="searchByOrderNumber">
@@ -68,8 +68,8 @@
                     <td style="vertical-align:middle">@Model.OrderList[i].OrderPrice</td>
                     <td style="vertical-align:middle">@Model.OrderList[i].CreateTime</td>
                     <td style="vertical-align:middle">
-                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus==1?"":"hidden")' data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button>
-                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus == 0 && !Model.OrderList[i].hasRefoundByCompany && Model.OrderList[i].isRefound ? "" : "hidden")' data-toggle="modal" onclick='refoundOrder("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">手动退款</button>
+                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus==(int)OrderStatusType.WaitCompanySendGoods?"":"hidden")' data-toggle="modal" onclick='getSendGoodsInfo("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">发货</button>
+                        <button class='btn btn-primary @(Model.OrderList[i].OrderStatus == (int)OrderStatusType.WaitCompanyRefund ? "" : "hidden")' data-toggle="modal" onclick='refoundOrder("@Model.OrderList[i].OrderID")' data-target="#sendGoodsModal">手动退款</button>
 
                     </td>
                 </tr>

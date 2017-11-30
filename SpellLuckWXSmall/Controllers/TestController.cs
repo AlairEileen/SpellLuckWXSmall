@@ -39,8 +39,25 @@ namespace SpellLuckWXSmall.Controllers
 
         public string SaveTest(TestModel testModel)
         {
-            new MongoDBTool().GetMongoCollection<TestModel>().InsertOne(new TestModel() { CDate = DateTime.Now.ToUniversalTime(), MDate = DateTime.Now });
-            return "ok";
+            var collection = new MongoDBTool().GetMongoCollection<TestModel>();
+            collection.InsertOne(new TestModel() { CDate = DateTime.Now.ToUniversalTime(), MDate = DateTime.Now ,TestType=TestType.error});
+            var list = collection.Find(Builders<TestModel>.Filter.Empty).ToList();
+
+            foreach (var item in list)
+            {
+                switch (item.TestType)
+                {
+                    case TestType.ok:
+                        break;
+                    case TestType.error:
+                        break;
+                    case TestType.success:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return JsonConvert.SerializeObject(list);
         }
         public string GetTestList()
         {

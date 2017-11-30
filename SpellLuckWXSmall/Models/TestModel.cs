@@ -14,10 +14,16 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId TestID { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
-        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CDate { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
-        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime MDate { get; set; }
+        public TestType TestType { get; set; }
+    }
+
+    public enum TestType
+    {
+        ok = 1, error = 2, success = 3
     }
 }

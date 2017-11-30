@@ -171,7 +171,7 @@ namespace SpellLuckWXSmall.Controllers
                     {
                         if (orderStatus == 0)
                         {
-                            orderList = orderList.FindAll(x => x.OrderStatus == (int)OrderStatusType.WaitCompanySendGoods);
+                            orderList = orderList.FindAll(x => x.OrderStatus == (int)OrderStatusType.WaitAgreeSendGoods);
                         }
                         else
                         {

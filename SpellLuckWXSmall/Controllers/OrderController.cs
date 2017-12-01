@@ -13,6 +13,7 @@ using Tools;
 using Tools.Json;
 using WXSmallAppCommon.WXInteractions;
 using SpellLuckWXSmall.AppData;
+using Microsoft.AspNetCore.Hosting;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,6 +60,12 @@ namespace SpellLuckWXSmall.Controllers
         //    return json;
         //}
         JackPotData jpd = new JackPotData();
+        private IHostingEnvironment hostingEnvironment;
+
+        public OrderController(IHostingEnvironment environment)
+        {
+            this.hostingEnvironment = environment;
+        }
 
         /// <summary>
         /// 获取所有订单

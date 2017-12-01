@@ -214,7 +214,10 @@ namespace SpellLuckWXSmall.AppData
             var filter = Builders<JackPotModel>.Filter;
             var filterSum = filter.Eq(x => x.JackPotStatus, 0) & filter.Eq("Participator.AccountID", new ObjectId(accountID));
             var listJackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
-
+            foreach (var item in listJackPot)
+            {
+                item.Description = "待拼团";
+            }
             ///一分夺宝列表
             var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
             var waitingFilterSum = waitingFilter.Eq(x => x.AccountID, new ObjectId(accountID)) & waitingFilter.Gt(x => x.ShareTimes, AppConstData.SharaMinAdd);
@@ -224,15 +227,12 @@ namespace SpellLuckWXSmall.AppData
                 var waitingJackPot = new List<JackPotModel>();
                 foreach (var item in listWaiting)
                 {
-                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods });
+                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods ,Description="待开奖-一分夺宝"});
                 }
                 listJackPot.AddRange(waitingJackPot);
             }
             listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
-            foreach (var item in listJackPot)
-            {
-                item.Description = "待拼团";
-            }
+          
             return listJackPot;
         }
 

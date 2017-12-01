@@ -66,7 +66,6 @@ namespace SpellLuckWXSmall.AppData
 
             }
         }
-
         /// <summary>
         /// 加入或者创建一分夺宝奖池待分享奖池
         /// </summary>

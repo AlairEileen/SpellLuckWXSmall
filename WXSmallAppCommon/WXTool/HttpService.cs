@@ -107,7 +107,7 @@ namespace WXSmallAppCommon.WXTool
             }
             catch (Exception e)
             {
-                Log.Error("HttpService", e.ToString());
+                Log.Error("HttpService", e.Message);
                 throw new WxPayException(e.ToString());
             }
             finally

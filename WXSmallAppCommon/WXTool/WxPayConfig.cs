@@ -20,7 +20,7 @@ namespace WXSmallAppCommon.WXTool
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */
-        public const string SSLCERT_PATH = @"/home/project_data/psqxcx/cert/apiclient_cert.p12";
+        public const string SSLCERT_PATH = "cert/apiclient_cert.p12";
         public const string SSLCERT_PASSWORD = "1491932202";
 
 

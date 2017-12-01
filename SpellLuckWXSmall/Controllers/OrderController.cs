@@ -14,6 +14,7 @@ using Tools.Json;
 using WXSmallAppCommon.WXInteractions;
 using SpellLuckWXSmall.AppData;
 using Microsoft.AspNetCore.Hosting;
+using WXSmallAppCommon.WXTool;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -318,6 +319,7 @@ namespace SpellLuckWXSmall.Controllers
                 var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
                 var account = collection.Find(Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID))).FirstOrDefault();
                 var order = account.OrderList.Find(x => x.OrderID.Equals(new ObjectId(orderID)));
+                HttpService.RootPath = hostingEnvironment.ContentRootPath;
                 Refund.Run(order.WXOrderId, order.OrderNumber, order.OrderPrice.ConvertToMoneyCent(), order.OrderPrice.ConvertToMoneyCent());
                 collection.UpdateOne(Builders<AccountModel>.Filter.Eq("OrderList.OrderID", new ObjectId(orderID)), Builders<AccountModel>.Update.Set("OrderList.$.isRefound", true).Set("OrderList.$.OrderStatus", (int)OrderStatusType.WaitCompanyRefund));
                 return new BaseResponseModel<string>() { StatusCode = (int)ActionParams.code_ok }.ToJson();

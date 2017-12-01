@@ -16,7 +16,15 @@ namespace SpellLuckWXSmall.Models
         public string CompanyName { get; set; }
         public string ServicePhone { get; set; }
         public List<CompanyAccountModel> CompanyAccountList { get; set; }
+        public TimeOpenJack TimeOpenJack { get; set; }
     }
+
+    public class TimeOpenJack
+    {
+        public int JackPotTimerHour { get; set; }
+        public int JackPotTimerMinute { get; set; }
+    }
+
     public class CompanyAccountModel
     {
         [BsonId]

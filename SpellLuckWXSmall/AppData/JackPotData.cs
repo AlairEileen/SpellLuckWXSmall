@@ -226,12 +226,12 @@ namespace SpellLuckWXSmall.AppData
                 var waitingJackPot = new List<JackPotModel>();
                 foreach (var item in listWaiting)
                 {
-                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods ,Description="待开奖-一分夺宝"});
+                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods, Description = "待开奖-一分夺宝" });
                 }
                 listJackPot.AddRange(waitingJackPot);
             }
             listJackPot.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
-          
+
             return listJackPot;
         }
 
@@ -339,8 +339,13 @@ namespace SpellLuckWXSmall.AppData
         private void CheckJack(object state)
         {
             var currentDate = DateTime.Now;
-            int currentHour = currentDate.Hour;
-            int currentMinute = currentDate.Minute;
+            var company = new MongoDBTool().GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+            if (company==null|| company.TimeOpenJack==null)
+            {
+                return;
+            }
+            int currentHour = company.TimeOpenJack.JackPotTimerHour;
+            int currentMinute = company.TimeOpenJack.JackPotTimerMinute;
             if (hour == currentHour && minute == currentMinute)
             {
                 DoCheckJack();

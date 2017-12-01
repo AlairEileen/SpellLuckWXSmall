@@ -30,7 +30,26 @@ namespace SpellLuckWXSmall.Pages
                 var waitingJackPot = new List<JackPotModel>();
                 foreach (var item in listWaiting)
                 {
-                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods });
+
+                    var account = mongo.GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(item.AccountID)).FirstOrDefault();
+                    waitingJackPot.Add(new JackPotModel()
+                    {
+                        JackGoods = item.Goods,
+                        Participator = new List<AccountPotModel>()
+                        {
+                         new AccountPotModel()
+                         {
+                             AccountID=account.AccountID,
+                             AccountAvatar=account.AccountAvatar,
+                             AccountName=account.AccountName,
+                             GoodsColor=item.GoodsColor,
+                             GoodsRule=item.GoodsRule,
+                             PayWaitingID=item.PayWaitingID,
+                             WXOrderId=item.WXOrderId
+                         }
+
+                        }
+                    });
                 }
                 listJackPot.AddRange(waitingJackPot);
             }

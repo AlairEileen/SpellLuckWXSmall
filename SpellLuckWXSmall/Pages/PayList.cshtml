@@ -11,7 +11,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <td>付款编号</td>
+                <td>微信订单号</td>
                 <td>订单商品</td>
                 <td>商品标题</td>
                 <td>购买人</td>
@@ -27,9 +27,10 @@
 
             @for (int i = 0; i < Model.AllJackPotList.Count(); i++)
             {
+
                 @for(int j=0;j<Model.AllJackPotList[i].Participator.Count();j++){
                     <tr>
-                        <td style="vertical-align:middle">@Model.AllJackPotList[i].JackPotID.ToString()</td>
+                        <td style="vertical-align:middle">@Model.AllJackPotList[i].Participator[j].WXOrderId</td>
                         <td style="vertical-align:middle"><img width="90" height="60" src="/file/FileDownload?fileUrl=@Model.AllJackPotList[i].JackGoods.GoodsListImage.FileUrlData[2]" /></td>
                         <td style="vertical-align:middle;max-width:100px;">@Model.AllJackPotList[i].JackGoods.GoodsTitle</td>
                         <td style="vertical-align:middle">@Model.AllJackPotList[i].Participator[j].AccountName</td>

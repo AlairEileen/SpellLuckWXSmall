@@ -91,7 +91,8 @@ namespace SpellLuckWXSmall.Pages
         private CompanyAccountModel GetCAM()
         {
             var company = GetCompany();
-            if (company.CompanyAccountList == null || company.CompanyAccountList.Count == 0)
+         
+            if (company==null||company.CompanyAccountList == null || company.CompanyAccountList.Count == 0)
             {
                 return null;
             }
@@ -111,7 +112,7 @@ namespace SpellLuckWXSmall.Pages
                     }
                     else if (company == null)
                     {
-                        mongo.GetMongoCollection<CompanyModel>().InsertOne(new CompanyModel() { CompanyAccountList = list });
+                        mongo.GetMongoCollection<CompanyModel>().InsertOne(new CompanyModel() { TimeOpenJack = new TimeOpenJack() { JackPotTimerHour = AppConstData.JackPotTimerHour, JackPotTimerMinute = AppConstData.JackPotTimerMinute }, CompanyAccountList = list });
                     }
                     return true;
                 }

@@ -11,11 +11,11 @@ namespace SpellLuckWXSmall
         /// <summary>
         /// 开奖时间——时
         /// </summary>
-        public const int JackPotTimerHour = 16;
+        public const int JackPotTimerHour = 17;
         /// <summary>
         /// 开奖时间——分
         /// </summary>
-        public const int JackPotTimerMinute = 15;
+        public const int JackPotTimerMinute = 0;
         #endregion
         /// <summary>
         /// 团购超时退款小时

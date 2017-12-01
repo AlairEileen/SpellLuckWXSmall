@@ -8,6 +8,25 @@
 <div class="jumbotron">
     <h1>设置</h1>
 </div>
+<h2>设置一分夺宝开奖时间（每天）</h2>
+<hr />
+<form class="form" method="post" asp-page-handler="submitCompanyTime" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-xs-6 col-sm-3">
+            <label for="JackPotTimerHour">开奖小时</label>
+            <input class="form-control" id="JackPotTimerHour" asp-for="Company.TimeOpenJack.JackPotTimerHour" type="text" required />
+        </div>
+        <div class="col-xs-6 col-sm-3">
+
+            <label for="JackPotTimerMinute">开奖分钟</label>
+            <input class="form-control" id="JackPotTimerMinute" asp-for="Company.TimeOpenJack.JackPotTimerMinute" type="tel" required />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary pull-right" type="submit">提 交</button>
+    <br style="clear:both;" />
+</form>
+<br />
 <h2>设置公司信息</h2>
 <hr />
 <form class="form" method="post" asp-page-handler="submitCompany" enctype="multipart/form-data">
@@ -28,7 +47,6 @@
 </form>
 <br />
 <h2>设置管理员用户信息</h2>
-<hr />
 <form class="form-signin" asp-page-handler="login" method="post">
     <div class="row">
 
@@ -60,3 +78,4 @@
 </form>
 <br style="clear:both;" />
 <br />
+

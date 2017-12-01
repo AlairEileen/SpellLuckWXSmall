@@ -54,9 +54,34 @@ namespace SpellLuckWXSmall.Pages
             else
             {
                 Company.CompanyID = company.CompanyID;
-                collection.ReplaceOne(x => x.CompanyID.Equals(company.CompanyID), Company);
+                collection.UpdateOne(x => x.CompanyID.Equals(company.CompanyID), Builders<CompanyModel>.Update.Set(x => x.CompanyName, Company.CompanyName).Set(x => x.ServicePhone, Company.ServicePhone));
             }
+            OnGet();
+            return Page();
+        }
 
+        public IActionResult OnPostSubmitCompanyTime()
+        {
+            var filter = Builders<CompanyModel>.Filter.Empty;
+            var collection = new MongoDBTool().GetMongoCollection<CompanyModel>();
+            var company = collection.Find(filter).FirstOrDefault();
+            if (company == null)
+            {
+                company = Company;
+                collection.InsertOne(company);
+            }
+            else
+            {
+                Company.CompanyID = company.CompanyID;
+                collection.UpdateOne(x => x.CompanyID.Equals(company.CompanyID), Builders<CompanyModel>.Update.Set(x => x.TimeOpenJack,
+                    new TimeOpenJack()
+                    {
+                        JackPotTimerHour = Company.TimeOpenJack.JackPotTimerHour,
+                        JackPotTimerMinute = Company.TimeOpenJack.JackPotTimerMinute
+                    }
+                    ));
+            }
+            OnGet();
             return Page();
         }
         private CompanyModel GetCompany()
@@ -108,6 +133,7 @@ namespace SpellLuckWXSmall.Pages
                     {
                         mongo.GetMongoCollection<CompanyModel>().UpdateOne(x => x.CompanyID.Equals(company.CompanyID), Builders<CompanyModel>.Update.Set(x => x.CompanyAccountList, list));
                     }
+                  
                     return true;
                 }
                 );

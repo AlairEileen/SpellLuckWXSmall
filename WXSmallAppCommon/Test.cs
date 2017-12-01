@@ -10,7 +10,7 @@ namespace WXSmallAppCommon
     {
         public string CertFileExists()
         {
-            string path = @"../WXSmallAppCommon/"+ WxPayConfig.SSLCERT_PATH;
+            string path = WxPayConfig.SSLCERT_PATH;
             var file = File.Open(path, FileMode.Open);
             return File.Exists(path)+"";
 

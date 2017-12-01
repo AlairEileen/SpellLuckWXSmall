@@ -67,7 +67,8 @@ namespace SpellLuckWXSmall.Pages
             }
             list.Sort((x, y) => DateTime.Compare(x.CreateTime, y.CreateTime));
 
-            return list.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            //return list.Skip(PageIndex * PageSize).Take(PageSize).ToList();
+            return list;
         }
 
         public IActionResult OnPostSendGoods()
@@ -106,6 +107,7 @@ namespace SpellLuckWXSmall.Pages
         {
             var accountWaitingSend = new MongoDBTool().GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList();
             OrderList = ConvertToOrderList(accountWaitingSend, o => true);
+            OrderStatus = -3;
         }
 
         public IActionResult OnPostSearchByOrderNumber()
@@ -134,5 +136,7 @@ namespace SpellLuckWXSmall.Pages
 
             return Page();
         }
+
+     
     }
 }

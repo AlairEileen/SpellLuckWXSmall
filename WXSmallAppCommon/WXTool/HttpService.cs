@@ -19,7 +19,6 @@ namespace WXSmallAppCommon.WXTool
             //直接确认，否则打不开    
             return true;
         }
-        public static string RootPath { get; set; }
         /// <summary>
         /// 向腾讯发起post请求
         /// </summary>
@@ -28,7 +27,7 @@ namespace WXSmallAppCommon.WXTool
         /// <param name="isUseCert">是否需要证书</param>
         /// <param name="timeout">超时设置</param>
         /// <returns></returns>
-        public static string Post(string xml, string url, bool isUseCert = true, int timeout = 10)
+        public static string Post(string xml, string url, bool isUseCert=true, int timeout=10)
         {
             System.GC.Collect();//垃圾回收，回收没有正常关闭的http连接
 
@@ -70,13 +69,9 @@ namespace WXSmallAppCommon.WXTool
                 //是否使用证书
                 if (isUseCert)
                 {
-                    string path = $@"{RootPath}{WxPayConfig.SSLCERT_PATH}";
-                    bool exists = File.Exists(path);
-                    Log.Debug("微信证书：，文件是否存在：,", path + exists);
-
+                    string path = @"../WXSmallAppCommon/";
                     
-
-                    X509Certificate2 cert = new X509Certificate2(path, WxPayConfig.SSLCERT_PASSWORD);
+                    X509Certificate2 cert = new X509Certificate2(path + WxPayConfig.SSLCERT_PATH, WxPayConfig.SSLCERT_PASSWORD);
                     request.ClientCertificates.Add(cert);
                     Log.Debug("WxPayApi", "PostXml used cert");
                 }
@@ -112,7 +107,7 @@ namespace WXSmallAppCommon.WXTool
             }
             catch (Exception e)
             {
-                Log.Error("HttpService", e.Message);
+                Log.Error("HttpService", e.ToString());
                 throw new WxPayException(e.ToString());
             }
             finally

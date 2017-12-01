@@ -74,10 +74,9 @@ namespace WXSmallAppCommon.WXTool
                     bool exists = File.Exists(path);
                     Log.Debug("微信证书：，文件是否存在：,", path + exists);
 
-                    byte[] byteRaw = File.ReadAllBytes(path);
-                    Log.Debug("证书长度",byteRaw.Length+"");
+                    
 
-                    X509Certificate2 cert = new X509Certificate2(data, WxPayConfig.SSLCERT_PASSWORD);
+                    X509Certificate2 cert = new X509Certificate2(path, WxPayConfig.SSLCERT_PASSWORD);
                     request.ClientCertificates.Add(cert);
                     Log.Debug("WxPayApi", "PostXml used cert");
                 }

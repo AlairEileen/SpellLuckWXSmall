@@ -70,8 +70,8 @@ namespace WXSmallAppCommon.WXTool
                 if (isUseCert)
                 {
                     //string path = @"../WXSmallAppCommon/";
-                    Log.Debug("微信证书：", "WxPayConfig.SSLCERT_PATH");
-                    X509Certificate2 cert = new X509Certificate2(WxPayConfig.SSLCERT_PATH, WxPayConfig.SSLCERT_PASSWORD);
+                    Log.Debug("微信证书：", @WxPayConfig.SSLCERT_PATH);
+                    X509Certificate2 cert = new X509Certificate2(@WxPayConfig.SSLCERT_PATH, WxPayConfig.SSLCERT_PASSWORD);
                     request.ClientCertificates.Add(cert);
                     Log.Debug("WxPayApi", "PostXml used cert");
                 }

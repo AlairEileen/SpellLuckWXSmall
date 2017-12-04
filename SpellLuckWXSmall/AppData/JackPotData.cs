@@ -382,7 +382,7 @@ namespace SpellLuckWXSmall.AppData
             var list = collection.Find(filter).ToList();
             foreach (var item in list)
             {
-                if ((DateTime.Now - item.CreateTime).Hours > AppConstData.OverTimeGroupJack)
+                if ((DateTime.Now - item.CreateTime).TotalHours > AppConstData.OverTimeGroupJack)
                 {
                     if (item.JackPotPeopleNum > item.Participator.Count)
                     {
@@ -424,7 +424,7 @@ namespace SpellLuckWXSmall.AppData
             var list = collection.Find(filter).ToList();
             foreach (var item in list)
             {
-                if ((DateTime.Now - item.CreateTime).Hours > AppConstData.OverTimeGroupJack)
+                if ((DateTime.Now - item.CreateTime).TotalHours > AppConstData.OverTimeGroupJack)
                 {
                     OpenJackPot(item);
 

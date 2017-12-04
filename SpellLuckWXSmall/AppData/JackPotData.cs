@@ -11,6 +11,7 @@ using Tools;
 using Tools.DB;
 using Tools.Strings;
 using WXSmallAppCommon.WXInteractions;
+using WXSmallAppCommon.WXTool;
 
 namespace SpellLuckWXSmall.AppData
 {
@@ -276,6 +277,10 @@ namespace SpellLuckWXSmall.AppData
                     GoodsColor = account.GoodsColor,
                 }
             };
+            var goodsCollection = new MongoDBTool().GetMongoCollection<GoodsModel>();
+            var goods = goodsCollection.Find(x => x.GoodsID.Equals(orderModel.GoodsInfo.GoodsID)).FirstOrDefault();
+            goods.GoodsSales++;
+            goodsCollection.UpdateOne(x => x.GoodsID.Equals(goods.GoodsID), Builders<GoodsModel>.Update.Set(x => x.GoodsSales, goods.GoodsSales));
             var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
             var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
             var accountCurrent = collection.Find(filter).FirstOrDefault();
@@ -340,7 +345,7 @@ namespace SpellLuckWXSmall.AppData
         {
             var currentDate = DateTime.Now;
             var company = new MongoDBTool().GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
-            if (company==null|| company.TimeOpenJack==null)
+            if (company == null || company.TimeOpenJack == null)
             {
                 return;
             }
@@ -378,6 +383,7 @@ namespace SpellLuckWXSmall.AppData
                 {
                     if (item.JackPotPeopleNum > item.Participator.Count)
                     {
+                        Log.Info("已经检测到退款项目",item.JackPotID.ToString());
                         GoRefund(item);
                     }
                 }
@@ -395,6 +401,8 @@ namespace SpellLuckWXSmall.AppData
             for (int i = 0; i < item.Participator.Count; i++)
             {
                 Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice.ConvertToMoneyCent(), item.JackGoods.GoodsPrice.ConvertToMoneyCent());
+                Log.Info("已经退款项目", item.Participator[i].WXOrderId);
+
             }
         }
 

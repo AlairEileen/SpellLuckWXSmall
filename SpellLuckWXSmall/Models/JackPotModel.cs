@@ -15,13 +15,14 @@ namespace SpellLuckWXSmall.Models
         public ObjectId JackPotID { get; set; }
         public List<AccountPotModel> Participator { get; set; }
         public GoodsModel JackGoods { get; set; }
-      
+
+
         /// <summary>
         /// 0:等待加入，1：等待开奖，2：已开奖
         /// </summary>
         public int JackPotStatus { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
-        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
         public string JackPotPassword { get; set; }
         public int JackPotPeopleNum { get; set; }
@@ -42,5 +43,9 @@ namespace SpellLuckWXSmall.Models
         public string GoodsRule { get; set; }
         [JsonConverter(typeof(Tools.Json.ObjectIdConverter))]
         public ObjectId PayWaitingID { get; set; }
+        /// <summary>
+        /// 是否已经退款
+        /// </summary>
+        public bool IsRefund { get; set; }
     }
 }

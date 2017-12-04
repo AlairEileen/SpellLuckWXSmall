@@ -384,7 +384,7 @@ namespace SpellLuckWXSmall.AppData
                     if (item.JackPotPeopleNum > item.Participator.Count)
                     {
                         Log.Info("已经检测到退款项目",item.JackPotID.ToString());
-                        GoRefund(item);
+                        GoRefund(item,mongo);
                     }
                 }
 
@@ -396,13 +396,17 @@ namespace SpellLuckWXSmall.AppData
         /// 请求退款
         /// </summary>
         /// <param name="item"></param>
-        private void GoRefund(JackPotModel item)
+        private void GoRefund(JackPotModel item,MongoDBTool mongo)
         {
             for (int i = 0; i < item.Participator.Count; i++)
             {
+                if (item.Participator[i].IsRefund)
+                {
+                    continue;
+                }
                 Refund.Run(item.Participator[i].WXOrderId, "", item.JackGoods.GoodsPrice.ConvertToMoneyCent(), item.JackGoods.GoodsPrice.ConvertToMoneyCent());
                 Log.Info("已经退款项目", item.Participator[i].WXOrderId);
-
+                mongo.GetMongoCollection<JackPotModel>().UpdateOne(Builders<JackPotModel>.Filter.Eq("Participator.WXOrderId", item.Participator[i].WXOrderId),Builders<JackPotModel>.Update.Set("Participator.$.IsRefund", true));
             }
         }
 

@@ -216,7 +216,21 @@ namespace SpellLuckWXSmall.AppData
             var listJackPot = new MongoDBTool().GetMongoCollection<JackPotModel>().Find(filterSum).ToList();
             foreach (var item in listJackPot)
             {
-                item.Description = "待拼团";
+                if (item.JackGoods.GoodsPayType == 2)
+                {
+                    item.Description = "待开奖-一分夺宝";
+                }
+                else
+                {
+                    if (item.JackPotStatus==3)
+                    {
+                        item.Description = "已退款";
+                    }
+                    else
+                    {
+                        item.Description = "待拼团";
+                    }
+                }
             }
             ///一分夺宝列表
             var waitingFilter = Builders<JackPotJoinWaitingModel>.Filter;
@@ -227,7 +241,7 @@ namespace SpellLuckWXSmall.AppData
                 var waitingJackPot = new List<JackPotModel>();
                 foreach (var item in listWaiting)
                 {
-                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods, Description = "待开奖-一分夺宝" });
+                    waitingJackPot.Add(new JackPotModel() { JackGoods = item.Goods, Description = "待分享-一分夺宝" });
                 }
                 listJackPot.AddRange(waitingJackPot);
             }
@@ -411,6 +425,7 @@ namespace SpellLuckWXSmall.AppData
                 Log.Info("已经退款项目", item.Participator[i].WXOrderId);
                 mongo.GetMongoCollection<JackPotModel>().UpdateOne(Builders<JackPotModel>.Filter.Eq("Participator.WXOrderId", item.Participator[i].WXOrderId), Builders<JackPotModel>.Update.Set("Participator.$.IsRefund", true));
             }
+            mongo.GetMongoCollection<JackPotModel>().UpdateOne(x => x.JackPotID.Equals(item.JackPotID), Builders<JackPotModel>.Update.Set(x => x.JackPotStatus, 3));
         }
 
         /// <summary>

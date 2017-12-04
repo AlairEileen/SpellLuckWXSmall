@@ -67,6 +67,10 @@ namespace SpellLuckWXSmall.Models
                     case OrderStatusType.WaitAssess:
                         return "待评价";
                     case OrderStatusType.FinishOrder:
+                        if (isRefound)
+                        {
+                            return "完成——已退款";
+                        }
                         return "完成";
                     default:
                         return "未知";

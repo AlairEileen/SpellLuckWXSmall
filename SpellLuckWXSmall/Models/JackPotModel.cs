@@ -18,7 +18,7 @@ namespace SpellLuckWXSmall.Models
 
 
         /// <summary>
-        /// 0:等待加入，1：等待开奖，2：已开奖
+        /// 0:等待加入，1：等待开奖，2：已开奖,3:已退款
         /// </summary>
         public int JackPotStatus { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]

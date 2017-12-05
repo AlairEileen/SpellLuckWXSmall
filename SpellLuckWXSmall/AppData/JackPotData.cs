@@ -291,6 +291,7 @@ namespace SpellLuckWXSmall.AppData
                     GoodsRule = account.GoodsRule,
                     GoodsColor = account.GoodsColor,
                 },
+                JackPotPeopleNum=jackPot.JackPotPeopleNum,
                 Participator = jackPot.Participator,
                 LuckAccount = luckAccount
             };

@@ -80,6 +80,7 @@ namespace SpellLuckWXSmall.Controllers
                         {
                             CreateTime = item.CreateTime,
                             Description = item.OrderStatusText,
+                            JackPotPeopleNum = item.JackPotPeopleNum,
                             JackGoods = new GoodsModel()
                             {
                                 GoodsID = item.GoodsInfo.GoodsID,
@@ -90,7 +91,8 @@ namespace SpellLuckWXSmall.Controllers
                                 GoodsPrice = item.GoodsInfo.GoodsPrice,
                                 GoodsTitle = item.GoodsInfo.GoodsTitle
                             }
-                            ,Participator=item.Participator
+                            ,
+                            Participator = item.Participator
                         });
                     }
                 }

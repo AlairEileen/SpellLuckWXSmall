@@ -79,6 +79,8 @@ namespace SpellLuckWXSmall.Models
         }
         public List<AccountPotModel> Participator { get; set; }
         public AccountPotModel LuckAccount { get; set; }
+        public int JackPotPeopleNum { get; set; }
+
     }
     public enum OrderStatusType
     {

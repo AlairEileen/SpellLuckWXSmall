@@ -24,6 +24,18 @@ namespace SpellLuckWXSmall.Models
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
+        [BsonIgnore]
+        public long CreateTimestamp
+        {
+            get
+            {
+                if (CreateTime != null)
+                {
+                    return (long) (CreateTime- new DateTime(1970, 1, 1, 8, 0, 0)).TotalMilliseconds;
+                }
+                return (long)(DateTime.MinValue - new DateTime(1970, 1, 1, 8, 0, 0)).TotalMilliseconds;
+            }
+        }
         public string JackPotPassword { get; set; }
         public int JackPotPeopleNum { get; set; }
         public decimal JackPotPrice { get; set; }

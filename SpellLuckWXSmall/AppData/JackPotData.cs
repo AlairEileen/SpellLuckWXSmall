@@ -263,7 +263,7 @@ namespace SpellLuckWXSmall.AppData
         /// </summary>
         /// <param name="jackPot"></param>
         /// <param name="accountID"></param>
-        internal static void CreateOrder(JackPotModel jackPot, ObjectId accountID, int orderStatus = 0)
+        internal static void CreateOrder(JackPotModel jackPot, ObjectId accountID, AccountPotModel luckAccount, int orderStatus = 0)
         {
             var account = jackPot.Participator.Find(x => x.AccountID.Equals(accountID));
             if (account == null)
@@ -271,7 +271,7 @@ namespace SpellLuckWXSmall.AppData
                 Console.WriteLine("订单用户不存在！");
                 return;
             }
-            
+
             OrderModel orderModel = new OrderModel()
             {
                 OrderID = ObjectId.GenerateNewId(),
@@ -291,8 +291,8 @@ namespace SpellLuckWXSmall.AppData
                     GoodsRule = account.GoodsRule,
                     GoodsColor = account.GoodsColor,
                 },
-                Participator = jackPot.Participator
-
+                Participator = jackPot.Participator,
+                LuckAccount = luckAccount
             };
             ///商品销量增加
             var goodsCollection = new MongoDBTool().GetMongoCollection<GoodsModel>();
@@ -315,17 +315,18 @@ namespace SpellLuckWXSmall.AppData
         internal static void CalcCreateOrder(JackPotModel jackPot, List<AccountPotModel> participator)
         {
             ObjectId objectId = CalcJackAccount(participator);
-            var hasJackPotAccount = jackPot.Participator.Find(x => x.AccountID.Equals(objectId));
-            hasJackPotAccount.HasJack = true;
+            var luckAccount = jackPot.Participator.Find(x => x.AccountID.Equals(objectId));
+            luckAccount.HasJack = true;
+
             for (int i = 0; i < participator.Count; i++)
             {
                 if (participator[i].AccountID.Equals(objectId))
                 {
-                    CreateOrder(jackPot, participator[i].AccountID);
+                    CreateOrder(jackPot, participator[i].AccountID, luckAccount);
                 }
                 else
                 {
-                    CreateOrder(jackPot, participator[i].AccountID, (int)OrderStatusType.NoGetJack);
+                    CreateOrder(jackPot, participator[i].AccountID, luckAccount, (int)OrderStatusType.NoGetJack);
                 }
             }
             var filter = Builders<JackPotModel>.Filter;

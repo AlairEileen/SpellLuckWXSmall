@@ -222,7 +222,7 @@ namespace SpellLuckWXSmall.AppData
                 }
                 else
                 {
-                    if (item.JackPotStatus==3)
+                    if (item.JackPotStatus == 3)
                     {
                         item.Description = "已退款";
                     }
@@ -271,6 +271,7 @@ namespace SpellLuckWXSmall.AppData
                 Console.WriteLine("订单用户不存在！");
                 return;
             }
+            
             OrderModel orderModel = new OrderModel()
             {
                 OrderID = ObjectId.GenerateNewId(),
@@ -289,12 +290,16 @@ namespace SpellLuckWXSmall.AppData
                     GoodsTitle = jackPot.JackGoods.GoodsTitle,
                     GoodsRule = account.GoodsRule,
                     GoodsColor = account.GoodsColor,
-                }
+                },
+                Participator = jackPot.Participator
+
             };
+            ///商品销量增加
             var goodsCollection = new MongoDBTool().GetMongoCollection<GoodsModel>();
             var goods = goodsCollection.Find(x => x.GoodsID.Equals(orderModel.GoodsInfo.GoodsID)).FirstOrDefault();
             goods.GoodsSales++;
             goodsCollection.UpdateOne(x => x.GoodsID.Equals(goods.GoodsID), Builders<GoodsModel>.Update.Set(x => x.GoodsSales, goods.GoodsSales));
+            ///保存订单
             var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
             var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
             var accountCurrent = collection.Find(filter).FirstOrDefault();
@@ -310,6 +315,8 @@ namespace SpellLuckWXSmall.AppData
         internal static void CalcCreateOrder(JackPotModel jackPot, List<AccountPotModel> participator)
         {
             ObjectId objectId = CalcJackAccount(participator);
+            var hasJackPotAccount = jackPot.Participator.Find(x => x.AccountID.Equals(objectId));
+            hasJackPotAccount.HasJack = true;
             for (int i = 0; i < participator.Count; i++)
             {
                 if (participator[i].AccountID.Equals(objectId))
@@ -318,9 +325,12 @@ namespace SpellLuckWXSmall.AppData
                 }
                 else
                 {
-                    CreateOrder(jackPot, participator[i].AccountID, -1);
+                    CreateOrder(jackPot, participator[i].AccountID, (int)OrderStatusType.NoGetJack);
                 }
             }
+            var filter = Builders<JackPotModel>.Filter;
+            var filterSum = filter.Eq(x => x.JackPotID, jackPot.JackPotID) & filter.Eq("Participator.AccountID", objectId);
+            new MongoDBTool().GetMongoCollection<JackPotModel>().UpdateOne(filterSum, Builders<JackPotModel>.Update.Set("Participator.$.HasJack", true));
         }
 
 
@@ -344,8 +354,6 @@ namespace SpellLuckWXSmall.AppData
     public class JackPotTimer
     {
         Timer jackPotTimer;
-        int hour = AppConstData.JackPotTimerHour;
-        int minute = AppConstData.JackPotTimerMinute;
         public JackPotTimer()
         {
             jackPotTimer = new Timer(CheckJack, null, 0, 1000 * 60);

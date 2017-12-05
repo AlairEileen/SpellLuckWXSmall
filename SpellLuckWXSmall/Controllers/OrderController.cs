@@ -90,6 +90,7 @@ namespace SpellLuckWXSmall.Controllers
                                 GoodsPrice = item.GoodsInfo.GoodsPrice,
                                 GoodsTitle = item.GoodsInfo.GoodsTitle
                             }
+                            ,Participator=item.Participator
                         });
                     }
                 }

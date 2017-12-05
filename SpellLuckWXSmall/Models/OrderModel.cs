@@ -77,6 +77,7 @@ namespace SpellLuckWXSmall.Models
                 }
             }
         }
+        public List<AccountPotModel> Participator { get; set; }
     }
     public enum OrderStatusType
     {

@@ -40,7 +40,7 @@ namespace SpellLuckWXSmall.Controllers
         public string SaveTest(TestModel testModel)
         {
             var collection = new MongoDBTool().GetMongoCollection<TestModel>();
-            collection.InsertOne(new TestModel() { CDate = DateTime.Now.ToUniversalTime(), MDate = DateTime.Now ,TestType=TestType.error});
+            collection.InsertOne(new TestModel() { CDate = DateTime.Now.ToUniversalTime(), MDate = DateTime.Now, TestType = TestType.error });
             var list = collection.Find(Builders<TestModel>.Filter.Empty).ToList();
 
             foreach (var item in list)
@@ -59,6 +59,31 @@ namespace SpellLuckWXSmall.Controllers
             }
             return JsonConvert.SerializeObject(list);
         }
+
+        public string ConvertJackOrder()
+        {
+            var mongo = new MongoDBTool();
+            var accountCollection = mongo.GetMongoCollection<AccountModel>();
+            var accountList = accountCollection.Find(Builders<AccountModel>.Filter.Exists("OrderList.Participator", false)).ToList();
+            List<JackPotModel> jackPotList = new List<JackPotModel>();
+            var jackCollection = mongo.GetMongoCollection<JackPotModel>();
+
+            foreach (var item in accountList)
+            {
+                foreach (var order in item.OrderList)
+                {
+                    if (order.Participator == null)
+                    {
+                        jackPotList.Add(jackCollection.Find(Builders<JackPotModel>.Filter.Eq("Participator.WXOrderId", order.WXOrderId)).FirstOrDefault());
+                    }
+                }
+            }
+            jackPotList = jackPotList.Distinct().ToList();
+
+
+            return "success";
+        }
+
         public string GetTestList()
         {
             return JsonConvert.SerializeObject(new MongoDBTool().GetMongoCollection<TestModel>().Find(Builders<TestModel>.Filter.Empty).ToList());

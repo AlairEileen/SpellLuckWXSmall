@@ -47,5 +47,9 @@ namespace SpellLuckWXSmall.Models
         /// 是否已经退款
         /// </summary>
         public bool IsRefund { get; set; }
+        /// <summary>
+        /// 是否中奖
+        /// </summary>
+        public bool HasJack { get; set; }
     }
 }

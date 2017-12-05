@@ -108,6 +108,10 @@ namespace SpellLuckWXSmall.Controllers
             {
                 responseModel.StatusCode = (int)ActionParams.code_null;
             }
+            if (goods.AssessmentList!=null)
+            {
+                goods.AssessmentList.Sort((x, y) => -x.AssessTime.CompareTo(y.AssessTime));
+            }
             if (goods.GoodsPayType == 0)
             {
                 var filter = Builders<JackPotModel>.Filter;

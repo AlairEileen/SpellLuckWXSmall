@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using SpellLuckWXSmall.AppData;
 using SpellLuckWXSmall.Models;
 using System;
 using System.Collections.Generic;
@@ -130,5 +131,41 @@ namespace SpellLuckWXSmall.Controllers
             return "success";
         }
 #endif
+
+
+        public string SendMessage()
+        {
+            WXMessageOrderModel wXMessageOrderModel = new WXMessageOrderModel()
+            {
+                OpenID = "oNd4E0Sn_wWIs035fA5_5RclQxZo",
+                FormID = "prepay_id=wx20171206143523d6e69376140860386017",
+                Data = new WXMessageOrderModelData()
+                {
+                    GoodsTitle = new KeyWord()
+                    {
+                        Value = "标题"
+                    },
+                    OrderCreateTime = new KeyWord()
+                    {
+                        Value = DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss")
+                    },
+                    OrderNumber = new KeyWord()
+                    {
+                        Value = "423432jfsdjfo"
+                    },
+                    OrderTotal = new KeyWord()
+                    {
+                        Value = "10元"
+                    },
+                    ServicePhone = new KeyWord()
+                    {
+                        Value = "432423432423"
+                    }
+
+                }
+            };
+            WXOrderMessageSender.Send(wXMessageOrderModel);
+            return "success";
+        }
     }
 }

@@ -48,10 +48,11 @@ namespace SpellLuckWXSmall.AppData
     {
         public static void Send(WXMessageOrderModel wXMessageOrderModel)
         {
+            wXMessageOrderModel.FormID = wXMessageOrderModel.FormID.Substring(wXMessageOrderModel.FormID.IndexOf("=") + 1);
             string jsonData = JsonConvert.SerializeObject(wXMessageOrderModel);
             string accessToken = new JsApiPay().GetAccessToken();
             string url = $"https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token={accessToken}";
-            Request_WebClient(url, jsonData, Encoding.UTF8);
+            string msg = Request_WebClient(url, jsonData, Encoding.UTF8);
         }
         public static string Request_WebClient(string uri, string paramStr, Encoding encoding)
         {

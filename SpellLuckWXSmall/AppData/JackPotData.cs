@@ -324,6 +324,7 @@ namespace SpellLuckWXSmall.AppData
                 if (participator[i].AccountID.Equals(objectId))
                 {
                     CreateOrder(jackPot, participator[i].AccountID, luckAccount);
+                    SendLuckMessage(jackPot,participator[i]);
                 }
                 else
                 {
@@ -333,6 +334,49 @@ namespace SpellLuckWXSmall.AppData
             var filter = Builders<JackPotModel>.Filter;
             var filterSum = filter.Eq(x => x.JackPotID, jackPot.JackPotID) & filter.Eq("Participator.AccountID", objectId);
             new MongoDBTool().GetMongoCollection<JackPotModel>().UpdateOne(filterSum, Builders<JackPotModel>.Update.Set("Participator.$.HasJack", true));
+        }
+        /// <summary>
+        /// 发送获奖信息
+        /// </summary>
+        /// <param name="jackPot"></param>
+        /// <param name="accountPotModel"></param>
+        private static void SendLuckMessage(JackPotModel jackPot, AccountPotModel accountPotModel)
+        {
+            var mongo = new MongoDBTool();
+            var payWaiting = mongo.GetMongoCollection<PayWaitingModel>().Find(x => x.PayWaitingID.Equals(accountPotModel.PayWaitingID)).FirstOrDefault();
+            var account = mongo.GetMongoCollection<AccountModel>().Find(x=>x.AccountID.Equals(accountPotModel.AccountID)).FirstOrDefault();
+            var order = account.OrderList.Find(x=>x.WXOrderId.Equals(accountPotModel.WXOrderId));
+            var company = mongo.GetMongoCollection<CompanyModel>().Find(Builders<CompanyModel>.Filter.Empty).FirstOrDefault();
+            WXMessageOrderModel wXMessageOrderModel = new WXMessageOrderModel()
+            {
+                OpenID = account.OpenID,
+                FormID = payWaiting.WXPayData.Package,
+                Data = new WXMessageOrderModelData()
+                {
+                    GoodsTitle = new KeyWord()
+                    {
+                        Value = jackPot.JackGoods.GoodsTitle
+                    },
+                    OrderCreateTime = new KeyWord()
+                    {
+                        Value = order.CreateTime.ToString("yyyy年MM月dd日 HH:mm:ss")
+                    },
+                    OrderNumber = new KeyWord()
+                    {
+                        Value = order.OrderNumber
+                    },
+                    OrderTotal = new KeyWord()
+                    {
+                        Value = order.OrderPrice + "元"
+                    },
+                    ServicePhone=new KeyWord()
+                    {
+                        Value=company.ServicePhone
+                    }
+                    
+                }
+            };
+            WXOrderMessageSender.Send(wXMessageOrderModel);
         }
 
 

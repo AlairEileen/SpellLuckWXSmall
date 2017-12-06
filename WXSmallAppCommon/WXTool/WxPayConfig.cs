@@ -24,7 +24,6 @@ namespace WXSmallAppCommon.WXTool
         public const string SSLCERT_PASSWORD = "1491932202";
 
 
-
         //=======【支付结果通知url】===================================== 
         /* 支付结果通知回调url，用于商户接收支付结果
         */

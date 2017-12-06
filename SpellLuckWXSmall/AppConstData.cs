@@ -33,5 +33,10 @@ namespace SpellLuckWXSmall
         /// 分享次数，达到后才能获得获奖机会
         /// </summary>
         public const int SharaMinAdd = 3;
+        /// <summary>
+        /// 中奖推送信息模板
+        /// </summary>
+        public const string MODEL_MESSAGE_ID = "SshDn_vyQWbTKx0bN6QZ4-8n0_ZknPJxgBPY1JMe7do";
+
     }
 }

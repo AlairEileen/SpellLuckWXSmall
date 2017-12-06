@@ -170,6 +170,7 @@ namespace SpellLuckWXSmall.Controllers
                 if (!string.IsNullOrEmpty(param))
                 {
                     payWaitingModel.WXPayData = JsonConvert.DeserializeObject<WXPayModel>(param);
+                    mongo.GetMongoCollection<PayWaitingModel>().UpdateOne(x => x.PayWaitingID.Equals(payWaitingModel.PayWaitingID), Builders<PayWaitingModel>.Update.Set(x => x.WXPayData, payWaitingModel.WXPayData));
                 }
 
                 JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
